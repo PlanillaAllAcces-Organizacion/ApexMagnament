@@ -12,9 +12,11 @@ public class ReportePreventivo {
     private Integer id;
 
     @NotBlank(message = "La observacion es requerida")
+    @Column(nullable = false)
     private String observacion;
 
     @NotBlank(message = "La fecha de atencion es requerida")
+    @Column(nullable = false)
     private LocalDateTime fechaAtencion;
 
    public Integer getId() {

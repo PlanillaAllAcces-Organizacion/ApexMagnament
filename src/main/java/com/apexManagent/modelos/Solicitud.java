@@ -12,15 +12,20 @@ public class Solicitud {
     private Integer id;
 
     @NotBlank(message = "La fecha de registro requerido")
+    @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 
     @NotBlank(message = "La descripcion es requerida")
+    @Column(nullable = false)
     private String descripcion; 
 
+    @NotBlank(message = "El estado es requerido")
     private byte estado;
 
+    //@JoinColumn(name = "asignacion_equipo_id", nullable = false)
     private AsignacionEquipo asignacionEquipo;
 
+   // @JoinColumn(name = "personal_id", nullable = false)
     private Personal personal;
 
     public Integer getId() {

@@ -3,16 +3,19 @@ package com.apexManagent.modelos;
 import jakarta.persistence.*;
 
 //@Entity
+@Table(name = "asignacion_equipo")
 public class AsignacionEquipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+   // @ManyToOne
     @JoinColumn(name = "asignacionEquipoId")
     private AsignacionEquipo asignacionEquipo;
 
-    @JoinColumn(name = "personalId")
+    //@ManyToOne
+    @JoinColumn(name = "PersonalId", nullable = false)
     private Personal personal;
 
     public Integer getId() {

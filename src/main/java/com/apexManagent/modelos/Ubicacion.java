@@ -11,6 +11,7 @@ public class Ubicacion {
     private Integer id;
 
     @NotBlank(message = "La dirección es requerida")
+    @Column(nullable = false)
     private String NombreUbicacion;
 
     public Integer getId() {

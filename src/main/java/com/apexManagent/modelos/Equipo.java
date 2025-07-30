@@ -12,26 +12,36 @@ public class Equipo {
     private Integer id;
 
     @NotBlank(message = "El numero de serie es requerido")
+    @Column(name = "n_serie", nullable = false, unique = true)
     private String Nserie;
 
     @NotBlank(message = "El nombre del equipo es requerido")
+    @Column(nullable = false)
     private String nombre;
 
     @NotBlank(message = "El modelo es requerido")
+    @Column(nullable = false)
     private String modelo;
 
     @NotBlank(message = "El descripcion es requerida")
     private String descripcion;
 
+    @Lob
     @NotBlank(message = "La garantia es requerida")
+     @Column(nullable = false)
     private byte garantia;
 
+    @Lob
     @NotBlank(message = "La imagen es requerida")
+    @Column(name = "img", columnDefinition = "BLOB")
     private byte[] img;
 
     @NotBlank(message = "La fecha de registro es requerida")
+    @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 
+     //@ManyToOne
+    @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
 
     public Integer getId() {

@@ -11,24 +11,32 @@ public class Personal {
     private Integer id;
 
     @NotBlank(message = "El nombre es requerido")
+    @Column(nullable = false)
     private String nombre;
 
     @NotBlank(message = "El apellido es requerido")
+    @Column(nullable = false)
     private String apellido;
 
     @NotBlank(message = "El telefono es requerido")
+
     private String telefono;
 
     @NotBlank(message = "La imagen es requerida")
-    private byte ImgPersonal;
+    @Lob
+    @Column(name = "img_personal", columnDefinition = "BLOB")
+    private byte[] ImgPersonal;
 
     @NotBlank(message = "El email es requerido")
+    @Column(nullable = false, unique = true)    
     private String email;
 
     @NotBlank(message = "El nombre de usuario es requerido")
+    @Column(nullable = false, unique = true)
     private String username;
 
     @NotBlank(message = "La contraseña es requerida")
+    @Column(nullable = false)
     private String password;
 
     public Integer getId() {

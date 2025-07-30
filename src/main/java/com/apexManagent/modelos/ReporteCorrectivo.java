@@ -13,17 +13,22 @@ public class ReporteCorrectivo {
     private Integer id;
 
     @NotBlank(message = "La observacion es requerida")
+    @Column(nullable = false)
     private String observacion;
 
     @NotBlank(message = "La fecha de creacion es requerido")
+    @Column(nullable = false)
     private LocalDateTime fechaCreacion;
 
     @NotBlank(message = "El tipo de mantenimiento es requerido")
+    @Column(nullable = false)
     private byte tipoMantenimiento;
 
     @NotBlank(message = "El estado es requerido")
+    @Column(nullable = false)
     private byte estado;
 
+    //@ManyToOne
     private Solicitud solicitud;
 
     public Integer getId() {
