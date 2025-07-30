@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
 
-//@Entity
+@Entity
 public class ReportePreventivo {
 
     @Id
@@ -18,6 +18,20 @@ public class ReportePreventivo {
     @NotBlank(message = "La fecha de atencion es requerida")
     @Column(nullable = false)
     private LocalDateTime fechaAtencion;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CalendarioPreventivoId", nullable = false) 
+    private CalendarioPreventivo calendarioPreventivo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PersonalId", nullable = false)
+    private Personal personal;
+
+    @Column(nullable = false)
+    private Short  tipoMantenimiento;
+
+    @Column(nullable = false)
+    private Short estado;
 
    public Integer getId() {
         return id;
@@ -41,6 +55,22 @@ public class ReportePreventivo {
 
     public void setFechaAtencion(LocalDateTime fechaAtencion) {
         this.fechaAtencion = fechaAtencion;
+    }
+
+    public Short getTipoMantenimiento() {
+        return tipoMantenimiento;
+    }
+
+    public void setTipoMantenimiento(Short tipoMantenimiento) {
+        this.tipoMantenimiento = tipoMantenimiento;
+    }
+
+    public Short getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Short estado) {
+        this.estado = estado;
     }
 
 }

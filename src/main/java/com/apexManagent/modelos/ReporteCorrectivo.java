@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-//@Entity
+@Entity
 public class ReporteCorrectivo {
 
     @Id
@@ -22,14 +22,19 @@ public class ReporteCorrectivo {
 
     @NotBlank(message = "El tipo de mantenimiento es requerido")
     @Column(nullable = false)
-    private byte tipoMantenimiento;
+    private short tipoMantenimiento;
 
     @NotBlank(message = "El estado es requerido")
     @Column(nullable = false)
-    private byte estado;
+    private short estado;
 
-    //@ManyToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SolicitudId", nullable = false)
     private Solicitud solicitud;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PersonalId", nullable = false)
+    private Personal personal;
 
     public Integer getId() {
         return id;
@@ -55,19 +60,20 @@ public class ReporteCorrectivo {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public byte getTipoMantenimiento() {
+    
+    public short getTipoMantenimiento() {
         return tipoMantenimiento;
     }
 
-    public void setTipoMantenimiento(byte tipoMantenimiento) {
+    public void setTipoMantenimiento(short tipoMantenimiento) {
         this.tipoMantenimiento = tipoMantenimiento;
     }
 
-    public byte getEstado() {
+    public short getEstado() {
         return estado;
     }
 
-    public void setEstado(byte estado) {
+    public void setEstado(short estado) {
         this.estado = estado;
     }
 

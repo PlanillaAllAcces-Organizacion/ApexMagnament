@@ -3,7 +3,10 @@ package com.apexManagent.modelos;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-//@Entity
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
 public class Personal {
 
     @Id
@@ -19,13 +22,12 @@ public class Personal {
     private String apellido;
 
     @NotBlank(message = "El telefono es requerido")
-
     private String telefono;
 
     @NotBlank(message = "La imagen es requerida")
     @Lob
     @Column(name = "img_personal", columnDefinition = "BLOB")
-    private byte[] ImgPersonal;
+    private byte[] imgPersonal;
 
     @NotBlank(message = "El email es requerido")
     @Column(nullable = false, unique = true)    
@@ -38,6 +40,22 @@ public class Personal {
     @NotBlank(message = "La contraseña es requerida")
     @Column(nullable = false)
     private String password;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RolId", nullable = false)
+    private Rol rol;
+
+    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Solicitud> solicitud = new HashSet<>();
+
+    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ReporteCorrectivo> reporteCorrectivo = new HashSet<>();
+
+    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ReportePreventivo> reportePreventivo = new HashSet<>();
+
+    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AsignacionEquipo> asignacionEquipos = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -71,12 +89,12 @@ public class Personal {
         this.telefono = telefono;
     }
 
-    public byte getImgPersonal() {
-        return ImgPersonal;
+     public byte[] getImgPersonal() {
+        return imgPersonal;
     }
 
-    public void setImgPersonal(byte imgPersonal) {
-        ImgPersonal = imgPersonal;
+    public void setImgPersonal(byte[] imgPersonal) {
+        this.imgPersonal = imgPersonal;
     }
 
     public String getEmail() {

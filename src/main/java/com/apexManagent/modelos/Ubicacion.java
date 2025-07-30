@@ -3,7 +3,10 @@ package com.apexManagent.modelos;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-//@Entity
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
 public class Ubicacion {
 
     @Id
@@ -13,6 +16,9 @@ public class Ubicacion {
     @NotBlank(message = "La dirección es requerida")
     @Column(nullable = false)
     private String NombreUbicacion;
+
+    @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Equipo> equipo = new HashSet<>();
 
     public Integer getId() {
         return id;

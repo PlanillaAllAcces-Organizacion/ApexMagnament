@@ -1,8 +1,10 @@
 package com.apexManagent.modelos;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-//@Entity
+@Entity
 @Table(name = "asignacion_equipo")
 public class AsignacionEquipo {
 
@@ -10,13 +12,16 @@ public class AsignacionEquipo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-   // @ManyToOne
-    @JoinColumn(name = "asignacionEquipoId")
-    private AsignacionEquipo asignacionEquipo;
-
-    //@ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PersonalId", nullable = false)
     private Personal personal;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EquipoId", nullable = false)
+    private Equipo equipo;
+
+    @OneToMany(mappedBy = "asignacionEquipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Solicitud> solicitud = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -26,20 +31,5 @@ public class AsignacionEquipo {
         this.id = id;
     }
 
-    public AsignacionEquipo getAsignacionEquipo() {
-        return asignacionEquipo;
-    }
-
-    public void setAsignacionEquipo(AsignacionEquipo asignacionEquipo) {
-        this.asignacionEquipo = asignacionEquipo;
-    }
-
-    public Personal getPersonal() {
-        return personal;
-    }
-
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
-    }
 
 }

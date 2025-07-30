@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-//@Entity
+@Entity
 public class Solicitud {
 
     @Id 
@@ -20,13 +20,18 @@ public class Solicitud {
     private String descripcion; 
 
     @NotBlank(message = "El estado es requerido")
-    private byte estado;
+    private short estado;
 
-    //@JoinColumn(name = "asignacion_equipo_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asignacionEquipoId", nullable = false)
     private AsignacionEquipo asignacionEquipo;
 
-   // @JoinColumn(name = "personal_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "personalId", nullable = false)
     private Personal personal;
+
+    @OneToOne(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ReporteCorrectivo reporteCorrectivo;
 
     public Integer getId() {
         return id;
@@ -53,11 +58,11 @@ public class Solicitud {
         this.descripcion = descripcion;
     }
 
-    public byte getEstado() {
+    public short getEstado() {
         return estado;
     }
 
-    public void setEstado(byte estado) {
+    public void setEstado(short estado) {
         this.estado = estado;
     }
 

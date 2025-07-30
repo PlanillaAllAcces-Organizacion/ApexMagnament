@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-//@Entity
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
 public class Equipo {
 
     @Id
@@ -28,11 +31,10 @@ public class Equipo {
 
     @Lob
     @NotBlank(message = "La garantia es requerida")
-     @Column(nullable = false)
-    private byte garantia;
+    @Column(nullable = false)
+    private short garantia;
 
     @Lob
-    @NotBlank(message = "La imagen es requerida")
     @Column(name = "img", columnDefinition = "BLOB")
     private byte[] img;
 
@@ -40,8 +42,14 @@ public class Equipo {
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 
-     //@ManyToOne
-    @JoinColumn(name = "ubicacion_id")
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AsignacionEquipo> AsignacionEquipo = new HashSet<>();
+
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<CalendarioPreventivo> calendarioPreventivo = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ubicacionid")
     private Ubicacion ubicacion;
 
     public Integer getId() {
@@ -84,11 +92,11 @@ public class Equipo {
         this.descripcion = descripcion;
     }
 
-    public byte getGarantia() {
+    public short getGarantia() {
         return garantia;
     }
 
-    public void setGarantia(byte garantia) {
+    public void setGarantia(short garantia) {
         this.garantia = garantia;
     }
 

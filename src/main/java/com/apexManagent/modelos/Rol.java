@@ -3,7 +3,10 @@ package com.apexManagent.modelos;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-//@Entity
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
 public class Rol {
 
     @Id
@@ -12,6 +15,9 @@ public class Rol {
 
     @NotBlank(message = "El nombre del rol es requerido")
     private String nombre;
+
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Personal> personal = new HashSet<>();
 
     public Integer getId() {
         return id;

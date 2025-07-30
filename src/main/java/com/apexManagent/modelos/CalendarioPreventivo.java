@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-//@Entity
+
+@Entity
 public class CalendarioPreventivo {
 
     @Id
@@ -18,9 +19,14 @@ public class CalendarioPreventivo {
     @NotBlank(message = "La fecha fin es obligatoria")
     private LocalDateTime fechaFin;
 
-    private byte EstadoMantenimiento;
+    private short EstadoMantenimiento;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "equipoId", nullable = false)
     private Equipo equipo;
+
+    @OneToOne(mappedBy = "calendarioPreventivo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ReportePreventivo reportePreventivo;
 
     public Integer getId() {
         return id;
@@ -46,12 +52,8 @@ public class CalendarioPreventivo {
         this.fechaFin = fechaFin;
     }
 
-    public byte getEstadoMantenimiento() {
+    public short getEstadoMantenimiento() {
         return EstadoMantenimiento;
-    }
-
-    public void setEstadoMantenimiento(byte estadoMantenimiento) {
-        EstadoMantenimiento = estadoMantenimiento;
     }
 
     public Equipo getEquipo() {
