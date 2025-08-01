@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Apex Manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
 </head>
+
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
         <a class="navbar-brand ps-3" href="#">Apex Manager</a>
         <!-- Sidebar Toggle-->
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+                class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
         <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
             <div class="input-group">
@@ -25,13 +30,16 @@
         <!-- Navbar-->
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Configuración</a></li>
                     <li><a class="dropdown-item" href="#!">Registro de actividad</a></li>
-                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
                     <li><a class="dropdown-item" href="#!">Cerrar sesión</a></li>
                 </ul>
             </li>
@@ -47,25 +55,30 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de control
                         </a>
-                        
+
                         <!-- Personal Section -->
                         <div class="sb-sidenav-menu-heading">Personal</div>
-                        
+
                         <!-- Redes Subsection -->
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRedes" aria-expanded="false" aria-controls="collapseRedes">
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRedes"
+                            aria-expanded="false" aria-controls="collapseRedes">
                             <div class="sb-nav-link-icon"><i class="fas fa-network-wired"></i></div>
                             Redes
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapseRedes" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse" id="collapseRedes" aria-labelledby="headingOne"
+                            data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="#"><i class="fas fa-laptop me-2"></i> Equipos informáticos</a>
-                                <a class="nav-link" href="#"><i class="fas fa-file-alt me-2"></i> Historial de reportes</a>
-                                <a class="nav-link" href="#"><i class="fas fa-map-marker-alt me-2"></i> Ubicación de equipos</a>
-                                <a class="nav-link" href="#"><i class="fas fa-calendar-check me-2"></i> Calendario preventivo</a>
+                                <a class="nav-link" href="#"><i class="fas fa-file-alt me-2"></i> Historial de
+                                    reportes</a>
+                                <a class="nav-link" href="#"><i class="fas fa-map-marker-alt me-2"></i> Ubicación de
+                                    equipos</a>
+                                <a class="nav-link" href="#"><i class="fas fa-calendar-check me-2"></i> Calendario
+                                    preventivo</a>
                             </nav>
                         </div>
-                        
+
                         <!-- Additional Sections -->
                         <div class="sb-sidenav-menu-heading">Operaciones</div>
                         <a class="nav-link" href="tables.html">
@@ -85,124 +98,21 @@
             </nav>
         </div>
         <div id="layoutSidenav_content">
+
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Bienvenido a Apex Manager</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Panel de control</li>
-                    </ol>
-                    
-                    <!-- Dashboard Cards -->
-                    <div class="row">
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5>Equipos Activos</h5>
-                                            <h2 class="mb-0">142</h2>
-                                        </div>
-                                        <i class="fas fa-server fa-2x"></i>
-                                    </div>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">Ver detalles</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-warning text-white mb-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5>Reportes Pendientes</h5>
-                                            <h2 class="mb-0">8</h2>
-                                        </div>
-                                        <i class="fas fa-exclamation-triangle fa-2x"></i>
-                                    </div>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">Ver detalles</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-success text-white mb-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5>Mantenimientos</h5>
-                                            <h2 class="mb-0">24</h2>
-                                        </div>
-                                        <i class="fas fa-calendar-check fa-2x"></i>
-                                    </div>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">Ver calendario</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-danger text-white mb-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5>Alertas</h5>
-                                            <h2 class="mb-0">3</h2>
-                                        </div>
-                                        <i class="fas fa-bell fa-2x"></i>
-                                    </div>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">Ver alertas</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Recent Activity -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Actividad Reciente
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Evento</th>
-                                            <th>Usuario</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                   
-                                </table>
-                            </div>
-                        </div>
+                    <!-- Aquí se renderizan las vistas de contenido -->
+                    <div layout:fragment="content">
                     </div>
                 </div>
             </main>
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Apex Manager 2023</div>
-                        <div>
-                            <a href="#">Política de privacidad</a>
-                            &middot;
-                            <a href="#">Términos &amp; Condiciones</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+
+           
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
     <script th:src="@{/js/scripts.js}"></script>
 </body>
+
 </html>

@@ -9,7 +9,7 @@ public class Solicitud {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
 
     @NotBlank(message = "La fecha de registro requerido")
     @Column(name = "fecha_registro", nullable = false)
@@ -34,11 +34,11 @@ public class Solicitud {
     private ReporteCorrectivo reporteCorrectivo;
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.Id = id;
     }
 
    
@@ -70,15 +70,4 @@ public class Solicitud {
         return asignacionEquipo;
     }
 
-    public void setAsignacionEquipo(AsignacionEquipo asignacionEquipo) {
-        this.asignacionEquipo = asignacionEquipo;
-    }
-
-    public Personal getPersonal() {
-        return personal;
-    }
-
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
-    }
 }

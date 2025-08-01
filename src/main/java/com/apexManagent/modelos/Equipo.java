@@ -12,7 +12,11 @@ public class Equipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ubicacionId")
+    private Ubicacion ubicacion;
 
     @NotBlank(message = "El numero de serie es requerido")
     @Column(name = "n_serie", nullable = false, unique = true)
@@ -48,18 +52,14 @@ public class Equipo {
     @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CalendarioPreventivo> calendarioPreventivo = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ubicacionid")
-    private Ubicacion ubicacion;
-
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
-
+   
     public String getNserie() {
         return Nserie;
     }
@@ -116,13 +116,5 @@ public class Equipo {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-   
 
 }

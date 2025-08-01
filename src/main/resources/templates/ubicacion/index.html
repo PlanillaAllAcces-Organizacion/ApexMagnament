@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="/layouts/_mainLayout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicaciones</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link th:href="@{/css/styleIndex.css}" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+
+        <!-- Primera tarjeta: Encabezado y búsqueda -->
+        <br />
+        <div class="app-card mb-4">
+            <!-- Campo de filtro -->
+            <div class="input-group mb-2">
+                <button class="input-group-text" type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <input type="text" id="filterInput" class="form-control"
+                    placeholder="Filtrar por nombre de ubicación..." aria-label="Filtrar">
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary">Ingresar nuevo</button>
+            </div>
+
+        </div>
+
+
+        <!-- Segunda tarjeta: Registros en formato de tarjetas -->
+        <div class="app-card">
+            <div id="locationList" class="row g-3">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 card-title mb-0">Lista de Ubicaciones</h2>
+                </div>
+
+                <!-- Ejemplo de cómo se vería una tarjeta estática -->
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Parque Central</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-light"><i class="fa-solid fa-clipboard"></i></button>
+                                <button class="btn btn-sm btn-dark"><i class="fa-solid fa-pencil"></i></button>
+                                <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Biblioteca Municipal</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Mercado de Abastos</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Plaza de la Cultura</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Plaza de la Cultura</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Plaza de la Cultura</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+
+    </div>
+
+</body>
+
+</html>
