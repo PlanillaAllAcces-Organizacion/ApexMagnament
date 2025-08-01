@@ -11,29 +11,30 @@ public class Ubicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
 
     @NotBlank(message = "La dirección es requerida")
     @Column(nullable = false)
-    private String NombreUbicacion;
+    private String nombreUbicacion;
 
     @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Equipo> equipo = new HashSet<>();
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.Id = id;
     }
 
-     public String getNombreUbicacion() {
-        return NombreUbicacion;
+    public String getNombreUbicacion() {
+        return nombreUbicacion;
     }
 
     public void setNombreUbicacion(String nombreUbicacion) {
-        NombreUbicacion = nombreUbicacion;
+        this.nombreUbicacion = nombreUbicacion;
     }
+    
 
 }

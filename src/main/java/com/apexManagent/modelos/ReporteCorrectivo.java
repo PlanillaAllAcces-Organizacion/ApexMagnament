@@ -10,7 +10,7 @@ public class ReporteCorrectivo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
 
     @NotBlank(message = "La observacion es requerida")
     @Column(nullable = false)
@@ -37,11 +37,11 @@ public class ReporteCorrectivo {
     private Personal personal;
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getObservacion() {

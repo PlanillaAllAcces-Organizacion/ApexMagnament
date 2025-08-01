@@ -1,0 +1,37 @@
+  body {
+      background: linear-gradient(to right, #efeae4, #8db986);
+      /* Fondo más suave */
+      font-family: 'Roboto', sans-serif;
+  }
+
+  .container {
+      max-width: 900px;
+  }
+
+  .app-card {
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+      background-color: #ffffff;
+      padding: 2.5rem;
+  }
+
+  /* Estilos para las tarjetas de ubicación */
+  .location-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      border: 1px solid #d0d7df;
+      border-radius: 0.5rem;
+      height: 100%;
+  }
+
+  .location-card:hover {
+      transform: translateY(-5px);
+      background-color: #8db986;
+      color: #ffffff;
+      /* Efecto de elevación */
+      box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+      /* Sombra más pronunciada */
+  }
+
+

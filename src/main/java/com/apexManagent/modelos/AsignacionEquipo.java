@@ -5,30 +5,29 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "asignacion_equipo")
 public class AsignacionEquipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PersonalId", nullable = false)
+    @JoinColumn(name = "personalId", nullable = false)
     private Personal personal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "EquipoId", nullable = false)
+    @JoinColumn(name = "equipoId", nullable = false)
     private Equipo equipo;
 
     @OneToMany(mappedBy = "asignacionEquipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Solicitud> solicitud = new HashSet<>();
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
 
 

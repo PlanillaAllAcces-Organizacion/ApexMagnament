@@ -11,20 +11,21 @@ public class Rol {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
 
     @NotBlank(message = "El nombre del rol es requerido")
+    @Column(nullable = false)
     private String nombre;
 
     @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Personal> personal = new HashSet<>();
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.Id = id;
     }
 
      public String getNombre() {
