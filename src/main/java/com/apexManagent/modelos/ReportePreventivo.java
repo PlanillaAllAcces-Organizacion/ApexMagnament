@@ -9,15 +9,7 @@ public class ReportePreventivo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @NotBlank(message = "La observacion es requerida")
-    @Column(nullable = false)
-    private String observacion;
-
-    @NotBlank(message = "La fecha de atencion es requerida")
-    @Column(nullable = false)
-    private LocalDateTime fechaAtencion;
+    private Integer Id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CalendarioPreventivoId", nullable = false) 
@@ -27,6 +19,14 @@ public class ReportePreventivo {
     @JoinColumn(name = "PersonalId", nullable = false)
     private Personal personal;
 
+    @NotBlank(message = "La observacion es requerida")
+    @Column(nullable = false)
+    private String observacion;
+
+    @NotBlank(message = "La fecha de atencion es requerida")
+    @Column(nullable = false)
+    private LocalDateTime fechaAtencion;
+
     @Column(nullable = false)
     private Short  tipoMantenimiento;
 
@@ -34,11 +34,11 @@ public class ReportePreventivo {
     private Short estado;
 
    public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.Id = id;
     }
 
    public String getObservacion() {

@@ -1,7 +1,10 @@
 package com.apexManagent.modelos;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +14,11 @@ public class Personal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer Id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RolId", nullable = false)
+    private Rol rol;
 
     @NotBlank(message = "El nombre es requerido")
     @Column(nullable = false)
@@ -22,14 +29,17 @@ public class Personal {
     private String apellido;
 
     @NotBlank(message = "El telefono es requerido")
+    @Pattern(regexp = "^[0-9]{8}$", message = "El formato del teléfono debe ser 8 dígitos numéricos")
+    @Pattern(regexp = "^(\\+?\\d{1,3}[-.\\s]?)?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Formato de teléfono inválido")
+    @Column(nullable = false)
     private String telefono;
 
-    @NotBlank(message = "La imagen es requerida")
     @Lob
     @Column(name = "img_personal", columnDefinition = "BLOB")
     private byte[] imgPersonal;
 
     @NotBlank(message = "El email es requerido")
+    @Email(message = "El formato del correo electrónico no es válido")
     @Column(nullable = false, unique = true)    
     private String email;
 
@@ -39,11 +49,8 @@ public class Personal {
 
     @NotBlank(message = "La contraseña es requerida")
     @Column(nullable = false)
+    @Size(min = 8, max = 255, message = "La contraseña debe tener al menos 8 caracteres")
     private String password;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RolId", nullable = false)
-    private Rol rol;
 
     @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Solicitud> solicitud = new HashSet<>();
@@ -58,11 +65,11 @@ public class Personal {
     private Set<AsignacionEquipo> asignacionEquipos = new HashSet<>();
 
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
 
     public String getNombre() {

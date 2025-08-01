@@ -4,17 +4,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/")
-public class HomeController {
+@RequestMapping("/ubicacion")
+public class UbicacionController {
 
     @GetMapping
     public  String index() {
-        return "layouts/_mainLayout";
+        return "ubicacion/index";
     }
-
-    @GetMapping("/Login")
-    public String mostrarLogin() {
-        return "home/Login";
-    }
-
+    
 }
