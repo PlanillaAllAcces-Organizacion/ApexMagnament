@@ -9,7 +9,7 @@ public class HomeController {
 
     @GetMapping
     public  String index() {
-        return "equipos/index";
+        return "layouts/_mainLayout";
     }
 
 }
