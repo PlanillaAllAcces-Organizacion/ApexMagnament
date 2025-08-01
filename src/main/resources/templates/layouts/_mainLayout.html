@@ -22,7 +22,7 @@
         
         <!-- Brand/Logo con imagen -->
         <a class="navbar-brand ps-3" href="#">
-            <img th:src="@{/assets/img/logo.png}" alt="Apex Manager Logo" style="height: 70px; margin-right: 10px;">
+            <img th:src="@{/assets/img/logoMenu.png}" alt="Apex Manager Logo" style="height: 70px; margin-right: 10px;">
             Apex Manager
         </a>
         
@@ -30,10 +30,7 @@
         <!-- Barra de búsqueda -->
         <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Buscar..." aria-label="Buscar" />
-                <button class="btn btn-link" type="button">
-                    <i class="fas fa-search"></i>
-                </button>
+               
             </div>
         </form>
         
@@ -96,7 +93,7 @@
                                 <a class="nav-link" href="#">
                                     <i class="fas fa-file-alt me-2"></i> Historial
                                 </a>
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" th:href="@{/ubicacion}">
                                     <i class="fas fa-map-marker-alt me-2"></i> Ubicación
                                 </a>
                                 <a class="nav-link" href="#">
@@ -138,9 +135,14 @@
         <!-- Contenido principal (vacío en este caso) -->
         <div id="layoutSidenav_content">
 
-            <main>
-                <!-- Tu contenido iría aquí -->
-            </main>
+           <main>
+            <div class="container-fluid px-4">
+                <!-- Aquí se renderizan las vistas de contenido -->
+                <div layout:fragment="content">
+                    <p>Changing contents...</p>
+                </div>
+            </div>
+        </main>
             
             
         </div>
