@@ -2,6 +2,7 @@ package com.apexManagent.controladores;
 
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.servicios.interfaces.IEquipoService;
+import com.apexManagent.servicios.interfaces.IUbicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,9 @@ public class EquipoController {
 
     @Autowired
     private IEquipoService equipoService;
+
+    @Autowired
+    private IUbicacionService ubicacionService;
 
     @GetMapping
     public String index(Model model, 
@@ -58,11 +62,12 @@ public class EquipoController {
         return "equipo/index";
     }
 
-    @GetMapping("/create")
-    public String create(Model model) {
-        model.addAttribute("equipo", new Equipo());
-        return "equipo/create";
-    }
+  @GetMapping("/create")
+public String create(Model model) {
+    model.addAttribute("equipo", new Equipo());
+    model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+    return "equipo/create";
+}
 
     @PostMapping("/save")
     public String save(@ModelAttribute Equipo equipo,
