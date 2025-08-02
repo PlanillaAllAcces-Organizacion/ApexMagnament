@@ -12,9 +12,12 @@ public class HomeController {
         return "layouts/_mainLayout";
     }
 
+    
+
     @GetMapping("/Login")
     public String mostrarLogin() {
         return "home/Login";
     }
+
 
 }

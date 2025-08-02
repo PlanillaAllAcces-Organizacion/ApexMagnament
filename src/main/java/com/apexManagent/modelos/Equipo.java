@@ -20,7 +20,7 @@ public class Equipo {
 
     @NotBlank(message = "El numero de serie es requerido")
     @Column(name = "n_serie", nullable = false, unique = true)
-    private String Nserie;
+    private String nserie;
 
     @NotBlank(message = "El nombre del equipo es requerido")
     @Column(nullable = false)
@@ -61,11 +61,11 @@ public class Equipo {
     }
    
     public String getNserie() {
-        return Nserie;
+        return nserie;
     }
 
     public void setNserie(String nserie) {
-        Nserie = nserie;
+        this.nserie = nserie;
     }
 
     public String getNombre() {
