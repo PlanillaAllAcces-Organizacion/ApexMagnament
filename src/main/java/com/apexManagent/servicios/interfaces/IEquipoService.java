@@ -8,23 +8,33 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IEquipoService {
+
+    Page<Equipo> buscarTodosPaginados(Pageable pageable);
+
     // Operaciones CRUD básicas
     Equipo guardarEquipo(Equipo equipo);
-    List<Equipo> listarTodos();
-    void eliminarPorNserie(String nserie);
-    
+
+    List<Equipo> obtenerTodos();
+
+    Optional<Equipo> buscarSerie(String nserie);
+
+    Equipo createOrEditOne(Equipo equipo);
+
+    void eliminarPorId(Integer id);
+
     // Búsquedas
     Optional<Equipo> buscarPorNserie(String nserie);
+
     List<Equipo> buscarPorNombre(String nombre);
-    List<Equipo> buscarPorModelo(String modelo);
-    
+
     // Operaciones específicas
     void actualizarUbicacion(Integer equipoId, Integer ubicacionId);
+
     void modificarEquipo(Integer equipoId, String nombre, String modelo, String descripcion);
+
     boolean existePorNserie(String nserie);
 
-    Page<Equipo> listarTodosPaginados(Pageable pageable);
-Page<Equipo> buscarPorNombreModeloOSerie(String search, Pageable pageable);
-Optional<Equipo> buscarPorId(Integer id);
-void eliminarPorId(Integer id);
+    Page<Equipo> buscarPorNombreModeloOSerie(String search, Pageable pageable);
+
+    Optional<Equipo> buscarPorId(Integer id);
 }

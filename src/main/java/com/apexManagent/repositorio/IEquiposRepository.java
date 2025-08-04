@@ -21,7 +21,7 @@ public interface IEquiposRepository extends JpaRepository<Equipo, Integer> {
     
     List<Equipo> findByModeloContainingIgnoreCase(String modelo);
     
-    Page<Equipo> findByNombreContainingIgnoreCaseOrModeloContainingIgnoreCaseOrNserieContainingIgnoreCase(
+     Page<Equipo> findByNombreContainingIgnoreCaseOrModeloContainingIgnoreCaseOrNserieContainingIgnoreCase(
         String nombre, String modelo, String nserie, Pageable pageable);
     
     boolean existsByNserie(String nserie);

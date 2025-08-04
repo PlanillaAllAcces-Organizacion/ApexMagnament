@@ -15,7 +15,8 @@ import java.util.Optional;
 @Service
 public class EquipoService implements IEquipoService {
 
-    private final IEquiposRepository equiposRepository;
+    @Autowired
+    private IEquiposRepository equiposRepository;
 
     @Autowired
     public EquipoService(IEquiposRepository equiposRepository) {
@@ -31,17 +32,19 @@ public class EquipoService implements IEquipoService {
         return equiposRepository.save(equipo);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Equipo> listarTodos() {
-        return equiposRepository.findAll();
-    }
+  
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Equipo> listarTodosPaginados(Pageable pageable) {
+    public Page<Equipo> buscarTodosPaginados(Pageable pageable) {
         return equiposRepository.findAll(pageable);
     }
+
+     @Override
+    public List<Equipo> obtenerTodos() {
+        return equiposRepository.findAll();
+    }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -49,6 +52,10 @@ public class EquipoService implements IEquipoService {
         return equiposRepository.findById(id);
     }
 
+    @Override
+    public Equipo createOrEditOne(Equipo equipo) {
+        return equiposRepository.save(equipo);
+    }
     @Override
     @Transactional(readOnly = true)
     public Optional<Equipo> buscarPorNserie(String nserie) {
@@ -61,12 +68,7 @@ public class EquipoService implements IEquipoService {
         return equiposRepository.findByNombreContainingIgnoreCase(nombre);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Equipo> buscarPorModelo(String modelo) {
-        return equiposRepository.findByModeloContainingIgnoreCase(modelo);
-    }
-
+   
     @Override
     @Transactional(readOnly = true)
     public Page<Equipo> buscarPorNombreModeloOSerie(String filtro, Pageable pageable) {
@@ -80,12 +82,7 @@ public class EquipoService implements IEquipoService {
         equiposRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public void eliminarPorNserie(String nserie) {
-        equiposRepository.deleteByNserie(nserie);
-    }
-
+    
     @Override
     @Transactional
     public void actualizarUbicacion(Integer equipoId, Integer ubicacionId) {
@@ -103,4 +100,14 @@ public class EquipoService implements IEquipoService {
     public boolean existePorNserie(String nserie) {
         return equiposRepository.existsByNserie(nserie);
     }
+
+   
+    @Override
+    public Optional<Equipo> buscarSerie(String nserie) {
+     return equiposRepository.findByNserie(nserie);   
+    }
+
+   
+
+    
 }

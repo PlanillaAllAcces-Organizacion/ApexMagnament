@@ -33,8 +33,6 @@ public class Equipo {
     @NotBlank(message = "El descripcion es requerida")
     private String descripcion;
 
-    @Lob
-    @NotBlank(message = "La garantia es requerida")
     @Column(nullable = false)
     private short garantia;
 
@@ -42,7 +40,6 @@ public class Equipo {
     @Column(name = "img", columnDefinition = "BLOB")
     private byte[] img;
 
-    @NotBlank(message = "La fecha de registro es requerida")
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 

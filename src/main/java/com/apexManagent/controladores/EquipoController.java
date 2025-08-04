@@ -31,64 +31,79 @@ public class EquipoController {
     @Autowired
     private IUbicacionService ubicacionService;
 
-    @GetMapping
-    public String index(Model model, 
-                       @RequestParam("page") Optional<Integer> page, 
-                       @RequestParam("size") Optional<Integer> size,
-                       @RequestParam(required = false) String search) {
-        
-        int currentPage = page.orElse(1) - 1;
-        int pageSize = size.orElse(5);
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+   @GetMapping
+public String index(Model model,
+        @RequestParam("page") Optional<Integer> page,
+        @RequestParam("size") Optional<Integer> size,
+        @RequestParam(required = false) String search) {
 
-        Page<Equipo> equipos;
-        if (search != null && !search.isEmpty()) {
-            equipos = equipoService.buscarPorNombreModeloOSerie(search, pageable);
-        } else {
-            equipos = equipoService.listarTodosPaginados(pageable);
-        }
-        
-        model.addAttribute("equipos", equipos);
-        model.addAttribute("search", search);
+    int currentPage = page.orElse(1) - 1; // Ajuste para que empiece en 0
+    int pageSize = size.orElse(5);
+    Pageable pageable = PageRequest.of(currentPage, pageSize);
 
-        int totalPages = equipos.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
-
-        return "equipo/index";
+    Page<Equipo> equipos;
+    
+    if (search != null && !search.isEmpty()) {
+        equipos = equipoService.buscarPorNombreModeloOSerie(search, pageable);
+    } else {
+        equipos = equipoService.buscarTodosPaginados(pageable);
     }
 
-  @GetMapping("/create")
-public String create(Model model) {
-    model.addAttribute("equipo", new Equipo());
+    System.out.println("Equipos encontrados: " + equipos.getTotalElements());
+
+    model.addAttribute("equipos", equipos);
+    model.addAttribute("search", search);
     model.addAttribute("ubicaciones", ubicacionService.listarTodas());
-    return "equipo/create";
+
+    int totalPages = equipos.getTotalPages();
+    if (totalPages > 0) {
+        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
+    }
+
+    return "equipo/index";
 }
 
-    @PostMapping("/save")
+
+  @GetMapping("/create")
+    public String create(Model model) {
+        if (!model.containsAttribute("equipo")) {
+            model.addAttribute("equipo", new Equipo());
+        }
+        model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+        return "equipo/create";
+    }
+
+
+  @PostMapping("/save")
     public String save(@ModelAttribute Equipo equipo,
-                      @RequestParam(value = "imagen", required = false) MultipartFile imagen,
-                      BindingResult result,
-                      RedirectAttributes attributes) throws IOException {
-        
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            BindingResult result,
+            RedirectAttributes attributes) throws IOException {
+
         if (result.hasErrors()) {
-            attributes.addFlashAttribute("error", "Error en los datos del equipo");
+            attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
+            attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
 
         if (equipoService.existePorNserie(equipo.getNserie())) {
             attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
+            attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
 
         if (imagen != null && !imagen.isEmpty()) {
+            if (imagen.getSize() > 2097152) { // 2MB
+                attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
+                attributes.addFlashAttribute("equipo", equipo);
+                return "redirect:/equipo/create";
+            }
             equipo.setImg(imagen.getBytes());
         }
-        
+
         equipo.setFechaRegistro(LocalDateTime.now());
         equipoService.guardarEquipo(equipo);
         attributes.addFlashAttribute("success", "Equipo registrado correctamente");
@@ -113,13 +128,13 @@ public String create(Model model) {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Equipo equipo,
-                        @RequestParam(value = "imagen", required = false) MultipartFile imagen,
-                        RedirectAttributes attributes) throws IOException {
-        
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            RedirectAttributes attributes) throws IOException {
+
         if (imagen != null && !imagen.isEmpty()) {
             equipo.setImg(imagen.getBytes());
         }
-        
+
         equipoService.guardarEquipo(equipo);
         attributes.addFlashAttribute("success", "Equipo actualizado correctamente");
         return "redirect:/equipo";

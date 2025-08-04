@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/_mainLayout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
 <head>
     <title>Lista de Equipos | Apex Manager</title>
 </head>
+
 <body>
     <div layout:fragment="content">
         <div class="container-fluid px-4">
@@ -27,15 +28,15 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="card-body">
                     <!-- Barra de Búsqueda -->
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <form th:action="@{/equipos}" method="get" class="d-flex">
+                            <form th:action="@{/equipo}" method="get" class="d-flex">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="search" 
-                                           th:value="${search}" placeholder="Buscar por nombre, modelo o serie...">
+                                    <input type="text" class="form-control" name="search" th:value="${search}"
+                                        placeholder="Buscar por nombre, modelo o serie...">
                                     <button class="btn btn-outline-secondary" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -43,7 +44,8 @@
                             </form>
                         </div>
                         <div class="col-md-6 text-end">
-                            <span class="text-muted" th:text="'Mostrando ' + ${equipos.totalElements} + ' equipos'"></span>
+                            <span class="text-muted"
+                                th:text="'Mostrando ' + ${equipos.totalElements} + ' equipos'"></span>
                         </div>
                     </div>
 
@@ -66,99 +68,78 @@
                                     <td th:text="${equipo.nserie}">ABC123</td>
                                     <td th:text="${equipo.nombre}">Equipo Ejemplo</td>
                                     <td th:text="${equipo.modelo}">Modelo XYZ</td>
-                                    <td th:text="${equipo.ubicacion?.nombre} ?: 'Sin ubicación'">Oficina 1</td>
+                                    <td th:text="${equipo.ubicacion?.nombreUbicacion} ?: 'Sin ubicación'">Oficina 1</td>
                                     <td>
-                                        <span th:text="${equipo.garantia} + ' meses'" 
-                                              th:class="${equipo.garantia < 6} ? 'text-danger' : 'text-success'"></span>
+                                        <span th:text="${equipo.garantia} + ' meses'"
+                                            th:class="${equipo.garantia < 6} ? 'text-danger' : 'text-success'"></span>
                                     </td>
-                                    <td th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy')}">01/01/2023</td>
+                                    <td th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy')}">01/01/2023
+                                    </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a th:href="@{/equipos/details/} + ${equipo.id}" 
-                                               class="btn btn-sm btn-info" title="Ver detalles">
+                                            <a th:href="@{/equipo/details/} + ${equipo.id}" class="btn btn-sm btn-info"
+                                                title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a th:href="@{/equipos/edit/} + ${equipo.id}" 
-                                               class="btn btn-sm btn-warning" title="Editar">
+                                            <a th:href="@{/equipo/edit/} + ${equipo.id}" class="btn btn-sm btn-warning"
+                                                title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a th:href="@{/equipos/delete/} + ${equipo.id}" 
-                                               class="btn btn-sm btn-danger" title="Eliminar"
-                                               onclick="return confirm('¿Está seguro de eliminar este equipo?');">
+                                            <a th:href="@{/equipo/delete/} + ${equipo.id}" class="btn btn-sm btn-danger"
+                                                title="Eliminar"
+                                                onclick="return confirm('¿Está seguro de eliminar este equipo?');">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr th:if="${equipos.content.empty}">
-                                    <td colspan="7" class="text-center text-muted">No se encontraron equipos registrados</td>
+                                    <td colspan="7" class="text-center text-muted">No se encontraron equipos registrados
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
 
-                    <!-- Paginación -->
-                    <nav th:if="${equipos.totalPages > 1}">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item" th:classappend="${equipos.first} ? 'disabled'">
-                                <a class="page-link" th:href="@{/equipos(search=${search}, page=1)}">
-                                    <i class="fas fa-angle-double-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" th:classappend="${equipos.first} ? 'disabled'">
-                                <a class="page-link" th:href="@{/equipos(search=${search}, page=${equipos.number})}">
-                                    <i class="fas fa-angle-left"></i>
-                                </a>
-                            </li>
-                            
-                            <li th:each="page : ${#numbers.sequence(1, equipos.totalPages)}" 
-                                class="page-item" th:classappend="${page == equipos.number + 1} ? 'active'">
-                                <a class="page-link" 
-                                   th:href="@{/equipos(search=${search}, page=${page})}" 
-                                   th:text="${page}">1</a>
-                            </li>
-                            
-                            <li class="page-item" th:classappend="${equipos.last} ? 'disabled'">
-                                <a class="page-link" th:href="@{/equipos(search=${search}, page=${equipos.number + 2})}">
-                                    <i class="fas fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" th:classappend="${equipos.last} ? 'disabled'">
-                                <a class="page-link" th:href="@{/equipos(search=${search}, page=${equipos.totalPages})}">
-                                    <i class="fas fa-angle-double-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                        <!-- Paginación simplificada como en el ejemplo -->
+                        <nav th:if="${equipos.totalPages > 1}">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                                    th:classappend="${pageNumber == equipos.number + 1} ? 'active'">
+                                    <a class="page-link" th:href="@{|/equipo?page=${pageNumber}&size=${equipos.size}|}"
+                                        th:text="${pageNumber}"></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Script para confirmación de eliminación -->
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            // Confirmación antes de eliminar
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (!confirm('¿Está seguro de eliminar este equipo?')) {
-                        e.preventDefault();
-                    }
+        <!-- Script para confirmación de eliminación -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                // Confirmación antes de eliminar
+                const deleteButtons = document.querySelectorAll('.btn-danger');
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        if (!confirm('¿Está seguro de eliminar este equipo?')) {
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                // Resaltar fila al pasar el mouse
+                const tableRows = document.querySelectorAll('tbody tr');
+                tableRows.forEach(row => {
+                    row.addEventListener('mouseenter', function () {
+                        this.classList.add('table-active');
+                    });
+                    row.addEventListener('mouseleave', function () {
+                        this.classList.remove('table-active');
+                    });
                 });
             });
-            
-            // Resaltar fila al pasar el mouse
-            const tableRows = document.querySelectorAll('tbody tr');
-            tableRows.forEach(row => {
-                row.addEventListener('mouseenter', function() {
-                    this.classList.add('table-active');
-                });
-                row.addEventListener('mouseleave', function() {
-                    this.classList.remove('table-active');
-                });
-            });
-        });
-    </script>
+        </script>
 </body>
+
 </html>
