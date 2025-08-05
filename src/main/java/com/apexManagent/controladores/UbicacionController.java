@@ -1,6 +1,7 @@
 package com.apexManagent.controladores;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,5 +78,26 @@ public class UbicacionController {
         return "redirect:/ubicaciones";
 
     }
+
+
+    @GetMapping("/details/{id}")
+    public String details(@PathVariable("id") Integer id, Model model){
+        Ubicacion ubicacion = ubicacionService.obtenerPorId(id).get();
+        model.addAttribute("ubicacion", ubicacion);
+        return "ubicacion/details";
+    }
+
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Integer id, Model model){
+        Ubicacion ubicacion = ubicacionService.obtenerPorId(id).get();
+        model.addAttribute("ubicacion", ubicacion);
+        return "ubicacion/edit";
+    }
+
+   
+
+   
+
 
 }
