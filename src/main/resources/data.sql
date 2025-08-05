@@ -4,7 +4,7 @@ INSERT IGNORE INTO rol (Nombre) VALUES ('Administrador') ;
 INSERT IGNORE INTO rol (Nombre) VALUES ('Técnico') ;
 INSERT IGNORE INTO rol (Nombre) VALUES ('Usuario');
 
-INSERT IGNORE INTO personal (rol_Id, nombre, apellido, email, telefono, img_personal, `username`, `password`) VALUES
+INSERT IGNORE INTO personal (rol_id, nombre, apellido, email, telefono, img_personal, `username`, `password`) VALUES
 (
      1, 
     'Juan',
