@@ -14,7 +14,7 @@ public class Ubicacion {
     private Integer Id;
 
     @NotBlank(message = "La dirección es requerida")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nombreUbicacion;
 
     @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

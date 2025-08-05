@@ -53,7 +53,7 @@ public class EquipoController {
 
         model.addAttribute("equipos", equipos);
         model.addAttribute("search", search);
-        model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
 
         int totalPages = equipos.getTotalPages();
         if (totalPages > 0) {
@@ -71,7 +71,7 @@ public class EquipoController {
         if (!model.containsAttribute("equipo")) {
             model.addAttribute("equipo", new Equipo());
         }
-        model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
         return "equipo/create";
     }
 
@@ -145,7 +145,7 @@ public class EquipoController {
         Equipo equipo = equipoService.buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
         model.addAttribute("equipo", equipo);
-        model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
 
         return "equipo/edit";
     }
