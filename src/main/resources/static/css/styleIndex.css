@@ -50,3 +50,22 @@
   .form-control {
       border-radius: 0.75rem;
   }
+
+  /*Color para la paginacion*/
+
+  .page-item.active .page-link {
+      background-color: #8db986;
+      border-color: #8db986;
+      color: #ffffff;
+  }
+
+
+  .page-link {
+      color: #000000;
+      background-color: #ffffff;
+  }
+
+  .page-link:hover {
+      background-color: #8db986;
+      color: #ffffff;
+  }
