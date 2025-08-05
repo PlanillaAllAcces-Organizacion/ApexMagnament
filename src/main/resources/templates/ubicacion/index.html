@@ -1,68 +1,125 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="/layouts/_mainLayout">
+<!DOCTYPE html>
+<html lang="es" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="/layouts/_mainLayout">
 
-<div layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicaciones</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link th:href="@{/css/styleIndex.css}" rel="stylesheet" />
 
-    <!-- Mostrar mensaje de confirmación en caso de éxito -->
-    <div th:if="${msg != null}">
-        <script>
-            Swal.fire({
-                title: "Confirmación",
-                text: '[[${msg}]]',
-                icon: "success"
-            });
-        </script>
-    </div>
 
-    <!-- Mostrar mensaje de error en caso de error -->
-    <div th:if="${error != null}">
-        <script>
-            Swal.fire({
-                title: "Error",
-                text: '[[${error}]]',
-                icon: "error"
-            });
-        </script>
-    </div>
+</head>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Listado de Ubicaciones</h1>
-        <a th:href="@{/ubicacion/create}" class="btn btn-outline-primary">Nueva Ubicación</a>
-    </div>
+<body>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="ubicacion : ${ubicaciones}">
-                    <td th:text="${ubicacion.id}"></td>
-                    <td th:text="${ubicacion.nombreUbicacion}"></td>
-                    <td>
-                        <div class="btn-group">
-                            <a th:href="@{/ubicacion/edit/{id}(id=${ubicacion.id})}"
-                                class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger"
-                                onclick="confirmarEliminacion([[$,{ubicacion,id}]])">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
+    <div layout:fragment="content">
+
+        <!-- Primera tarjeta: Encabezado y búsqueda -->
+        <div class="app-card mb-4">
+            <!-- Campo de filtro -->
+            <div class="input-group mb-2">
+                <button class="input-group-text" type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <input type="text" id="filterInput" class="form-control"
+                    placeholder="Filtrar por nombre de ubicación..." aria-label="Filtrar">
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary">Ingresar nuevo</button>
+            </div>
+
+        </div>
+
+
+        <!-- Segunda tarjeta: Registros en formato de tarjetas -->
+        <div class="app-card">
+            <div id="locationList" class="row g-3">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 card-title mb-0">Lista de Ubicaciones</h2>
+                </div>
+
+                <!-- Ejemplo de cómo se vería una tarjeta estática -->
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Parque Central</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-light"><i class="fa-solid fa-clipboard"></i></button>
+                                <button class="btn btn-sm btn-dark"><i class="fa-solid fa-pencil"></i></button>
+                                <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         </div>
-                    </td>
-                </tr>
-                <tr th:if="${ubicaciones.isEmpty()}">
-                    <td colspan="3" class="text-center">No hay ubicaciones registradas</td>
-                </tr>
-            </tbody>
-        </table>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Biblioteca Municipal</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Mercado de Abastos</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Plaza de la Cultura</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Plaza de la Cultura</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0">Plaza de la Cultura</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">Ver</button>
+                                <button class="btn btn-sm btn-outline-info">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+
     </div>
 
-</div>
+</body>
 
 </html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/_mainLayout}">
+<head>
+    <title>Detalles del Equipo</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-4">
+            <!-- Mensajes de error -->
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            
+            <!-- Contenido principal -->
+            <div th:if="${equipo != null}">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Detalles del Equipo</h1>
+                    <a th:href="@{/equipo}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        Información del Equipo
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <th>Número de Serie:</th>
+                                <td th:text="${equipo.nserie}"></td>
+                            </tr>
+                            <tr>
+                                <th>Nombre:</th>
+                                <td th:text="${equipo.nombre}"></td>
+                            </tr>
+                            <tr>
+                                <th>Modelo:</th>
+                                <td th:text="${equipo.modelo}"></td>
+                            </tr>
+                            <tr>
+                                <th>Descripción:</th>
+                                <td th:text="${equipo.descripcion}"></td>
+                            </tr>
+                            <tr>
+                                <th>Ubicación:</th>
+                                <td th:text="${equipo.ubicacion?.nombreUbicacion} ?: 'No asignada'"></td>
+                            </tr>
+                            <tr>
+                                <th>Fecha de Registro:</th>
+                                <td th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy HH:mm')}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

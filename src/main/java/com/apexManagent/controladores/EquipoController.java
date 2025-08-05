@@ -31,43 +31,42 @@ public class EquipoController {
     @Autowired
     private IUbicacionService ubicacionService;
 
-   @GetMapping
-public String index(Model model,
-        @RequestParam("page") Optional<Integer> page,
-        @RequestParam("size") Optional<Integer> size,
-        @RequestParam(required = false) String search) {
+    @GetMapping
+    public String index(Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size,
+            @RequestParam(required = false) String search) {
 
-    int currentPage = page.orElse(1) - 1; // Ajuste para que empiece en 0
-    int pageSize = size.orElse(5);
-    Pageable pageable = PageRequest.of(currentPage, pageSize);
+        int currentPage = page.orElse(1) - 1; // Ajuste para que empiece en 0
+        int pageSize = size.orElse(5);
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
 
-    Page<Equipo> equipos;
-    
-    if (search != null && !search.isEmpty()) {
-        equipos = equipoService.buscarPorNombreModeloOSerie(search, pageable);
-    } else {
-        equipos = equipoService.buscarTodosPaginados(pageable);
+        Page<Equipo> equipos;
+
+        if (search != null && !search.isEmpty()) {
+            equipos = equipoService.buscarPorNombreModeloOSerie(search, pageable);
+        } else {
+            equipos = equipoService.buscarTodosPaginados(pageable);
+        }
+
+        System.out.println("Equipos encontrados: " + equipos.getTotalElements());
+
+        model.addAttribute("equipos", equipos);
+        model.addAttribute("search", search);
+        model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+
+        int totalPages = equipos.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        return "equipo/index";
     }
 
-    System.out.println("Equipos encontrados: " + equipos.getTotalElements());
-
-    model.addAttribute("equipos", equipos);
-    model.addAttribute("search", search);
-    model.addAttribute("ubicaciones", ubicacionService.listarTodas());
-
-    int totalPages = equipos.getTotalPages();
-    if (totalPages > 0) {
-        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                .boxed()
-                .collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
-    }
-
-    return "equipo/index";
-}
-
-
-  @GetMapping("/create")
+    @GetMapping("/create")
     public String create(Model model) {
         if (!model.containsAttribute("equipo")) {
             model.addAttribute("equipo", new Equipo());
@@ -76,10 +75,9 @@ public String index(Model model,
         return "equipo/create";
     }
 
-
-  @PostMapping("/save")
+    @PostMapping("/save")
     public String save(@ModelAttribute Equipo equipo,
-            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            @RequestParam("imagen") MultipartFile imagen,
             BindingResult result,
             RedirectAttributes attributes) throws IOException {
 
@@ -89,33 +87,57 @@ public String index(Model model,
             return "redirect:/equipo/create";
         }
 
+        // Validar número de serie único
         if (equipoService.existePorNserie(equipo.getNserie())) {
             attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
 
-        if (imagen != null && !imagen.isEmpty()) {
-            if (imagen.getSize() > 2097152) { // 2MB
+        // Procesar imagen si fue subida
+        if (!imagen.isEmpty()) {
+            // Validar tamaño máximo (2MB)
+            if (imagen.getSize() > 2097152) {
                 attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
                 attributes.addFlashAttribute("equipo", equipo);
                 return "redirect:/equipo/create";
             }
+
+            // Validar tipo de imagen
+            String contentType = imagen.getContentType();
+            if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+                attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
+                attributes.addFlashAttribute("equipo", equipo);
+                return "redirect:/equipo/create";
+            }
+
+            // Asignar imagen al equipo
             equipo.setImg(imagen.getBytes());
         }
 
+        // Establecer fecha de registro
         equipo.setFechaRegistro(LocalDateTime.now());
+
+        // Guardar equipo
         equipoService.guardarEquipo(equipo);
+
         attributes.addFlashAttribute("success", "Equipo registrado correctamente");
         return "redirect:/equipo";
     }
 
-    @GetMapping("/details/{id}")
-    public String details(@PathVariable Integer id, Model model) {
-        Equipo equipo = equipoService.buscarPorId(id)
-                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
-        model.addAttribute("equipo", equipo);
-        return "equipo/details";
+    @GetMapping("/details/{nserie}")
+    public String detailsByNserie(@PathVariable String nserie, Model model) {
+        try {
+            Equipo equipo = equipoService.buscarPorNserie(nserie)
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("Equipo no encontrado con número de serie: " + nserie));
+
+            model.addAttribute("equipo", equipo);
+            return "equipo/details";
+        } catch (Exception e) {
+            System.err.println("Error al cargar detalles: " + e.getMessage());
+            return "redirect:/equipo?error=Equipo no encontrado";
+        }
     }
 
     @GetMapping("/edit/{id}")
@@ -123,6 +145,8 @@ public String index(Model model,
         Equipo equipo = equipoService.buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
         model.addAttribute("equipo", equipo);
+        model.addAttribute("ubicaciones", ubicacionService.listarTodas());
+
         return "equipo/edit";
     }
 

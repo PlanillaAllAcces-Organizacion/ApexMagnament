@@ -37,7 +37,7 @@ public class Equipo {
     private short garantia;
 
     @Lob
-    @Column(name = "img", columnDefinition = "BLOB")
+    @Column(name = "img", columnDefinition = "LONGBLOB")
     private byte[] img;
 
     @Column(name = "fecha_registro", nullable = false)
