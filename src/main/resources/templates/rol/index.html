@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="/layouts/_mainLayout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link th:href="@{/css/styleIndex.css}" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+
+        <!-- Mostrar mensaje de confirmación en caso de éxito -->
+        <div th:if="${msg != null}">
+            <script>
+                Swal.fire({
+                    title: "Confirmación",
+                    text: '[[${msg}]]',
+                    icon: "success"
+                });
+            </script>
+        </div>
+
+        <!-- Mostrar mensaje de error en caso de error -->
+        <div th:if="${error != null}">
+            <script>
+                Swal.fire({
+                    title: "Error",
+                    text: '[[${error}]]',
+                    icon: "error"
+                });
+            </script>
+        </div>
+
+        <div class="app-card mb-4">
+
+            <!-- Campo de filtro -->
+            <form th:action="@{/ubicaciones}" method="get">
+                <div class="input-group mb-2">
+                    <button class="input-group-text" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <input type="text" name="nombreUbicacion" class="form-control"
+                        placeholder="Filtrar por nombre de rol...">
+                </div>
+            </form>
+
+            <div class="d-flex justify-content-end">
+                <a th:href="@{/roles/create}" class="btn btn-primary">Ingresar nuevo</a>
+            </div>
+
+        </div>
+
+
+        <div class="app-card">
+            <div id="locationList" class="row g-3">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 card-title mb-0">Lista de roles</h2>
+                </div>
+
+                <div class="col-12 col-md-6" th:each="item : ${roles}">
+                    <div class="card location-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title h6 mb-0" th:text="${item.nombre}"></h5>
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/roles/details/{id} (id = ${item.id}) }" class="btn btn-sm btn-light"><i class="fa-solid fa-clipboard"></i></a>
+                                <a th:href="@{/roles/edit/{id} (id = ${item.id}) }" class="btn btn-sm btn-dark" ><i class="fa-solid fa-pencil"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <br>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                    th:classappend="${pageNumber == roles.number + 1 ? 'active' : ''}">
+                    <a class="page-link" th:href="@{|/roles?page=${pageNumber}|}" th:text="${pageNumber}"></a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+    <br />
+
+</body>
+
+</html>

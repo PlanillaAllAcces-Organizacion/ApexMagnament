@@ -1,4 +1,4 @@
-package com.apexManagent.repositorios;
+package com.apexManagent.repositorio;
 
 import com.apexManagent.modelos.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
