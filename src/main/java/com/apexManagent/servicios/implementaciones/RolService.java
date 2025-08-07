@@ -1,8 +1,11 @@
 package com.apexManagent.servicios.implementaciones;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.apexManagent.modelos.Rol;
@@ -22,12 +25,17 @@ public class RolService implements IRolService {
     }
 
     @Override
-    public Rol obtnerPorNombre(String nombre) {
-        return rolRepository.findByNombre(nombre); 
+    public Optional<Rol> obtenerPorId(Integer id) {
+        return rolRepository.findById(id);
     }
 
     @Override
-    public Rol obtenerPorId(Integer id) {
-        return rolRepository.findById(id).orElse(null);
+    public Page<Rol> findByNombreContaining(String nombre, Pageable pageable) {
+        return rolRepository.findByNombreContaining(nombre, pageable);
+    }
+
+    @Override
+    public Rol guardar(Rol rol) {
+        return rolRepository.save(rol);
     }
 }
