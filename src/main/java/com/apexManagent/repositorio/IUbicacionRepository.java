@@ -14,4 +14,6 @@ public interface IUbicacionRepository extends JpaRepository<Ubicacion, Integer> 
 
     Page<Ubicacion> findByNombreUbicacionContaining(String nombreUbicacion, Pageable pageable);
 
+    boolean existsByNombreUbicacion(String nombreUbicacion);
+
 }

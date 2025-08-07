@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface IRolRepository extends JpaRepository<Rol, Integer> {
 
     Page<Rol> findByNombreContaining(String nombre, Pageable pageable);
+
+    boolean existsByNombre(String nombre);
     
 }

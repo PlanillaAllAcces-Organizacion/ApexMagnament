@@ -38,6 +38,11 @@ public class UbicacionService implements IUbicacionService {
     }
 
     @Override
+    public boolean existsByNombreUbicacion(String nombreUbicacion) {
+        return ubicacionRepository.existsByNombreUbicacion(nombreUbicacion);
+    }
+
+    @Override
     public Ubicacion guardar(Ubicacion ubicacion) {
         return ubicacionRepository.save(ubicacion);
     }

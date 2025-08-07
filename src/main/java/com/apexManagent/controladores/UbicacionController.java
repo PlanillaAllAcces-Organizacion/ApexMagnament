@@ -73,8 +73,14 @@ public class UbicacionController {
             return "ubicacion/create";
         }
 
+        if(ubicacionService.existsByNombreUbicacion(ubicacion.getNombreUbicacion())) {
+            attributes.addFlashAttribute("error", "Ya existe una ubicación con ese nombre.");
+            model.addAttribute("ubicacion", ubicacion);
+            return "redirect:/roles/create";
+        }
+
         ubicacionService.guardar(ubicacion);
-        attributes.addFlashAttribute("msg", "Ubicación guardada exitosamente.");
+        attributes.addFlashAttribute("success", "Ubicación guardada exitosamente.");
         return "redirect:/ubicaciones";
 
     }

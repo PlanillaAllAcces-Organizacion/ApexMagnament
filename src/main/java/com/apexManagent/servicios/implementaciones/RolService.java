@@ -38,4 +38,11 @@ public class RolService implements IRolService {
     public Rol guardar(Rol rol) {
         return rolRepository.save(rol);
     }
+
+    @Override
+    public boolean existsByNombre(String nombre) {
+        return rolRepository.existsByNombre(nombre);
+    }
+
+
 }

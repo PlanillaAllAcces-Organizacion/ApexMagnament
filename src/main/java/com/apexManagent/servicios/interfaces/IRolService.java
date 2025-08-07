@@ -17,4 +17,6 @@ public interface IRolService{
     Page<Rol> findByNombreContaining(String nombre, Pageable pageable);
 
     Rol guardar(Rol rol);
+
+    boolean existsByNombre(String nombre);
 }

@@ -17,6 +17,8 @@ public interface IUbicacionService {
 
     Page<Ubicacion> findByNombreUbicacionContaining(String nombreUbicacion, Pageable pageable);
 
+    boolean existsByNombreUbicacion(String nombreUbicacion);
+
     Ubicacion guardar(Ubicacion ubicacion);
 
 }

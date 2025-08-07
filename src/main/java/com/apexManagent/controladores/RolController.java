@@ -71,6 +71,12 @@ public class RolController {
             return "rol/create";
         }
 
+        if(rolService.existsByNombre(rol.getNombre())) {
+            attributes.addFlashAttribute("error", "Ya existe una ubicación con ese nombre.");
+            model.addAttribute("rol", rol);
+            return "redirect:/roles/create";
+        }
+
         rolService.guardar(rol);
         attributes.addFlashAttribute("msg", "Rol guardado exitosamente.");
         return "redirect:/roles";
