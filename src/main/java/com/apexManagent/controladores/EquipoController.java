@@ -3,6 +3,9 @@ package com.apexManagent.controladores;
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -111,63 +115,110 @@ public class EquipoController {
                 return "redirect:/equipo/create";
             }
 
-            // Asignar imagen al equipo
+            // Asignar imagen al equipo (se guardará en la base de datos)
             equipo.setImg(imagen.getBytes());
+        } else {
+            attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/create";
         }
 
         // Establecer fecha de registro
         equipo.setFechaRegistro(LocalDateTime.now());
 
-        // Guardar equipo
+        // Guardar equipo (incluyendo la imagen)
         equipoService.guardarEquipo(equipo);
 
         attributes.addFlashAttribute("success", "Equipo registrado correctamente");
         return "redirect:/equipo";
     }
 
-    @GetMapping("/details/{nserie}")
-    public String detailsByNserie(@PathVariable String nserie, Model model) {
-        try {
-            Equipo equipo = equipoService.buscarPorNserie(nserie)
-                    .orElseThrow(
-                            () -> new IllegalArgumentException("Equipo no encontrado con número de serie: " + nserie));
-
-            model.addAttribute("equipo", equipo);
-            return "equipo/details";
-        } catch (Exception e) {
-            System.err.println("Error al cargar detalles: " + e.getMessage());
-            return "redirect:/equipo?error=Equipo no encontrado";
-        }
+    @GetMapping("/details/{id}")
+    public String mostrarEquipo(@PathVariable Integer id, Model model) {
+        Equipo equipo = equipoService.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
+        model.addAttribute("equipo", equipo);
+        return "equipo/details";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
-        Equipo equipo = equipoService.buscarPorId(id)
-                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
-        model.addAttribute("equipo", equipo);
-        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        try {
+            Equipo equipo = equipoService.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
 
-        return "equipo/edit";
+            model.addAttribute("equipo", equipo);
+            model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+
+            return "equipo/edit";
+        } catch (Exception e) {
+            System.err.println("Error al cargar edición: " + e.getMessage());
+            return "redirect:/equipo?error=Error al cargar equipo para edición";
+        }
+
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Equipo equipo,
+    public String update(
+            @RequestParam("id") Integer id,
             @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            @Valid @ModelAttribute("equipo") Equipo equipo,
+            BindingResult result,
             RedirectAttributes attributes) throws IOException {
 
-        if (imagen != null && !imagen.isEmpty()) {
-            equipo.setImg(imagen.getBytes());
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
+            attributes.addFlashAttribute("equipo", equipo);
+            attributes.addFlashAttribute("error", "por favor complete todos los campos requeridos");
+
+            return "redirect:/equipo/edit/" + id;
         }
 
+        // Obtener equipo existente
+        Equipo equipoExistente = equipoService.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
+
+        // Validar número de serie único (excepto para el equipo actual)
+        if (equipoService.existePorNserie(equipo.getNserie()) &&
+                !equipoExistente.getNserie().equals(equipo.getNserie())) {
+            attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
+            return "redirect:/equipo/edit/" + id;
+        }
+
+        // Resto del código para manejar la imagen...
+        if (imagen != null && !imagen.isEmpty()) {
+            // Validaciones de imagen...
+            equipo.setImg(imagen.getBytes());
+        } else {
+            equipo.setImg(equipoExistente.getImg());
+        }
+
+        // Preservar otros datos importantes
+        equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
+
+        // Actualizar equipo
         equipoService.guardarEquipo(equipo);
-        attributes.addFlashAttribute("success", "Equipo actualizado correctamente");
-        return "redirect:/equipo";
+        attributes.addFlashAttribute("swal", Map.of(
+                "title", "¡Actualizado!",
+                "text", "El equipo se ha editado con éxito",
+                "icon", "success"));
+        return "redirect:/equipo/details/" + id;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes attributes) {
-        equipoService.eliminarPorId(id);
-        attributes.addFlashAttribute("success", "Equipo eliminado correctamente");
+        try {
+            equipoService.eliminarPorId(id);
+            attributes.addFlashAttribute("swal", Map.of(
+                    "title", "¡Eliminado!",
+                    "text", "El equipo ha sido eliminado correctamente",
+                    "icon", "success"));
+        } catch (Exception e) {
+            attributes.addFlashAttribute("swal", Map.of(
+                    "title", "Error",
+                    "text", "No se pudo eliminar el equipo: " + e.getMessage(),
+                    "icon", "error"));
+        }
         return "redirect:/equipo";
     }
 }

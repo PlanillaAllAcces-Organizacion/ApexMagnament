@@ -121,5 +121,11 @@ public Ubicacion getUbicacion() {
 public void setUbicacion(Ubicacion ubicacion) {
     this.ubicacion = ubicacion;
 }
-
+// Método para mostrar imagen en Base64
+    public String getImagenBase64() {
+        if (this.img != null && this.img.length > 0) {
+            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(this.img);
+        }
+        return "/img/default-equipo.jpg";
+    }
 }

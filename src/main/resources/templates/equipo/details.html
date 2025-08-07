@@ -1,60 +1,99 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/_mainLayout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
 <head>
-    <title>Detalles del Equipo</title>
+    <title>Detalles del Equipo | Apex Manager</title>
+    <link rel="stylesheet" th:href="@{/css/DetailsStyle.css}" />
+     <link th:href="@{/vendor/sweetalert2/sweetalert2.min.css}" rel="stylesheet">
+    <script th:src="@{/vendor/sweetalert2/sweetalert2.all.min.js}"></script>
 </head>
+
 <body>
     <div layout:fragment="content">
-        <div class="container mt-4">
-            <!-- Mensajes de error -->
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-            
-            <!-- Contenido principal -->
-            <div th:if="${equipo != null}">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Detalles del Equipo</h1>
-                    <a th:href="@{/equipo}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Volver
-                    </a>
+        <div class="container-fluid px-4">
+
+            <!-- Mensajes Flash -->
+            <div th:if="${success != null}" class="alert alert-success alert-dismissible fade show mt-3">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show mt-3">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <h1 class="mt-4">Detalles del Equipo</h1>
+            <ol class="breadcrumb breadcrumb-modern mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/equipo}">Equipos</a></li>
+                <li class="breadcrumb-item active">Detalles</li>
+            </ol>
+
+            <div class="details-container mb-4">
+                <div class="details-header">
+                    <i class="fas fa-laptop"></i>
+                    <span>Información del Equipo</span>
                 </div>
-                
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        Información del Equipo
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <tr>
-                                <th>Número de Serie:</th>
-                                <td th:text="${equipo.nserie}"></td>
-                            </tr>
-                            <tr>
-                                <th>Nombre:</th>
-                                <td th:text="${equipo.nombre}"></td>
-                            </tr>
-                            <tr>
-                                <th>Modelo:</th>
-                                <td th:text="${equipo.modelo}"></td>
-                            </tr>
-                            <tr>
-                                <th>Descripción:</th>
-                                <td th:text="${equipo.descripcion}"></td>
-                            </tr>
-                            <tr>
-                                <th>Ubicación:</th>
-                                <td th:text="${equipo.ubicacion?.nombreUbicacion} ?: 'No asignada'"></td>
-                            </tr>
-                            <tr>
-                                <th>Fecha de Registro:</th>
-                                <td th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy HH:mm')}"></td>
-                            </tr>
-                        </table>
+                <div class="details-body">
+                    <div class="row">
+                        <div class="col-md-5 text-center">
+                            <img th:src="${equipo.getImagenBase64()}" class="equipo-img img-fluid"
+                                alt="Imagen del equipo" onerror="this.src='/img/default-equipo.jpg'">
+                        </div>
+                        <div class="col-md-7">
+                            <div class="row">
+                                <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Número de Serie</span>
+                                    <span class="detalle-value" th:text="${equipo.nserie}"></span>
+                                </div>
+                                <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Nombre</span>
+                                    <span class="detalle-value" th:text="${equipo.nombre}"></span>
+                                </div>
+                                <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Modelo</span>
+                                    <span class="detalle-value" th:text="${equipo.modelo}"></span>
+                                </div>
+                                <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Garantía</span>
+                                    <span class="detalle-value" th:text="${equipo.garantia} + ' meses'"></span>
+                                </div>
+                            </div>
+
+                            <div class="detalle-item">
+                                <span class="detalle-label">Descripción</span>
+                                <p th:text="${equipo.descripcion} ?: 'Sin descripción'"></p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Ubicación</span>
+                                    <span class="detalle-value" th:text="${equipo.ubicacion.nombreUbicacion}"></span>
+                                </div>
+                                <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Fecha de Registro</span>
+                                    <span class="detalle-value"
+                                        th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy HH:mm')}"></span>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a th:href="@{/equipo}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Volver
+                                </a>
+                                <a th:href="@{'/equipo/edit/' + ${equipo.id}}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i> Editar
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+        <script th:src="@{/js/script.js}"></script>
+
 </body>
+
 </html>

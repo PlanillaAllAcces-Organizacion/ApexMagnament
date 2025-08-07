@@ -1,43 +1,16 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/_mainLayout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
 <head>
     <title>Editar Equipo | Apex Manager</title>
-    <style>
-        .image-upload-container {
-            border: 2px dashed #dee2e6;
-            border-radius: 5px;
-            padding: 20px;
-            text-align: center;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-        .image-upload-container:hover {
-            border-color: #adb5bd;
-        }
-        .image-preview {
-            max-height: 200px;
-            max-width: 100%;
-            margin-bottom: 15px;
-        }
-        .file-input-label {
-            cursor: pointer;
-            display: inline-block;
-            padding: 6px 12px;
-            background-color: #0d6efd;
-            color: white;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .file-input-label:hover {
-            background-color: #0b5ed7;
-        }
-        .file-input {
-            display: none;
-        }
-    </style>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <!-- SweetAlert CSS -->
+    <link th:href="@{/vendor/sweetalert2/sweetalert2.min.css}" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script th:src="@{/vendor/sweetalert2/sweetalert2.all.min.js}"></script>
 </head>
+
 <body>
     <div layout:fragment="content">
         <div class="container-fluid px-4">
@@ -46,7 +19,7 @@
                 <span th:text="${success}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
+
             <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show mt-3">
                 <span th:text="${error}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -65,129 +38,115 @@
                     Modificar Equipo
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/equipo/update}" th:object="${equipo}" method="post" enctype="multipart/form-data">
+                    <form th:action="@{/equipo/update}" th:object="${equipo}" method="post"
+                        enctype="multipart/form-data" class="needs-validation" novalidate>
                         <input type="hidden" th:field="*{id}">
                         <input type="hidden" th:field="*{fechaRegistro}">
-                        
+
                         <div class="row">
                             <!-- Columna Imagen -->
-                            <div class="col-md-5 mb-4">
-                                <div class="image-upload-container">
-                                    <img id="imagePreview" 
-                                         th:src="${equipo.img != null && !equipo.img.isEmpty()} ? 
-                                               @{'/assets/img/equipos/' + ${equipo.img}} : 
-                                               @{/assets/img/equipos/default-equipo.jpg}"
-                                         class="image-preview img-fluid rounded">
-                                    <div class="mt-3">
-                                        <label for="imagen" class="file-input-label">
-                                            <i class="fas fa-camera me-2"></i> Cambiar Imagen
-                                        </label>
-                                        <input type="file" class="file-input" id="imagen" name="imagen" 
-                                               accept="image/*" onchange="previewImage(this)">
-                                        <div class="mt-2 small text-muted">
-                                            Formatos: JPG, PNG (Max. 2MB)
-                                        </div>
+                            <div class="col-md-5">
+                                <div class="equipo-img-container">
+                                    <div class="img-overlay">
+                                        <img id="currentImg" th:src="${equipo.getImagenBase64()}"
+                                            class="equipo-img img-fluid" alt="Imagen actual del equipo"
+                                            onerror="this.src='/img/default-equipo.jpg'">
+
+                                        <img id="imgPreview" class="img-preview">
                                     </div>
+
+                                    <button type="button" class="btn btn-primary btn-change-img"
+                                        onclick="document.getElementById('imgInput').click()">
+                                        <i class="fas fa-camera me-1"></i> Cambiar Imagen
+                                    </button>
+
+                                    <input type="file" id="imgInput" name="imagen" accept="image/jpeg, image/png"
+                                        onchange="previewImage(this)" style="display: none;">
+
+
                                 </div>
                             </div>
-                            
+
                             <!-- Columna Formulario -->
                             <div class="col-md-7">
-                                <div class="row g-3">
+                                <div class="row">
                                     <!-- Número de Serie -->
-                                    <div class="col-md-6">
-                                        <label for="nserie" class="form-label">Número de Serie</label>
-                                        <input type="text" class="form-control" id="nserie" 
-                                               th:field="*{nserie}" readonly>
+                                    <!-- Campos del formulario actualizados con validación -->
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="nserie" class="detalle-label required">Número de Serie</label>
+                                        <input type="text" class="form-control" id="nserie" th:field="*{nserie}"
+                                            required
+                                            th:classappend="${#fields.hasErrors('nserie')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nserie')}"
+                                            th:errors="*{nserie}"></div>
                                     </div>
-                                    
-                                    <!-- Nombre -->
-                                    <div class="col-md-6">
-                                        <label for="nombre" class="form-label">Nombre *</label>
-                                        <input type="text" class="form-control" id="nombre" 
-                                               th:field="*{nombre}" required>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="nombre" class="detalle-label required">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
+                                            required minlength="3"
+                                            th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}"
+                                            th:errors="*{nombre}"></div>
                                     </div>
-                                    
-                                    <!-- Modelo -->
-                                    <div class="col-12">
-                                        <label for="modelo" class="form-label">Modelo *</label>
-                                        <input type="text" class="form-control" id="modelo" 
-                                               th:field="*{modelo}" required>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="modelo" class="detalle-label required">Modelo</label>
+                                        <input type="text" class="form-control" id="modelo" th:field="*{modelo}"
+                                            required
+                                            th:classappend="${#fields.hasErrors('modelo')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('modelo')}"
+                                            th:errors="*{modelo}"></div>
                                     </div>
-                                    
-                                    <!-- Descripción -->
-                                    <div class="col-12">
-                                        <label for="descripcion" class="form-label">Descripción *</label>
-                                        <textarea class="form-control" id="descripcion" 
-                                                  th:field="*{descripcion}" rows="3" required></textarea>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="garantia" class="detalle-label required">Garantía (meses)</label>
+                                        <input type="number" class="form-control" id="garantia" th:field="*{garantia}"
+                                            min="0" required
+                                            th:classappend="${#fields.hasErrors('garantia')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('garantia')}"
+                                            th:errors="*{garantia}"></div>
                                     </div>
-                                    
-                                    <!-- Garantía y Ubicación -->
-                                    <div class="col-md-6">
-                                        <label for="garantia" class="form-label">Garantía (meses) *</label>
-                                        <input type="number" class="form-control" id="garantia" 
-                                               th:field="*{garantia}" min="0" max="60" required>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                         <label for="ubicacion" class="form-label">Ubicación *</label>
-                                        <select class="form-select" id="ubicacion" 
-                                                th:field="*{ubicacion.id}" required>
-                                            <option value="">Seleccione una ubicación...</option>
-                                            <option th:each="ubicacion : ${ubicaciones}" 
-                                                    th:value="${ubicacion.id}" 
-                                                    th:text="${ubicacion.nombreUbicacion}"></option>
+
+                                    <div class="col-md-12 detalle-item">
+                                        <label for="ubicacion" class="detalle-label required">Ubicación</label>
+                                        <select class="form-select" id="ubicacion" th:field="*{ubicacion.id}" required
+                                            th:classappend="${#fields.hasErrors('ubicacion')} ? 'is-invalid' : ''">
+                                            <option value="">Seleccione una ubicación</option>
+                                            <option th:each="ubic : ${ubicaciones}" th:value="${ubic.id}"
+                                                th:text="${ubic.nombreUbicacion}"
+                                                th:selected="${ubic.id == equipo.ubicacion.id}">
+                                            </option>
                                         </select>
+                                       
                                     </div>
-                                </div>
-                                
-                                <!-- Botones -->
-                                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                                    <a th:href="@{/equipo}" class="btn btn-secondary">
-                                        <i class="fas fa-times me-1"></i> Cancelar
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save me-1"></i> Guardar Cambios
-                                    </button>
+
+                                    <div class="col-12 detalle-item">
+                                        <label for="descripcion" class="detalle-label required">Descripción</label>
+                                        <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
+                                            rows="3" required
+                                            th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"></textarea>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
+                                            th:errors="*{descripcion}"></div>
+                                    </div>
+                                    <!-- Botones -->
+                                    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                                        <a th:href="@{'/equipo/details/' + ${equipo.id}}" class="btn btn-secondary">
+                                            <i class="fas fa-times me-1"></i> Cancelar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i> Guardar Cambios
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script para vista previa de imagen -->
-    <script>
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        const maxSize = 2 * 1024 * 1024; // 2MB en bytes
-        
-        if (input.files && input.files[0]) {
-            // Validar tamaño
-            if (input.files[0].size > maxSize) {
-                alert('La imagen excede el tamaño máximo de 2MB');
-                input.value = '';
-                return;
-            }
-            
-            // Validar tipo de imagen
-            const fileType = input.files[0].type;
-            if (!fileType.match('image/jpeg') && !fileType.match('image/png')) {
-                alert('Solo se permiten imágenes JPEG o PNG');
-                input.value = '';
-                return;
-            }
-            
-            // Crear vista previa
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    </script>
+    <script th:src="@{/js/equipo/script.js}"></script>
 </body>
+
 </html>
