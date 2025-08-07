@@ -74,7 +74,7 @@ public class UbicacionController {
         }
 
         ubicacionService.guardar(ubicacion);
-        attributes.addFlashAttribute("success", "Ubicación guardada exitosamente.");
+        attributes.addFlashAttribute("msg", "Ubicación guardada exitosamente.");
         return "redirect:/ubicaciones";
 
     }

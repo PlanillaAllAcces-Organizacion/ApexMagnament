@@ -72,7 +72,7 @@ public class RolController {
         }
 
         rolService.guardar(rol);
-        attributes.addFlashAttribute("success", "Rol guardado exitosamente.");
+        attributes.addFlashAttribute("msg", "Rol guardado exitosamente.");
         return "redirect:/roles";
     }
 
