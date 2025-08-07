@@ -65,19 +65,18 @@
                             </thead>
                             <tbody>
                                 <tr th:each="equipo : ${equipos.content}">
-                                    <td th:text="${equipo.nserie}">ABC123</td>
-                                    <td th:text="${equipo.nombre}">Equipo Ejemplo</td>
-                                    <td th:text="${equipo.modelo}">Modelo XYZ</td>
-                                    <td th:text="${equipo.ubicacion?.nombreUbicacion} ?: 'Sin ubicación'">Oficina 1</td>
+                                    <td th:text="${equipo.nserie}"></td>
+                                    <td th:text="${equipo.nombre}"></td>
+                                    <td th:text="${equipo.modelo}"></td>
+                                    <td th:text="${equipo.ubicacion?.nombreUbicacion} ?: 'Sin ubicación'"></td>
                                     <td>
                                         <span th:text="${equipo.garantia} + ' meses'"
                                             th:class="${equipo.garantia < 6} ? 'text-danger' : 'text-success'"></span>
                                     </td>
-                                    <td th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy')}">01/01/2023
-                                    </td>
+                                    <td th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy')}"></td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a th:href="@{/equipo/details/{nserie}(nserie=${equipo.nserie})}"
+                                            <a th:href="@{'/equipo/details/' + ${equipo.id}}"
                                                 class="btn btn-sm btn-info" title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
                                             </a>
@@ -85,9 +84,9 @@
                                                 title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a th:href="@{/equipo/delete/} + ${equipo.id}" class="btn btn-sm btn-danger"
-                                                title="Eliminar"
-                                                onclick="return confirm('¿Está seguro de eliminar este equipo?');">
+                                            <a th:href="@{'/equipo/delete/' + ${equipo.id}}"
+                                                class="btn btn-sm btn-danger" title="Eliminar"
+                                                onclick="confirmDelete(event, this.href)">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </div>
@@ -118,15 +117,6 @@
         <!-- Script para confirmación de eliminación -->
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', function () {
-                // Confirmación antes de eliminar
-                const deleteButtons = document.querySelectorAll('.btn-danger');
-                deleteButtons.forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        if (!confirm('¿Está seguro de eliminar este equipo?')) {
-                            e.preventDefault();
-                        }
-                    });
-                });
 
                 // Resaltar fila al pasar el mouse
                 const tableRows = document.querySelectorAll('tbody tr');

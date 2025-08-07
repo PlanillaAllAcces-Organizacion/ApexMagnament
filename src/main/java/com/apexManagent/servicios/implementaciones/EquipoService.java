@@ -107,7 +107,4 @@ public class EquipoService implements IEquipoService {
      return equiposRepository.findByNserie(nserie);   
     }
 
-   
-
-    
 }

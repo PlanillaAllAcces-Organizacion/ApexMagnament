@@ -90,55 +90,54 @@
                                 <div class="row g-3">
                                     <!-- Número de Serie -->
                                     <div class="col-md-6">
-                                        <label for="nserie" class="form-label">Número de Serie *</label>
-                                        <input type="text" class="form-control" id="nserie" 
-                                               th:field="*{nserie}" required
-                                               placeholder="Ej: SN-12345ABC">
+                                        <label for="nserie" class="form-label required-field">Número de Serie</label>
+                                        <input type="text" class="form-control" id="nserie" th:field="*{nserie}"
+                                            required placeholder="Ej: SN-12345ABC">
+                                        <div class="invalid-feedback">Por favor ingrese el número de serie</div>
                                     </div>
-                                    
+
                                     <!-- Nombre -->
                                     <div class="col-md-6">
-                                        <label for="nombre" class="form-label">Nombre *</label>
-                                        <input type="text" class="form-control" id="nombre" 
-                                               th:field="*{nombre}" required
-                                               placeholder="Ej: Laptop Dell XPS">
+                                        <label for="nombre" class="form-label required-field">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
+                                            required placeholder="Ej: Laptop Dell XPS">
+                                        <div class="invalid-feedback">Por favor ingrese el nombre</div>
                                     </div>
-                                    
+
                                     <!-- Modelo -->
                                     <div class="col-12">
-                                        <label for="modelo" class="form-label">Modelo *</label>
-                                        <input type="text" class="form-control" id="modelo" 
-                                               th:field="*{modelo}" required
-                                               placeholder="Ej: XPS 15 9500">
+                                        <label for="modelo" class="form-label required-field">Modelo</label>
+                                        <input type="text" class="form-control" id="modelo" th:field="*{modelo}"
+                                            required placeholder="Ej: XPS 15 9500">
+                                        <div class="invalid-feedback">Por favor ingrese el modelo</div>
                                     </div>
-                                    
+
                                     <!-- Descripción -->
                                     <div class="col-12">
-                                        <label for="descripcion" class="form-label">Descripción *</label>
-                                        <textarea class="form-control" id="descripcion" 
-                                                  th:field="*{descripcion}" rows="3" required
-                                                  placeholder="Especificaciones del equipo"></textarea>
+                                        <label for="descripcion" class="form-label required-field">Descripción</label>
+                                        <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
+                                            rows="3" required placeholder="Especificaciones del equipo"></textarea>
+                                        <div class="invalid-feedback">Por favor ingrese una descripción</div>
                                     </div>
-                                    
+
                                     <!-- Garantía y Ubicación -->
                                     <div class="col-md-6">
-                                        <label for="garantia" class="form-label">Garantía (meses) *</label>
-                                        <input type="number" class="form-control" id="garantia" 
-                                               th:field="*{garantia}" min="0" max="60" required>
+                                        <label for="garantia" class="form-label required-field">Garantía (meses)</label>
+                                        <input type="number" class="form-control" id="garantia" th:field="*{garantia}"
+                                            min="0" max="60" required>
+                                        <div class="invalid-feedback">Por favor ingrese los meses de garantía</div>
                                     </div>
-                                    
+
                                     <div class="col-md-6">
-                                        <label for="ubicacion" class="form-label">Ubicación *</label>
-                                        <select class="form-select" id="ubicacion" 
-                                                th:field="*{ubicacion.id}" required>
+                                        <label for="ubicacion" class="form-label required-field">Ubicación</label>
+                                        <select class="form-select" id="ubicacion" th:field="*{ubicacion.id}" required>
                                             <option value="">Seleccione una ubicación...</option>
-                                            <option th:each="ubicacion : ${ubicaciones}" 
-                                                    th:value="${ubicacion.id}" 
-                                                    th:text="${ubicacion.nombreUbicacion}"></option>
+                                            <option th:each="ubicacion : ${ubicaciones}" th:value="${ubicacion.id}"
+                                                th:text="${ubicacion.nombreUbicacion}"></option>
                                         </select>
+                                        <div class="invalid-feedback">Por favor seleccione una ubicación</div>
                                     </div>
                                 </div>
-                                
                                 <!-- Botones -->
                                 <div class="d-flex justify-content-between mt-4 pt-3 border-top">
                                     <a th:href="@{/equipo}" class="btn btn-secondary">
@@ -150,6 +149,7 @@
                                 </div>
                             </div>
                         </div>
+                 </div>
                     </form>
                 </div>
             </div>
