@@ -34,9 +34,12 @@ window.addEventListener('DOMContentLoaded', event => {
 
     const form = document.querySelector('.needs-validation');
 
+    const phoneInput = document.querySelector('#phone-input');
+    const phoneRegex = /^\d{4}-\d{4}$/;
+
     // Validar al enviar
     form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
+        if (!form.checkValidity() || !phoneRegex.test(phoneInput.value)) {
             event.preventDefault();
             event.stopPropagation();
 
