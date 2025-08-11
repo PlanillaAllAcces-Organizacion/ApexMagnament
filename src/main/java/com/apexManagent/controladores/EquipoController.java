@@ -129,7 +129,7 @@ public class EquipoController {
         // Guardar equipo (incluyendo la imagen)
         equipoService.guardarEquipo(equipo);
 
-        attributes.addFlashAttribute("success", "Equipo registrado correctamente");
+        attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
         return "redirect:/equipo";
     }
 
@@ -198,10 +198,8 @@ public class EquipoController {
 
         // Actualizar equipo
         equipoService.guardarEquipo(equipo);
-        attributes.addFlashAttribute("swal", Map.of(
-                "title", "¡Actualizado!",
-                "text", "El equipo se ha editado con éxito",
-                "icon", "success"));
+        attributes.addFlashAttribute("msg","Informacion actualizada correctamente" );
+
         return "redirect:/equipo/details/" + id;
     }
 

@@ -6,8 +6,20 @@
     <title>Lista de Equipos | Apex Manager</title>
 </head>
 
+
 <body>
     <div layout:fragment="content">
+        
+         <div th:if="${msg != null}">
+            <script>
+                Swal.fire({
+                    title: "Confirmación",
+                    text: '[[${msg}]]',
+                    icon: "success"
+                });
+            </script>
+        </div>
+        
         <div class="container-fluid px-4">
             <h1 class="mt-4">Gestión de Equipos</h1>
             <ol class="breadcrumb mb-4">
