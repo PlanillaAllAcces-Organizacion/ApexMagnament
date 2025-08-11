@@ -1,6 +1,5 @@
 package com.apexManagent.servicios.implementaciones;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import com.apexManagent.modelos.Personal;
-import com.apexManagent.modelos.Rol;
 import com.apexManagent.repositorio.IPersonalRepository;
 import com.apexManagent.servicios.interfaces.IPersonalService;
 
