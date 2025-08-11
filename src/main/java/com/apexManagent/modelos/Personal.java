@@ -29,13 +29,12 @@ public class Personal {
     private String apellido;
 
     @NotBlank(message = "El telefono es requerido")
-    @Pattern(regexp = "^[0-9]{8}$", message = "El formato del teléfono debe ser 8 dígitos numéricos")
-    @Pattern(regexp = "^(\\+?\\d{1,3}[-.\\s]?)?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Formato de teléfono inválido")
+    @Pattern(regexp = "^\\d{4}-\\d{4}$", message = "El formato del teléfono debe ser 1234-5678")
     @Column(nullable = false)
     private String telefono;
 
     @Lob
-    @Column(name = "img_personal", columnDefinition = "BLOB")
+    @Column(name = "img_personal", columnDefinition = "LONGBLOB")
     private byte[] imgPersonal;
 
     @NotBlank(message = "El email es requerido")
@@ -43,11 +42,14 @@ public class Personal {
     @Column(nullable = false, unique = true)    
     private String email;
 
+    @Column(nullable = false)
+    private int status;
+
     @NotBlank(message = "El nombre de usuario es requerido")
     @Column(nullable = false, unique = true)
     private String username;
 
-    @NotBlank(message = "La contraseña es requerida")
+
     @Column(nullable = false)
     @Size(min = 8, max = 255, message = "La contraseña debe tener al menos 8 caracteres")
     private String password;
@@ -112,6 +114,14 @@ public class Personal {
         this.email = email;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -128,4 +138,20 @@ public class Personal {
         this.password = password;
     }
 
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    // Método para mostrar imagen en Base64
+    public String getImagenBase64() {
+        if (this.imgPersonal != null && this.imgPersonal.length > 0) {
+            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(this.imgPersonal);
+        }
+        return "/img/default-equipo.jpg";
+    }
 }
+
