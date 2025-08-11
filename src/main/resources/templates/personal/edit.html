@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
+<head>
+    <title>Editar Personal | Apex Manager</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid px-4">
+
+            <script th:if="${error != null}">
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '[[${ error }]]'
+                });
+            </script>
+
+            <h1 class="mt-4">Editar Personal</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/equipo}">Equipos</a></li>
+                <li class="breadcrumb-item active">Editar</li>
+            </ol>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-edit me-1"></i>
+                    Modificar Equipo
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/personales/update}" th:object="${personal}" method="post"
+                        enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <input type="hidden" th:field="*{id}">
+
+
+                        <div class="row">
+                            <!-- Columna Imagen -->
+                            <div class="col-md-5">
+                                <div class="equipo-img-container">
+                                    <div class="img-overlay">
+                                        <img id="currentImg" th:src="${personal.getImagenBase64()}"
+                                            class="equipo-img img-fluid" alt="Imagen actual del equipo"
+                                            onerror="this.src='/img/default-equipo.jpg'">
+
+                                        <img id="imgPreview" class="img-preview">
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary btn-change-img"
+                                        onclick="document.getElementById('imgInput').click()">
+                                        <i class="fas fa-camera me-1"></i> Cambiar Imagen
+                                    </button>
+
+                                    <input type="file" id="imgInput" name="imagen" accept="image/jpeg, image/png"
+                                        onchange="previewImage(this)" style="display: none;">
+
+
+                                </div>
+                            </div>
+
+                            <!-- Columna Formulario -->
+                            <div class="col-md-7">
+
+                                <div class="row g-3">
+                                    <!-- Nombre -->
+                                    <div class="col-md-6">
+                                        <label for="nombre" class="form-label required-field">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
+                                            required placeholder="Ej: Angel" />
+                                        <div class="text-danger" th:if="${#fields.hasErrors('nombre')}"
+                                            th:errors="*{nombre}"></div>
+                                    </div>
+
+                                    <!-- Apellido -->
+                                    <div class="col-md-6">
+                                        <label for="apellido" class="form-label required-field">Apellido</label>
+                                        <input type="text" class="form-control" id="apellido" th:field="*{apellido}"
+                                            required placeholder="Ej: Pérez" />
+                                        <div class="text-danger" th:if="${#fields.hasErrors('apellido')}"
+                                            th:errors="*{apellido}"></div>
+                                    </div>
+
+                                    <!-- Teléfono -->
+                                    <div class="col-12">
+                                        <label for="telefono" class="form-label required-field">Teléfono</label>
+                                        <input type="text" class="form-control" id="telefono" th:field="*{telefono}" pattern="^\d{4}-\d{4}$" 
+                                            required placeholder="Ej: 1234-5678" />
+                                        <div class="text-danger" th:if="${#fields.hasErrors('telefono')}"
+                                            th:errors="*{telefono}"></div> 
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="col-12">
+                                        <label for="email" class="form-label required-field">Correo Electrónico</label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" required
+                                            placeholder="Ej: angel.perez@dominio.com" />
+                                        <div class="text-danger" th:if="${#fields.hasErrors('email')}"
+                                            th:errors="*{email}"></div>
+                                    </div>
+
+                                    <!-- Username -->
+                                    <div class="col-md-6">
+                                        <label for="username" class="form-label required-field">Nombre de
+                                            Usuario</label>
+                                        <input type="text" class="form-control" id="username" th:field="*{username}"
+                                            required placeholder="Ej: angelperez123" />
+                                        <div class="text-danger" th:if="${#fields.hasErrors('username')}"
+                                            th:errors="*{username}"></div>
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="col-md-6">
+                                        <label for="password" class="form-label required-field">Contraseña</label>
+                                        <input type="password" class="form-control" id="password" th:field="*{password}"
+                                            placeholder="Mínimo 8 caracteres" />
+                                    </div>
+
+                                    <!-- estatus -->
+                                    <div class="col-md-6">
+                                        <label for="status" class="form-label required-field">Estado</label>
+                                        <select class="form-select" id="status" th:field="*{status}" required>
+                                            <option value="1">Activo</option>
+                                            <option value="2">Inactivo</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Rol -->
+                                    <div class="col-md-6">
+                                        <label for="rol" class="form-label required-field">Rol</label>
+                                        <select class="form-select" id="rol" th:field="*{rol}" required>
+                                            <option value="">Seleccione una Rol...</option>
+                                            <option th:each="rol : ${roles}" th:value="${rol.id}"
+                                                th:text="${rol.nombre}"></option>
+                                        </select>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                                    <a th:href="@{/personales}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i> Volver
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i> Guardar Cambios
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/personal/scripts2.js}"></script>
+</body>
+
+</html>
