@@ -3,15 +3,9 @@ package com.apexManagent.controladores;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
-// import java.time.LocalDateTime;
-// import java.util.List;
-// import java.util.Optional;
-// import java.util.stream.Collectors;
-// import java.util.stream.IntStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-//import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,15 +30,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.apexManagent.modelos.Personal;
 import com.apexManagent.modelos.Rol;
 import com.apexManagent.repositorio.IPersonalRepository;
-//import com.apexManagent.repositorio.IRolRepository;
 import com.apexManagent.servicios.interfaces.IPersonalService;
 import com.apexManagent.servicios.interfaces.IRolService;
 
 import jakarta.validation.Valid;
-
-// import org.springframework.data.domain.Page;
-// import org.springframework.data.domain.Pageable;
-// import org.springframework.data.domain.Sort;
 
 @Controller
 @RequestMapping("/personales")
@@ -68,7 +56,10 @@ public class PersonalController {
             @RequestParam("page") Optional<Integer> page,
             @RequestParam("size") Optional<Integer> size,
             @RequestParam(required = false) String search,
-            @RequestParam("nombre") Optional<String> nombre) {
+            @RequestParam("nombre") Optional<String> nombre,
+            @RequestParam("apellido") Optional<String> apellido,
+            @RequestParam("email") Optional<String> email,
+            @RequestParam("rolNombre") Optional<String> rolNombre) {
 
         int currentPage = page.orElse(1) - 1; // Ajuste para que empiece en 0
         int pageSize = size.orElse(5);
@@ -77,7 +68,12 @@ public class PersonalController {
         Pageable pageable = PageRequest.of(currentPage, pageSize, sortByIdDesc);
 
         String nombreSearch = nombre.orElse("");
-        Page<Personal> personales = personalService.findByNombreContaining(nombreSearch, pageable);
+        String apellidoSearch = apellido.orElse("");
+        String emailSearch = email.orElse("");
+        String rolearch = rolNombre.orElse("");
+        Page<Personal> personales = personalService
+                .findByNombreContainingAndApellidoContainingAndEmailContainingAndRol_NombreContaining(nombreSearch,
+                        apellidoSearch, emailSearch, rolearch, pageable);
 
         model.addAttribute("personales", personales);
         model.addAttribute("roles", rolService.obtenerTodos());
