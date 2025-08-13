@@ -3,11 +3,10 @@ package com.apexManagent.controladores;
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
-
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,8 +32,7 @@ public class EquipoController {
 
     @Autowired
     private IUbicacionService ubicacionService;
-
-    @GetMapping
+ @GetMapping
     public String index(Model model,
             @RequestParam("page") Optional<Integer> page,
             @RequestParam("size") Optional<Integer> size,
@@ -43,35 +40,53 @@ public class EquipoController {
             @RequestParam(required = false) String searchModelo,
             @RequestParam(required = false) String searchSerie) {
 
-        int currentPage = page.orElse(1) - 1;
+        int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
 
-        Page<Equipo> equipos;
-
-        if (searchNombre != null && !searchNombre.isEmpty()) {
-            equipos = equipoService.buscarPorNombre(searchNombre, pageable);
+        if (searchSerie != null && !searchSerie.isEmpty()) {
+            // Búsqueda paginada por serie
+            Page<Equipo> equipos = equipoService.buscarPorSerie(searchSerie, pageable);
+            model.addAttribute("equipos", equipos);
+            
+            int totalPages = equipos.getTotalPages();
+            if (totalPages > 0) {
+                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+                model.addAttribute("pageNumbers", pageNumbers);
+            }
+            
+        } else if (searchNombre != null && !searchNombre.isEmpty()) {
+            // Búsqueda no paginada por nombre
+            List<Equipo> equipos = equipoService.buscarPorNombre(searchNombre);
+            model.addAttribute("equipos", new PageImpl<>(equipos, pageable, equipos.size()));
+            model.addAttribute("pageNumbers", List.of(1)); // Solo una página
+            
         } else if (searchModelo != null && !searchModelo.isEmpty()) {
-            equipos = equipoService.buscarPorModelo(searchModelo, pageable);
-        } else if (searchSerie != null && !searchSerie.isEmpty()) {
-            equipos = equipoService.buscarPorSerie(searchSerie, pageable);
+            // Búsqueda no paginada por modelo
+            List<Equipo> equipos = equipoService.buscarPorModelo(searchModelo);
+            model.addAttribute("equipos", new PageImpl<>(equipos, pageable, equipos.size()));
+            model.addAttribute("pageNumbers", List.of(1)); // Solo una página
+            
         } else {
-            equipos = equipoService.buscarTodosPaginados(pageable);
+            // Búsqueda general paginada
+            Page<Equipo> equipos = equipoService.buscarTodosPaginados(pageable);
+            model.addAttribute("equipos", equipos);
+            
+            int totalPages = equipos.getTotalPages();
+            if (totalPages > 0) {
+                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                        .boxed()
+                        .collect(Collectors.toList());
+                model.addAttribute("pageNumbers", pageNumbers);
+            }
         }
 
-        model.addAttribute("equipos", equipos);
         model.addAttribute("searchNombre", searchNombre);
         model.addAttribute("searchModelo", searchModelo);
         model.addAttribute("searchSerie", searchSerie);
-        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
-
-        int totalPages = equipos.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
 
         return "equipo/index";
     }

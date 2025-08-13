@@ -18,6 +18,7 @@ public class EquipoService implements IEquipoService {
     @Autowired
     private IEquiposRepository equiposRepository;
 
+    // Métodos básicos
     @Override
     @Transactional(readOnly = true)
     public Page<Equipo> buscarTodosPaginados(Pageable pageable) {
@@ -34,6 +35,7 @@ public class EquipoService implements IEquipoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Equipo> obtenerTodos() {
         return equiposRepository.findAll();
     }
@@ -44,29 +46,7 @@ public class EquipoService implements IEquipoService {
         return equiposRepository.findById(id);
     }
 
-    @Override
-    public Equipo createOrEditOne(Equipo equipo) {
-        return equiposRepository.save(equipo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Equipo> buscarPorNserie(String nserie) {
-        return equiposRepository.findByNserie(nserie);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Equipo> buscarPorNombre(String nombre, Pageable pageable) {
-        return equiposRepository.findByNombreContainingIgnoreCase(nombre, pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Equipo> buscarPorModelo(String modelo, Pageable pageable) {
-        return equiposRepository.findByModeloContainingIgnoreCase(modelo, pageable);
-    }
-
+    // Búsquedas específicas
     @Override
     @Transactional(readOnly = true)
     public Page<Equipo> buscarPorSerie(String serie, Pageable pageable) {
@@ -75,9 +55,21 @@ public class EquipoService implements IEquipoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Equipo> buscarPorNombreModeloOSerie(String filtro, Pageable pageable) {
-        return equiposRepository.findByNombreContainingIgnoreCaseOrModeloContainingIgnoreCaseOrNserieContainingIgnoreCase(
-            filtro, filtro, filtro, pageable);
+    public List<Equipo> buscarPorNombre(String nombre) {
+        return equiposRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Equipo> buscarPorModelo(String modelo) {
+        return equiposRepository.findByModeloContainingIgnoreCase(modelo);
+    }
+
+    // Métodos adicionales
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Equipo> buscarPorNserie(String nserie) {
+        return equiposRepository.findByNserie(nserie);
     }
 
     @Override

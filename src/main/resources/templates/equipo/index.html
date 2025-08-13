@@ -8,10 +8,12 @@
         .search-box {
             margin-bottom: 10px;
         }
+
         .search-input {
             width: 200px !important;
             display: inline-block !important;
         }
+
         .search-btn {
             width: auto !important;
             display: inline-block !important;
@@ -21,7 +23,7 @@
 
 <body>
     <div layout:fragment="content">
-        
+
         <div th:if="${msg != null}">
             <script>
                 Swal.fire({
@@ -31,7 +33,7 @@
                 });
             </script>
         </div>
-        
+
         <div class="container-fluid px-4">
             <h1 class="mt-4">Gestión de Equipos</h1>
             <ol class="breadcrumb mb-4">
@@ -54,58 +56,44 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Barra de Búsqueda Compacta -->
+                    <!-- Barra de Búsqueda Unificada -->
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <div class="d-flex flex-wrap gap-2">
-                                <!-- Búsqueda por Nombre -->
-                                <form th:action="@{/equipo}" method="get" class="search-box">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control search-input" name="searchNombre" 
-                                               th:value="${searchNombre}" placeholder="Nombre">
-                                        <button class="btn btn-primary search-btn" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                        <a th:href="@{/equipo}" class="btn btn-secondary search-btn" 
-                                           th:if="${searchNombre != null}">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+                            <form th:action="@{/equipo}" method="get" class="search-box">
+                                <input type="hidden" name="page" value="1">
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    <!-- Campo Nombre -->
+                                    <div class="input-group" style="width: 200px;">
+                                        <input type="text" class="form-control" name="searchNombre"
+                                            th:value="${searchNombre}" placeholder="Nombre">
                                     </div>
-                                </form>
 
-                                <!-- Búsqueda por Modelo -->
-                                <form th:action="@{/equipo}" method="get" class="search-box">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control search-input" name="searchModelo" 
-                                               th:value="${searchModelo}" placeholder="Modelo">
-                                        <button class="btn btn-primary search-btn" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                        <a th:href="@{/equipo}" class="btn btn-secondary search-btn" 
-                                           th:if="${searchModelo != null}">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+                                    <!-- Campo Modelo -->
+                                    <div class="input-group" style="width: 200px;">
+                                        <input type="text" class="form-control" name="searchModelo"
+                                            th:value="${searchModelo}" placeholder="Modelo">
                                     </div>
-                                </form>
 
-                                <!-- Búsqueda por Serie -->
-                                <form th:action="@{/equipo}" method="get" class="search-box">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control search-input" name="searchSerie" 
-                                               th:value="${searchSerie}" placeholder="N° Serie">
-                                        <button class="btn btn-primary search-btn" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                        <a th:href="@{/equipo}" class="btn btn-secondary search-btn" 
-                                           th:if="${searchSerie != null}">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+                                    <!-- Campo Serie -->
+                                    <div class="input-group" style="width: 200px;">
+                                        <input type="text" class="form-control" name="searchSerie"
+                                            th:value="${searchSerie}" placeholder="N° Serie">
                                     </div>
-                                </form>
-                            </div>
+
+                                    <!-- Botón de Búsqueda -->
+                                    <button class="btn btn-primary" type="submit" style="width: auto;">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+
+                                    <!-- Botón Limpiar (solo visible si hay algún filtro activo) -->
+                                    <a th:href="@{/equipo}" class="btn btn-secondary"
+                                        th:if="${searchNombre != null or searchModelo != null or searchSerie != null}">
+                                        <i class="fas fa-times"></i> Limpiar
+                                    </a>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
                     <!-- Tabla de Equipos -->
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-bordered">
@@ -161,12 +149,11 @@
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:each="pageNumber : ${pageNumbers}"
                                     th:classappend="${pageNumber == equipos.number + 1} ? 'active'">
-                                    <a class="page-link" 
-                                       th:href="@{'/equipo?page=' + ${pageNumber} + '&size=' + ${equipos.size} 
+                                    <a class="page-link" th:href="@{'/equipo?page=' + ${pageNumber} + '&size=' + ${equipos.size} 
                                        + (${searchNombre} != null ? '&searchNombre=' + ${searchNombre} : '')
                                        + (${searchModelo} != null ? '&searchModelo=' + ${searchModelo} : '')
                                        + (${searchSerie} != null ? '&searchSerie=' + ${searchSerie} : '')}"
-                                       th:text="${pageNumber}"></a>
+                                        th:text="${pageNumber}"></a>
                                 </li>
                             </ul>
                         </nav>
@@ -176,4 +163,5 @@
         </div>
     </div>
 </body>
+
 </html>
