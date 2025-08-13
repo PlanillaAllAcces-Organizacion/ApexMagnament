@@ -114,6 +114,11 @@
                                                 onclick="confirmDelete(event, this.href)">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
+                                            <button class="btn btn-sm btn-primary" th:attr="data-id=${item.id}"
+                                                onclick="window.location.href='/asignaciones/asignar/' + this.getAttribute('data-id')"
+                                                title="Asignar equipo">
+                                                <i class="fa-solid fa-laptop-medical"></i>
+                                            </button>
 
                                         </div>
                                     </td>

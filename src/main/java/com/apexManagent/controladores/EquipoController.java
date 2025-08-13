@@ -39,24 +39,30 @@ public class EquipoController {
     public String index(Model model,
             @RequestParam("page") Optional<Integer> page,
             @RequestParam("size") Optional<Integer> size,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String searchNombre,
+            @RequestParam(required = false) String searchModelo,
+            @RequestParam(required = false) String searchSerie) {
 
-        int currentPage = page.orElse(1) - 1; // Ajuste para que empiece en 0
+        int currentPage = page.orElse(1) - 1;
         int pageSize = size.orElse(5);
         Pageable pageable = PageRequest.of(currentPage, pageSize);
 
         Page<Equipo> equipos;
 
-        if (search != null && !search.isEmpty()) {
-            equipos = equipoService.buscarPorNombreModeloOSerie(search, pageable);
+        if (searchNombre != null && !searchNombre.isEmpty()) {
+            equipos = equipoService.buscarPorNombre(searchNombre, pageable);
+        } else if (searchModelo != null && !searchModelo.isEmpty()) {
+            equipos = equipoService.buscarPorModelo(searchModelo, pageable);
+        } else if (searchSerie != null && !searchSerie.isEmpty()) {
+            equipos = equipoService.buscarPorSerie(searchSerie, pageable);
         } else {
             equipos = equipoService.buscarTodosPaginados(pageable);
         }
 
-        System.out.println("Equipos encontrados: " + equipos.getTotalElements());
-
         model.addAttribute("equipos", equipos);
-        model.addAttribute("search", search);
+        model.addAttribute("searchNombre", searchNombre);
+        model.addAttribute("searchModelo", searchModelo);
+        model.addAttribute("searchSerie", searchSerie);
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
 
         int totalPages = equipos.getTotalPages();
@@ -80,12 +86,17 @@ public class EquipoController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute Equipo equipo,
-            @RequestParam("imagen") MultipartFile imagen,
+    public String save(@Valid @ModelAttribute Equipo equipo,
             BindingResult result,
+            @RequestParam("imagen") MultipartFile imagen,
             RedirectAttributes attributes) throws IOException {
 
         if (result.hasErrors()) {
+            // Agregar mensajes de error específicos
+            if (result.getFieldError("descripcion") != null) {
+                attributes.addFlashAttribute("errorDescripcion",
+                        "La descripción no puede exceder los 255 caracteres");
+            }
             attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
@@ -158,21 +169,23 @@ public class EquipoController {
 
     }
 
-    @PostMapping("/update")
-    public String update(
-            @RequestParam("id") Integer id,
-            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
-            @Valid @ModelAttribute("equipo") Equipo equipo,
-            BindingResult result,
-            RedirectAttributes attributes) throws IOException {
+   @PostMapping("/update")
+public String update(
+        @RequestParam("id") Integer id,
+        @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+        @Valid @ModelAttribute("equipo") Equipo equipo,
+        BindingResult result,
+        RedirectAttributes attributes) throws IOException {
 
-        if (result.hasErrors()) {
-            attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
-            attributes.addFlashAttribute("equipo", equipo);
-            attributes.addFlashAttribute("error", "por favor complete todos los campos requeridos");
-
-            return "redirect:/equipo/edit/" + id;
+    if (result.hasErrors()) {
+        if (result.getFieldError("descripcion") != null) {
+            attributes.addFlashAttribute("errorDescripcion", 
+                "La descripción no puede exceder los 255 caracteres");
         }
+        attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
+        attributes.addFlashAttribute("equipo", equipo);
+        return "redirect:/equipo/edit/" + id;
+    }
 
         // Obtener equipo existente
         Equipo equipoExistente = equipoService.buscarPorId(id)
@@ -198,7 +211,7 @@ public class EquipoController {
 
         // Actualizar equipo
         equipoService.guardarEquipo(equipo);
-        attributes.addFlashAttribute("msg","Informacion actualizada correctamente" );
+        attributes.addFlashAttribute("msg", "Informacion actualizada correctamente");
 
         return "redirect:/equipo/details/" + id;
     }

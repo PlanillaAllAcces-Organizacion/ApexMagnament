@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,11 +16,13 @@ public interface IEquiposRepository extends JpaRepository<Equipo, Integer> {
 
     Optional<Equipo> findByNserie(String nserie);
     
-    List<Equipo> findByNombreContainingIgnoreCase(String nombre);
+    // Búsquedas individuales paginadas
+    Page<Equipo> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
+    Page<Equipo> findByModeloContainingIgnoreCase(String modelo, Pageable pageable);
+    Page<Equipo> findByNserieContainingIgnoreCase(String nserie, Pageable pageable);
     
-    List<Equipo> findByModeloContainingIgnoreCase(String modelo);
-    
-     Page<Equipo> findByNombreContainingIgnoreCaseOrModeloContainingIgnoreCaseOrNserieContainingIgnoreCase(
+    // Búsqueda combinada (opcional)
+    Page<Equipo> findByNombreContainingIgnoreCaseOrModeloContainingIgnoreCaseOrNserieContainingIgnoreCase(
         String nombre, String modelo, String nserie, Pageable pageable);
     
     boolean existsByNserie(String nserie);
@@ -41,4 +42,6 @@ public interface IEquiposRepository extends JpaRepository<Equipo, Integer> {
                        @Param("nombre") String nombre,
                        @Param("modelo") String modelo, 
                        @Param("descripcion") String descripcion);
+
+                       
 }

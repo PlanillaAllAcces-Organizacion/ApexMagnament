@@ -18,9 +18,10 @@ public class EquipoService implements IEquipoService {
     @Autowired
     private IEquiposRepository equiposRepository;
 
-    @Autowired
-    public EquipoService(IEquiposRepository equiposRepository) {
-        this.equiposRepository = equiposRepository;
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Equipo> buscarTodosPaginados(Pageable pageable) {
+        return equiposRepository.findAll(pageable);
     }
 
     @Override
@@ -32,19 +33,10 @@ public class EquipoService implements IEquipoService {
         return equiposRepository.save(equipo);
     }
 
-  
-
     @Override
-    @Transactional(readOnly = true)
-    public Page<Equipo> buscarTodosPaginados(Pageable pageable) {
-        return equiposRepository.findAll(pageable);
-    }
-
-     @Override
     public List<Equipo> obtenerTodos() {
         return equiposRepository.findAll();
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -56,6 +48,7 @@ public class EquipoService implements IEquipoService {
     public Equipo createOrEditOne(Equipo equipo) {
         return equiposRepository.save(equipo);
     }
+
     @Override
     @Transactional(readOnly = true)
     public Optional<Equipo> buscarPorNserie(String nserie) {
@@ -64,11 +57,22 @@ public class EquipoService implements IEquipoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Equipo> buscarPorNombre(String nombre) {
-        return equiposRepository.findByNombreContainingIgnoreCase(nombre);
+    public Page<Equipo> buscarPorNombre(String nombre, Pageable pageable) {
+        return equiposRepository.findByNombreContainingIgnoreCase(nombre, pageable);
     }
 
-   
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Equipo> buscarPorModelo(String modelo, Pageable pageable) {
+        return equiposRepository.findByModeloContainingIgnoreCase(modelo, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Equipo> buscarPorSerie(String serie, Pageable pageable) {
+        return equiposRepository.findByNserieContainingIgnoreCase(serie, pageable);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Page<Equipo> buscarPorNombreModeloOSerie(String filtro, Pageable pageable) {
@@ -82,7 +86,6 @@ public class EquipoService implements IEquipoService {
         equiposRepository.deleteById(id);
     }
 
-    
     @Override
     @Transactional
     public void actualizarUbicacion(Integer equipoId, Integer ubicacionId) {
@@ -101,10 +104,8 @@ public class EquipoService implements IEquipoService {
         return equiposRepository.existsByNserie(nserie);
     }
 
-   
     @Override
     public Optional<Equipo> buscarSerie(String nserie) {
-     return equiposRepository.findByNserie(nserie);   
+        return equiposRepository.findByNserie(nserie);
     }
-
 }

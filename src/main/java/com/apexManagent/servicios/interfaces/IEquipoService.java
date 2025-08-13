@@ -13,28 +13,22 @@ public interface IEquipoService {
 
     // Operaciones CRUD básicas
     Equipo guardarEquipo(Equipo equipo);
-
     List<Equipo> obtenerTodos();
-
     Optional<Equipo> buscarSerie(String nserie);
-
     Equipo createOrEditOne(Equipo equipo);
-
     void eliminarPorId(Integer id);
 
     // Búsquedas
     Optional<Equipo> buscarPorNserie(String nserie);
+    Page<Equipo> buscarPorNombre(String nombre, Pageable pageable);
+    Page<Equipo> buscarPorModelo(String modelo, Pageable pageable);
+    Page<Equipo> buscarPorSerie(String serie, Pageable pageable);
+    Page<Equipo> buscarPorNombreModeloOSerie(String search, Pageable pageable);
 
-    List<Equipo> buscarPorNombre(String nombre);
 
     // Operaciones específicas
     void actualizarUbicacion(Integer equipoId, Integer ubicacionId);
-
     void modificarEquipo(Integer equipoId, String nombre, String modelo, String descripcion);
-
     boolean existePorNserie(String nserie);
-
-    Page<Equipo> buscarPorNombreModeloOSerie(String search, Pageable pageable);
-
     Optional<Equipo> buscarPorId(Integer id);
 }

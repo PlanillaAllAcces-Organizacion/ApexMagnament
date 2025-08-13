@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/_mainLayout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
 <head>
     <title>Crear Nuevo Equipo | Apex Manager</title>
     <style>
@@ -13,14 +13,17 @@
             background-color: #f8f9fa;
             transition: all 0.3s ease;
         }
+
         .image-upload-container:hover {
             border-color: #adb5bd;
         }
+
         .image-preview {
             max-height: 200px;
             max-width: 100%;
             margin-bottom: 15px;
         }
+
         .file-input-label {
             cursor: pointer;
             display: inline-block;
@@ -30,18 +33,21 @@
             border-radius: 4px;
             transition: background-color 0.3s;
         }
+
         .file-input-label:hover {
             background-color: #0b5ed7;
         }
+
         .file-input {
             display: none;
         }
     </style>
 </head>
+
 <body>
     <div layout:fragment="content">
         <div class="container-fluid px-4">
-           
+
             <h1 class="mt-4">Nuevo Equipo</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
@@ -60,21 +66,21 @@
                             <!-- Columna Imagen -->
                             <div class="col-md-5 mb-4">
                                 <div class="image-upload-container">
-                                    <img id="imagePreview" src="/img/default-equipo.jpg" 
-                                         class="image-preview img-fluid rounded">
+                                    <img id="imagePreview" src="/img/default-equipo.jpg"
+                                        class="image-preview img-fluid rounded">
                                     <div class="mt-3">
                                         <label for="imagen" class="file-input-label">
                                             <i class="fas fa-camera me-2"></i> Seleccionar Imagen
                                         </label>
-                                        <input type="file" class="file-input" id="imagen" name="imagen" 
-                                               accept="image/*" onchange="previewImage(this)">
+                                        <input type="file" class="file-input" id="imagen" name="imagen" accept="image/*"
+                                            onchange="previewImage(this)">
                                         <div class="mt-2 small text-muted">
                                             Formatos: JPG, PNG (Max. 2MB)
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Columna Formulario -->
                             <div class="col-md-7">
                                 <div class="row g-3">
@@ -103,11 +109,14 @@
                                     </div>
 
                                     <!-- Descripción -->
-                                    <div class="col-12">
-                                        <label for="descripcion" class="form-label required-field">Descripción</label>
-                                        <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
-                                            rows="3" required placeholder="Especificaciones del equipo"></textarea>
-                                        <div class="invalid-feedback">Por favor ingrese una descripción</div>
+                                    <div class="form-group">
+                                        <label for="descripcion">Descripción</label>
+                                        <textarea th:field="*{descripcion}" class="form-control" id="descripcion"
+                                            rows="3" maxlength="255"></textarea>
+                                        <small class="text-muted">Máximo 255 caracteres</small>
+                                        <div th:if="${errorDescripcion}" class="alert alert-warning mt-2">
+                                            <span th:text="${errorDescripcion}"></span>
+                                        </div>
                                     </div>
 
                                     <!-- Garantía y Ubicación -->
@@ -139,35 +148,36 @@
                                 </div>
                             </div>
                         </div>
-                 </div>
-                    </form>
                 </div>
+                </form>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Script para vista previa de imagen -->
     <script>
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        const maxSize = 2 * 1024 * 1024; // 2MB en bytes
-        
-        if (input.files && input.files[0]) {
-            // Validar tamaño
-            if (input.files[0].size > maxSize) {
-                alert('La imagen excede el tamaño máximo de 2MB');
-                input.value = '';
-                return;
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const maxSize = 2 * 1024 * 1024; // 2MB en bytes
+
+            if (input.files && input.files[0]) {
+                // Validar tamaño
+                if (input.files[0].size > maxSize) {
+                    alert('La imagen excede el tamaño máximo de 2MB');
+                    input.value = '';
+                    return;
+                }
+
+                // Crear vista previa
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
             }
-            
-            // Crear vista previa
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
         }
-    }
     </script>
 </body>
+
 </html>
