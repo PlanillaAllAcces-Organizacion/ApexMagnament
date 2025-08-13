@@ -26,6 +26,11 @@ public class AsignacionEquipo {
         return Id;
     }
 
+    public AsignacionEquipo(Personal personal, Equipo equipo) {
+        this.personal = personal;
+        this.equipo = equipo;
+    }
+
     public void setId(Integer id) {
         Id = id;
     }

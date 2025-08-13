@@ -51,7 +51,7 @@ public class EquipoController {
         String nserieSearch = nserie.orElse("");
         String nombreSearch = nombre.orElse("");
         String modeloSearch = modelo.orElse("");
-        
+
         Page<Equipo> equipos = equipoService.findByNserieContainingAndNombreContainingAndModeloContaining(
                 nserieSearch, nombreSearch, modeloSearch, pageable);
 
@@ -78,56 +78,56 @@ public class EquipoController {
         return "equipo/create";
     }
 
-   @PostMapping("/save")
-public String save(@Valid @ModelAttribute Equipo equipo,
-        BindingResult result,
-        @RequestParam("imagen") MultipartFile imagen,
-        RedirectAttributes attributes) throws IOException {
+    @PostMapping("/save")
+    public String save(@Valid @ModelAttribute Equipo equipo,
+            BindingResult result,
+            @RequestParam("imagen") MultipartFile imagen,
+            RedirectAttributes attributes) throws IOException {
 
-    // Validación de errores del modelo
-    if (result.hasErrors()) {
-        // Mensaje específico para descripción
-        if (result.getFieldError("descripcion") != null) {
-            attributes.addFlashAttribute("errorDescripcion", 
-                "La descripción no puede exceder los 255 caracteres");
+        // Validación de errores del modelo
+        if (result.hasErrors()) {
+            // Mensaje específico para descripción
+            if (result.getFieldError("descripcion") != null) {
+                attributes.addFlashAttribute("errorDescripcion",
+                        "La descripción no puede exceder los 255 caracteres");
+            }
+            attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/create";
         }
-        attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
-        attributes.addFlashAttribute("equipo", equipo);
-        return "redirect:/equipo/create";
+
+        if (equipoService.existePorNserie(equipo.getNserie())) {
+            attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/create";
+        }
+
+        if (imagen.isEmpty()) {
+            attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/create";
+        }
+
+        if (imagen.getSize() > 2097152) {
+            attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/create";
+        }
+
+        String contentType = imagen.getContentType();
+        if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+            attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/create";
+        }
+
+        equipo.setImg(imagen.getBytes());
+        equipo.setFechaRegistro(LocalDateTime.now());
+        equipoService.guardar(equipo);
+
+        attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
+        return "redirect:/equipo";
     }
-
-    if (equipoService.existePorNserie(equipo.getNserie())) {
-        attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
-        attributes.addFlashAttribute("equipo", equipo);
-        return "redirect:/equipo/create";
-    }
-
-    if (imagen.isEmpty()) {
-        attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
-        attributes.addFlashAttribute("equipo", equipo);
-        return "redirect:/equipo/create";
-    }
-
-    if (imagen.getSize() > 2097152) {
-        attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
-        attributes.addFlashAttribute("equipo", equipo);
-        return "redirect:/equipo/create";
-    }
-
-    String contentType = imagen.getContentType();
-    if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-        attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
-        attributes.addFlashAttribute("equipo", equipo);
-        return "redirect:/equipo/create";
-    }
-
-    equipo.setImg(imagen.getBytes());
-    equipo.setFechaRegistro(LocalDateTime.now());
-    equipoService.guardar(equipo);
-
-    attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
-    return "redirect:/equipo";
-}
 
     @GetMapping("/details/{id}")
     public String mostrarEquipo(@PathVariable Integer id, Model model) {
@@ -177,7 +177,7 @@ public String save(@Valid @ModelAttribute Equipo equipo,
 
         equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
         equipoService.guardar(equipo);
-        
+
         attributes.addFlashAttribute("msg", "Información actualizada correctamente");
         return "redirect:/equipo/details/" + id;
     }

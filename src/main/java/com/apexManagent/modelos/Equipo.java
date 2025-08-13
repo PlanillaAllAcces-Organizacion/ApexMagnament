@@ -52,13 +52,33 @@ public class Equipo {
     @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CalendarioPreventivo> calendarioPreventivo = new HashSet<>();
 
-    public Integer getId() {
+
+     @Transient 
+    private boolean asignado;
+
+     public Integer getId() {
         return Id;
     }
 
     public void setId(Integer id) {
         Id = id;
     }
+
+    // Método para verificar si está asignado
+    public boolean isAsignado() {
+        return !this.AsignacionEquipo.isEmpty();
+    }
+
+    // Getter y Setter para el campo transitorio
+    public boolean getAsignado() {
+        return this.asignado;
+    }
+
+    public void setAsignado(boolean asignado) {
+        this.asignado = asignado;
+    }
+
+   
    
     public String getNserie() {
         return nserie;
