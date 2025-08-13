@@ -6,9 +6,9 @@ import com.apexManagent.servicios.interfaces.IUbicacionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,61 +32,39 @@ public class EquipoController {
 
     @Autowired
     private IUbicacionService ubicacionService;
- @GetMapping
+
+    @GetMapping
     public String index(Model model,
             @RequestParam("page") Optional<Integer> page,
             @RequestParam("size") Optional<Integer> size,
-            @RequestParam(required = false) String searchNombre,
-            @RequestParam(required = false) String searchModelo,
-            @RequestParam(required = false) String searchSerie) {
+            @RequestParam(required = false) String search,
+            @RequestParam("nserie") Optional<String> nserie,
+            @RequestParam("nombre") Optional<String> nombre,
+            @RequestParam("modelo") Optional<String> modelo) {
 
-        int currentPage = page.orElse(1);
+        int currentPage = page.orElse(1) - 1;
         int pageSize = size.orElse(5);
+
+        Sort sortByIdDesc = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(currentPage, pageSize, sortByIdDesc);
+
+        String nserieSearch = nserie.orElse("");
+        String nombreSearch = nombre.orElse("");
+        String modeloSearch = modelo.orElse("");
         
-        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+        Page<Equipo> equipos = equipoService.findByNserieContainingAndNombreContainingAndModeloContaining(
+                nserieSearch, nombreSearch, modeloSearch, pageable);
 
-        if (searchSerie != null && !searchSerie.isEmpty()) {
-            // Búsqueda paginada por serie
-            Page<Equipo> equipos = equipoService.buscarPorSerie(searchSerie, pageable);
-            model.addAttribute("equipos", equipos);
-            
-            int totalPages = equipos.getTotalPages();
-            if (totalPages > 0) {
-                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                        .boxed()
-                        .collect(Collectors.toList());
-                model.addAttribute("pageNumbers", pageNumbers);
-            }
-            
-        } else if (searchNombre != null && !searchNombre.isEmpty()) {
-            // Búsqueda no paginada por nombre
-            List<Equipo> equipos = equipoService.buscarPorNombre(searchNombre);
-            model.addAttribute("equipos", new PageImpl<>(equipos, pageable, equipos.size()));
-            model.addAttribute("pageNumbers", List.of(1)); // Solo una página
-            
-        } else if (searchModelo != null && !searchModelo.isEmpty()) {
-            // Búsqueda no paginada por modelo
-            List<Equipo> equipos = equipoService.buscarPorModelo(searchModelo);
-            model.addAttribute("equipos", new PageImpl<>(equipos, pageable, equipos.size()));
-            model.addAttribute("pageNumbers", List.of(1)); // Solo una página
-            
-        } else {
-            // Búsqueda general paginada
-            Page<Equipo> equipos = equipoService.buscarTodosPaginados(pageable);
-            model.addAttribute("equipos", equipos);
-            
-            int totalPages = equipos.getTotalPages();
-            if (totalPages > 0) {
-                List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                        .boxed()
-                        .collect(Collectors.toList());
-                model.addAttribute("pageNumbers", pageNumbers);
-            }
+        model.addAttribute("equipos", equipos);
+        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+
+        int totalPages = equipos.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
         }
-
-        model.addAttribute("searchNombre", searchNombre);
-        model.addAttribute("searchModelo", searchModelo);
-        model.addAttribute("searchSerie", searchSerie);
 
         return "equipo/index";
     }
@@ -100,68 +78,60 @@ public class EquipoController {
         return "equipo/create";
     }
 
-    @PostMapping("/save")
-    public String save(@Valid @ModelAttribute Equipo equipo,
-            BindingResult result,
-            @RequestParam("imagen") MultipartFile imagen,
-            RedirectAttributes attributes) throws IOException {
+   @PostMapping("/save")
+public String save(@Valid @ModelAttribute Equipo equipo,
+        BindingResult result,
+        @RequestParam("imagen") MultipartFile imagen,
+        RedirectAttributes attributes) throws IOException {
 
-        if (result.hasErrors()) {
-            // Agregar mensajes de error específicos
-            if (result.getFieldError("descripcion") != null) {
-                attributes.addFlashAttribute("errorDescripcion",
-                        "La descripción no puede exceder los 255 caracteres");
-            }
-            attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
+    // Validación de errores del modelo
+    if (result.hasErrors()) {
+        // Mensaje específico para descripción
+        if (result.getFieldError("descripcion") != null) {
+            attributes.addFlashAttribute("errorDescripcion", 
+                "La descripción no puede exceder los 255 caracteres");
         }
-
-        // Validar número de serie único
-        if (equipoService.existePorNserie(equipo.getNserie())) {
-            attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
-        }
-
-        // Procesar imagen si fue subida
-        if (!imagen.isEmpty()) {
-            // Validar tamaño máximo (2MB)
-            if (imagen.getSize() > 2097152) {
-                attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
-                attributes.addFlashAttribute("equipo", equipo);
-                return "redirect:/equipo/create";
-            }
-
-            // Validar tipo de imagen
-            String contentType = imagen.getContentType();
-            if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-                attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
-                attributes.addFlashAttribute("equipo", equipo);
-                return "redirect:/equipo/create";
-            }
-
-            // Asignar imagen al equipo (se guardará en la base de datos)
-            equipo.setImg(imagen.getBytes());
-        } else {
-            attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
-        }
-
-        // Establecer fecha de registro
-        equipo.setFechaRegistro(LocalDateTime.now());
-
-        // Guardar equipo (incluyendo la imagen)
-        equipoService.guardarEquipo(equipo);
-
-        attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
-        return "redirect:/equipo";
+        attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
+        attributes.addFlashAttribute("equipo", equipo);
+        return "redirect:/equipo/create";
     }
+
+    if (equipoService.existePorNserie(equipo.getNserie())) {
+        attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
+        attributes.addFlashAttribute("equipo", equipo);
+        return "redirect:/equipo/create";
+    }
+
+    if (imagen.isEmpty()) {
+        attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
+        attributes.addFlashAttribute("equipo", equipo);
+        return "redirect:/equipo/create";
+    }
+
+    if (imagen.getSize() > 2097152) {
+        attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
+        attributes.addFlashAttribute("equipo", equipo);
+        return "redirect:/equipo/create";
+    }
+
+    String contentType = imagen.getContentType();
+    if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+        attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
+        attributes.addFlashAttribute("equipo", equipo);
+        return "redirect:/equipo/create";
+    }
+
+    equipo.setImg(imagen.getBytes());
+    equipo.setFechaRegistro(LocalDateTime.now());
+    equipoService.guardar(equipo);
+
+    attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
+    return "redirect:/equipo";
+}
 
     @GetMapping("/details/{id}")
     public String mostrarEquipo(@PathVariable Integer id, Model model) {
-        Equipo equipo = equipoService.buscarPorId(id)
+        Equipo equipo = equipoService.obtenerPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
         model.addAttribute("equipo", equipo);
         return "equipo/details";
@@ -169,65 +139,46 @@ public class EquipoController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
-        try {
-            Equipo equipo = equipoService.buscarPorId(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
-
-            model.addAttribute("equipo", equipo);
-            model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
-
-            return "equipo/edit";
-        } catch (Exception e) {
-            System.err.println("Error al cargar edición: " + e.getMessage());
-            return "redirect:/equipo?error=Error al cargar equipo para edición";
-        }
-
+        Equipo equipo = equipoService.obtenerPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        return "equipo/edit";
     }
 
-   @PostMapping("/update")
-public String update(
-        @RequestParam("id") Integer id,
-        @RequestParam(value = "imagen", required = false) MultipartFile imagen,
-        @Valid @ModelAttribute("equipo") Equipo equipo,
-        BindingResult result,
-        RedirectAttributes attributes) throws IOException {
+    @PostMapping("/update")
+    public String update(
+            @RequestParam("id") Integer id,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            @Valid @ModelAttribute("equipo") Equipo equipo,
+            BindingResult result,
+            RedirectAttributes attributes) throws IOException {
 
-    if (result.hasErrors()) {
-        if (result.getFieldError("descripcion") != null) {
-            attributes.addFlashAttribute("errorDescripcion", 
-                "La descripción no puede exceder los 255 caracteres");
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
+            attributes.addFlashAttribute("equipo", equipo);
+            return "redirect:/equipo/edit/" + id;
         }
-        attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
-        attributes.addFlashAttribute("equipo", equipo);
-        return "redirect:/equipo/edit/" + id;
-    }
 
-        // Obtener equipo existente
-        Equipo equipoExistente = equipoService.buscarPorId(id)
+        Equipo equipoExistente = equipoService.obtenerPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
 
-        // Validar número de serie único (excepto para el equipo actual)
         if (equipoService.existePorNserie(equipo.getNserie()) &&
                 !equipoExistente.getNserie().equals(equipo.getNserie())) {
             attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
             return "redirect:/equipo/edit/" + id;
         }
 
-        // Resto del código para manejar la imagen...
         if (imagen != null && !imagen.isEmpty()) {
-            // Validaciones de imagen...
             equipo.setImg(imagen.getBytes());
         } else {
             equipo.setImg(equipoExistente.getImg());
         }
 
-        // Preservar otros datos importantes
         equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
-
-        // Actualizar equipo
-        equipoService.guardarEquipo(equipo);
-        attributes.addFlashAttribute("msg", "Informacion actualizada correctamente");
-
+        equipoService.guardar(equipo);
+        
+        attributes.addFlashAttribute("msg", "Información actualizada correctamente");
         return "redirect:/equipo/details/" + id;
     }
 
