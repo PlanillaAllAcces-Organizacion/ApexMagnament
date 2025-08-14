@@ -12,8 +12,6 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-//import javax.sql.DataSource;
-
 @Configuration
 @EnableWebSecurity
 public class DatabaseWebSecurity {
@@ -38,14 +36,15 @@ public class DatabaseWebSecurity {
                 .requestMatchers("/privacy", "/terms", "/Login").permitAll() 
 
                 // Asignar permisos a URLs por ROLES
-                .requestMatchers("/").hasAnyAuthority("Administrador", "Tecnico")
+                .requestMatchers("/").hasAnyAuthority("Administrador", "Tecnico", "Usuario")
                 .requestMatchers("/equipo/**").hasAnyAuthority("Administrador", "Tecnico")
-                .requestMatchers("/personal/**").hasAnyAuthority("Administrador")
-                .requestMatchers("/rol/**").hasAnyAuthority("Administrador")
-                .requestMatchers("/ubicacion/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/personales/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/roles/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/ubicaciones/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/empleados/**").hasAnyAuthority("Usuario")
 
                 // todas las demás vistas requieren autenticación
-                .anyRequest().authenticated());
+                .anyRequest().denyAll());
 
         http.formLogin(form -> form
                 .loginPage("/Login") // Le dice a Spring Security cuál es la URL de tu página de login

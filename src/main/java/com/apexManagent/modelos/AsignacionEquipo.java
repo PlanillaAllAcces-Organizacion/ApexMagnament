@@ -30,5 +30,29 @@ public class AsignacionEquipo {
         Id = id;
     }
 
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
+    }
+
+    public Equipo getEquipo() {
+        return equipo;
+    }
+
+    public void setEquipo(Equipo equipo) {
+        this.equipo = equipo;
+    }
+
+    public Set<Solicitud> getSolicitud() {
+        return solicitud;
+    }
+
+    public void setSolicitud(Set<Solicitud> solicitud) {
+        this.solicitud = solicitud;
+    }
+
 
 }

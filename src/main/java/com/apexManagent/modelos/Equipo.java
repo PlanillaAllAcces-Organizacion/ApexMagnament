@@ -2,6 +2,8 @@ package com.apexManagent.modelos;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 import java.util.HashSet;
@@ -31,6 +33,7 @@ public class Equipo {
     private String modelo;
 
     @NotBlank(message = "El descripcion es requerida")
+    @Size(max = 255, message = "La descripción no puede tener más de 255 caracteres")   
     private String descripcion;
 
     @Column(nullable = false)

@@ -1,40 +1,16 @@
 package com.apexManagent.servicios.interfaces;
 
 import com.apexManagent.modelos.Equipo;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import java.util.Optional;
 
 public interface IEquipoService {
-
-    Page<Equipo> buscarTodosPaginados(Pageable pageable);
-
-    // Operaciones CRUD básicas
-    Equipo guardarEquipo(Equipo equipo);
-
-    List<Equipo> obtenerTodos();
-
-    Optional<Equipo> buscarSerie(String nserie);
-
-    Equipo createOrEditOne(Equipo equipo);
-
+    Equipo guardar(Equipo equipo);
+    Optional<Equipo> obtenerPorId(Integer id);
     void eliminarPorId(Integer id);
-
-    // Búsquedas
-    Optional<Equipo> buscarPorNserie(String nserie);
-
-    List<Equipo> buscarPorNombre(String nombre);
-
-    // Operaciones específicas
-    void actualizarUbicacion(Integer equipoId, Integer ubicacionId);
-
-    void modificarEquipo(Integer equipoId, String nombre, String modelo, String descripcion);
-
     boolean existePorNserie(String nserie);
-
-    Page<Equipo> buscarPorNombreModeloOSerie(String search, Pageable pageable);
-
-    Optional<Equipo> buscarPorId(Integer id);
+    
+    Page<Equipo> findByNserieContainingAndNombreContainingAndModeloContaining(
+        String nserie, String nombre, String modelo, Pageable pageable);
 }

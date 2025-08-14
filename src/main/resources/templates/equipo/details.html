@@ -9,18 +9,17 @@
 
 <body>
     <div layout:fragment="content">
+            <div th:if="${msg != null}">
+            <script>
+                Swal.fire({
+                    title: "Confirmación",
+                    text: '[[${msg}]]',
+                    icon: "success"
+                });
+            </script>
+        </div>
+        
         <div class="container-fluid px-4">
-
-            <!-- Mensajes Flash -->
-            <div th:if="${success != null}" class="alert alert-success alert-dismissible fade show mt-3">
-                <span th:text="${success}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show mt-3">
-                <span th:text="${error}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-
             <h1 class="mt-4">Detalles del Equipo</h1>
             <ol class="breadcrumb breadcrumb-modern mb-4">
                 <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
