@@ -22,6 +22,10 @@ public class AsignacionEquipo {
     @OneToMany(mappedBy = "asignacionEquipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Solicitud> solicitud = new HashSet<>();
 
+    public AsignacionEquipo() {
+    // inicialización si es necesaria
+        }
+
     public Integer getId() {
         return Id;
     }

@@ -1,20 +1,24 @@
 package com.apexManagent.controladores;
 
-import com.apexManagent.modelos.AsignacionEquipo;
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.modelos.Personal;
 import com.apexManagent.servicios.interfaces.IAsignacionEquipoService;
-import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IPersonalService;
-import com.apexManagent.repositorio.IEquiposRepository;
-import java.util.ArrayList;
-import java.util.List;
+import com.apexManagent.servicios.interfaces.IUbicacionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/asignaciones")
@@ -24,74 +28,69 @@ public class AsignacionEquipoController {
     private IAsignacionEquipoService asignacionService;
 
     @Autowired
+    private IUbicacionService ubicacionService;
+    
+    @Autowired
     private IPersonalService personalService;
-
-    @Autowired
-    private IEquipoService equipoService;
-
-    @Autowired
-    private IEquiposRepository equipoRepository;
-
- @GetMapping("/asignar/{personalId}")
-public String mostrarFormularioAsignacion(@PathVariable Integer personalId, Model model) {
+@GetMapping("/asignar/{personalId}")
+public String mostrarFormularioAsignacion(
+        @PathVariable Integer personalId,
+        @RequestParam(required = false) String nombre,
+        @RequestParam(required = false) String nserie,
+        @RequestParam(required = false) Integer ubicacion,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size,
+        Model model) {
+    
     Personal personal = personalService.obtenerPorId(personalId)
             .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
     
-    // Asegúrate que estos métodos no retornen null
-    List<Equipo> equiposDisponibles = equipoService.findEquiposDisponibles();
-    List<Equipo> equiposAsignados = equipoRepository.findEquiposAsignadosAPersonal(personalId); // Usa el nombre correcto
+    Pageable pageable = PageRequest.of(page - 1, size, Sort.by("nombre").ascending());
     
-    if(equiposDisponibles == null) equiposDisponibles = new ArrayList<>();
-    if(equiposAsignados == null) equiposAsignados = new ArrayList<>();
+    List<Equipo> equiposAsignados = asignacionService.obtenerEquiposAsignados(personalId);
+    Page<Equipo> equiposDisponibles = asignacionService.buscarEquiposDisponibles(nombre, nserie, ubicacion, pageable);
     
+    // Agregar la lista de ubicaciones al modelo
+    model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
     model.addAttribute("personal", personal);
-    model.addAttribute("equiposDisponibles", equiposDisponibles);
     model.addAttribute("equiposAsignados", equiposAsignados);
+    model.addAttribute("equiposDisponibles", equiposDisponibles);
+    
+    int totalPages = equiposDisponibles.getTotalPages();
+    if (totalPages > 0) {
+        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
+    }
     
     return "personal/asignacion";
 }
 
-    @PostMapping("/guardar")
-    public String guardarAsignacion(
+    @PostMapping("/asignar-equipo")
+    public String asignarEquipo(
             @RequestParam Integer personalId,
             @RequestParam Integer equipoId,
-            RedirectAttributes attributes) {
+            RedirectAttributes redirectAttributes) {
         
-        try {
-            Personal personal = personalService.obtenerPorId(personalId).get();
-            Equipo equipo = equipoService.obtenerPorId(equipoId).get();
-            
-            asignacionService.crearAsignacion(personal, equipo);
-            attributes.addFlashAttribute("msg", "Equipo asignado correctamente");
-        } catch (Exception e) {
-            attributes.addFlashAttribute("error", e.getMessage());
-        }
+        Personal personal = personalService.obtenerPorId(personalId)
+                .orElseThrow(() -> new IllegalArgumentException("Personal no encontrado"));
         
+        asignacionService.asignarEquipo(personal, equipoId);
+        
+        redirectAttributes.addFlashAttribute("success", "Equipo asignado correctamente");
         return "redirect:/asignaciones/asignar/" + personalId;
     }
 
-    @GetMapping("/eliminar/{id}")
-    public String eliminarAsignacion(@PathVariable Integer id, RedirectAttributes attributes) {
-        AsignacionEquipo asignacion = asignacionService.obtenerPorId(id);
-        Integer personalId = asignacion.getPersonal().getId();
+    @GetMapping("/desasignar/{personalId}/{equipoId}")
+    public String desasignarEquipo(
+            @PathVariable Integer personalId,
+            @PathVariable Integer equipoId,
+            RedirectAttributes redirectAttributes) {
         
-        asignacionService.eliminarAsignacion(id);
-        attributes.addFlashAttribute("msg", "Asignación eliminada correctamente");
+        asignacionService.desasignarEquipo(personalId, equipoId);
         
+        redirectAttributes.addFlashAttribute("success", "Equipo desasignado correctamente");
         return "redirect:/asignaciones/asignar/" + personalId;
     }
-
-    @GetMapping("/por-personal/{personalId}")
-    @ResponseBody
-    public List<Equipo> obtenerEquiposAsignadosJson(@PathVariable Integer personalId) {
-        return asignacionService.obtenerEquiposAsignados(personalId);
-    }
-
-    @GetMapping("/verificar/{equipoId}")
-    @ResponseBody
-    public boolean verificarAsignacionEquipo(@PathVariable Integer equipoId) {
-        return asignacionService.equipoEstaAsignado(equipoId);
-    }
-
-    
 }
