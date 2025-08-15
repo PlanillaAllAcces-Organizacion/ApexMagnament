@@ -15,8 +15,6 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
 </head>
 
 <body class="sb-nav-fixed">
@@ -66,76 +64,103 @@
         <!-- Menú Lateral -->
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <!-- Sección Principal -->
                         <div class="sb-sidenav-menu-heading">Principal</div>
 
-                        <!-- Panel de control con submenú -->
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePanel"
-                            aria-expanded="false">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Panel de control
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePanel">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" th:href="@{/roles}">
-                                    <i class="fas fa-user-tag me-2"></i> Roles
-                                </a>
-                                <a class="nav-link" th:href="@{/personales}">
-                                    <i class="fas fa-users me-2"></i> Personal
-                                </a>
-                            </nav>
+                        <div sec:authorize="hasAnyAuthority('Administrador', 'Tecnico')">
+
+                            <!-- Panel de control con submenú -->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapsePanel" aria-expanded="false">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Panel de control
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePanel">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" th:href="@{/roles}">
+                                        <i class="fas fa-user-tag me-2"></i> Roles
+                                    </a>
+                                    <a class="nav-link" th:href="@{/personales}">
+                                        <i class="fas fa-users me-2"></i> Personal
+                                    </a>
+                                </nav>
+                            </div>
+
+                            <!-- Sección Gestión -->
+                            <div class="sb-sidenav-menu-heading">Gestión</div>
+
+                            <!-- Submenú Redes -->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapseRedes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-network-wired"></i></div>
+                                Redes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseRedes">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" th:href="@{/equipo}">
+                                        <i class="fas fa-laptop me-2"></i> Equipos informáticos
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        <i class="fas fa-file-alt me-2"></i> Historial
+                                    </a>
+                                    <a class="nav-link" th:href="@{/ubicaciones}">
+                                        <i class="fas fa-map-marker-alt me-2"></i> Ubicación
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        <i class="fas fa-calendar-check me-2"></i> Mantenimiento
+                                    </a>
+                                </nav>
+                            </div>
+
+                            <!-- Sección Operaciones -->
+                            <div class="sb-sidenav-menu-heading">Operaciones</div>
+
+                            <!-- Reportes con submenú -->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapseReportes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+                                Reportes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseReportes">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" th:href="@{/reportes-preventivos}">
+                                        <i class="fas fa-shield-alt me-2"></i> Preventivos
+                                    </a>
+                                    <a class="nav-link" th:href="@{/reportes-correctivos}">
+                                        <i class="fas fa-tools me-2"></i> Correctivos
+                                    </a>
+                                </nav>
+                            </div>
                         </div>
 
-                        <!-- Sección Gestión -->
-                        <div class="sb-sidenav-menu-heading">Gestión</div>
+                        <div sec:authorize="hasAnyAuthority('Usuario')">
 
-                        <!-- Submenú Redes -->
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                            data-bs-target="#collapseRedes">
-                            <div class="sb-nav-link-icon"><i class="fas fa-network-wired"></i></div>
-                            Redes
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseRedes">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" th:href="@{/equipo}">
-                                    <i class="fas fa-laptop me-2"></i> Equipos informáticos
-                                </a>
-                                <a class="nav-link" href="#">
-                                    <i class="fas fa-file-alt me-2"></i> Historial
-                                </a>
-                                <a class="nav-link" th:href="@{/ubicaciones}">
-                                    <i class="fas fa-map-marker-alt me-2"></i> Ubicación
-                                </a>
-                                <a class="nav-link" href="#">
-                                    <i class="fas fa-calendar-check me-2"></i> Mantenimiento
-                                </a>
-                            </nav>
+                            <!-- Panel de control con submenú -->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapsePanel" aria-expanded="false">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Mas opciones
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePanel">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" th:href="@{/empleados/miEquipo}">
+                                        <i class="fa-solid fa-laptop me-2"></i> Mis equipos
+                                    </a>
+                                    <a class="nav-link" th:href="@{/personales}">
+                                        <i class="fas fa-users me-2"></i> Historial
+                                    </a>
+                                </nav>
+                            </div>
+
                         </div>
 
-                        <!-- Sección Operaciones -->
-                        <div class="sb-sidenav-menu-heading">Operaciones</div>
-
-                        <!-- Reportes con submenú -->
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                            data-bs-target="#collapseReportes">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
-                            Reportes
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseReportes">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" th:href="@{/reportes-preventivos}">
-                                    <i class="fas fa-shield-alt me-2"></i> Preventivos
-                                </a>
-                                <a class="nav-link" th:href="@{/reportes-correctivos}">
-                                    <i class="fas fa-tools me-2"></i> Correctivos
-                                </a>
-                            </nav>
-                        </div>
                     </div>
                 </div>
 
