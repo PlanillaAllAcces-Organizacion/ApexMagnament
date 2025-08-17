@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -184,18 +183,7 @@ public class EquipoController {
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes attributes) {
-        try {
-            equipoService.eliminarPorId(id);
-            attributes.addFlashAttribute("swal", Map.of(
-                    "title", "¡Eliminado!",
-                    "text", "El equipo ha sido eliminado correctamente",
-                    "icon", "success"));
-        } catch (Exception e) {
-            attributes.addFlashAttribute("swal", Map.of(
-                    "title", "Error",
-                    "text", "No se pudo eliminar el equipo: " + e.getMessage(),
-                    "icon", "error"));
-        }
+            equipoService.eliminarPorId(id);                   
         return "redirect:/equipo";
     }
 }

@@ -1,4 +1,4 @@
-USE sistmaequipo;
+USE sistmaequipo2;
 
 INSERT IGNORE INTO rol (Nombre) VALUES ('Administrador') ;
 INSERT IGNORE INTO rol (Nombre) VALUES ('Tecnico') ;
