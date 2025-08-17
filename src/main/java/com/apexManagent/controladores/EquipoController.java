@@ -5,10 +5,15 @@ import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +34,8 @@ import java.util.stream.IntStream;
 @Controller
 @RequestMapping("/equipo")
 public class EquipoController {
+
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
     @Autowired
     private IEquipoService equipoService;
@@ -80,16 +91,10 @@ public class EquipoController {
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute Equipo equipo,
             BindingResult result,
-            @RequestParam("imagen") MultipartFile imagen,
+            @RequestParam("fileImagen") MultipartFile fileImagen,
             RedirectAttributes attributes) throws IOException {
 
-        // Validación de errores del modelo
         if (result.hasErrors()) {
-            // Mensaje específico para descripción
-            if (result.getFieldError("descripcion") != null) {
-                attributes.addFlashAttribute("errorDescripcion",
-                        "La descripción no puede exceder los 255 caracteres");
-            }
             attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
@@ -101,29 +106,41 @@ public class EquipoController {
             return "redirect:/equipo/create";
         }
 
-        if (imagen.isEmpty()) {
+        if (fileImagen.isEmpty()) {
             attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
 
-        if (imagen.getSize() > 2097152) {
+        if (fileImagen.getSize() > 2097152) {
             attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
 
-        String contentType = imagen.getContentType();
+        String contentType = fileImagen.getContentType();
         if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
             attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
 
-        equipo.setImg(imagen.getBytes());
+        try {
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            String fileName = fileImagen.getOriginalFilename();
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(fileImagen.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            equipo.setImg(fileName);
+        } catch (Exception e) {
+            attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+            return "redirect:/equipo/create";
+        }
+
         equipo.setFechaRegistro(LocalDateTime.now());
         equipoService.guardar(equipo);
-
         attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
         return "redirect:/equipo";
     }
@@ -148,7 +165,7 @@ public class EquipoController {
     @PostMapping("/update")
     public String update(
             @RequestParam("id") Integer id,
-            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            @RequestParam(value = "fileImagen", required = false) MultipartFile fileImagen,
             @Valid @ModelAttribute("equipo") Equipo equipo,
             BindingResult result,
             RedirectAttributes attributes) throws IOException {
@@ -168,22 +185,81 @@ public class EquipoController {
             return "redirect:/equipo/edit/" + id;
         }
 
-        if (imagen != null && !imagen.isEmpty()) {
-            equipo.setImg(imagen.getBytes());
+        if (fileImagen != null && !fileImagen.isEmpty()) {
+            try {
+                // Validar imagen nueva
+                if (fileImagen.getSize() > 2097152) {
+                    attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
+                    return "redirect:/equipo/edit/" + id;
+                }
+
+                String contentType = fileImagen.getContentType();
+                if (!(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+                    attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
+                    return "redirect:/equipo/edit/" + id;
+                }
+
+                // Eliminar imagen anterior si existe
+                if (equipoExistente.getImg() != null) {
+                    Path oldFilePath = Paths.get(UPLOAD_DIR + equipoExistente.getImg());
+                    Files.deleteIfExists(oldFilePath);
+                }
+
+                // Guardar nueva imagen
+                String fileName = fileImagen.getOriginalFilename();
+                Path filePath = Paths.get(UPLOAD_DIR + fileName);
+                Files.copy(fileImagen.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                equipo.setImg(fileName);
+            } catch (Exception e) {
+                attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+                return "redirect:/equipo/edit/" + id;
+            }
         } else {
             equipo.setImg(equipoExistente.getImg());
         }
 
         equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
         equipoService.guardar(equipo);
-
         attributes.addFlashAttribute("msg", "Información actualizada correctamente");
         return "redirect:/equipo/details/" + id;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes attributes) {
-            equipoService.eliminarPorId(id);                   
+        try {
+            Equipo equipo = equipoService.obtenerPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
+
+            // Eliminar imagen asociada si existe
+            if (equipo.getImg() != null) {
+                Path filePath = Paths.get(UPLOAD_DIR + equipo.getImg());
+                Files.deleteIfExists(filePath);
+            }
+
+            equipoService.eliminarPorId(id);
+            attributes.addFlashAttribute("msg", "Equipo eliminado correctamente");
+        } catch (Exception e) {
+            attributes.addFlashAttribute("error", "Error al eliminar el equipo: " + e.getMessage());
+        }
         return "redirect:/equipo";
+    }
+
+    @GetMapping("/image/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
+        try {
+            Path file = Paths.get(UPLOAD_DIR).resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
+            
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(file))
+                    .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

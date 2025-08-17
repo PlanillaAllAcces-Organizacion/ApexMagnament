@@ -41,19 +41,28 @@
         .file-input {
             display: none;
         }
+
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
     </style>
 </head>
 
 <body>
     <div layout:fragment="content">
         <div class="container-fluid px-4">
-
             <h1 class="mt-4">Nuevo Equipo</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
                 <li class="breadcrumb-item"><a th:href="@{/equipo}">Equipos</a></li>
                 <li class="breadcrumb-item active">Nuevo</li>
             </ol>
+
+            <!-- Mensajes de error -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
 
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
@@ -66,16 +75,19 @@
                             <!-- Columna Imagen -->
                             <div class="col-md-5 mb-4">
                                 <div class="image-upload-container">
-                                    <img id="imagePreview" src="/img/default-equipo.jpg"
+                                    <img id="imagePreview" th:src="${equipo.img != null} ? '/uploads/' + ${equipo.img} : '/img/default-equipo.jpg'"
                                         class="image-preview img-fluid rounded">
                                     <div class="mt-3">
-                                        <label for="imagen" class="file-input-label">
+                                        <label for="fileImagen" class="file-input-label">
                                             <i class="fas fa-camera me-2"></i> Seleccionar Imagen
                                         </label>
-                                        <input type="file" class="file-input" id="imagen" name="imagen" accept="image/*"
-                                            onchange="previewImage(this)">
+                                        <input type="file" class="file-input" id="fileImagen" name="fileImagen" 
+                                            accept="image/jpeg, image/png" required>
                                         <div class="mt-2 small text-muted">
                                             Formatos: JPG, PNG (Max. 2MB)
+                                        </div>
+                                        <div th:if="${equipo.img != null}" class="mt-2">
+                                            <small>Archivo actual: <span th:text="${equipo.img}"></span></small>
                                         </div>
                                     </div>
                                 </div>
@@ -109,9 +121,9 @@
                                     </div>
 
                                     <!-- Descripción -->
-                                    <div class="form-group">
-                                        <label for="descripcion">Descripción</label>
-                                        <textarea th:field="*{descripcion}" class="form-control" id="descripcion"
+                                    <div class="col-12">
+                                        <label for="descripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
                                             rows="3" maxlength="255"></textarea>
                                         <small class="text-muted">Máximo 255 caracteres</small>
                                         <div th:if="${errorDescripcion}" class="alert alert-warning mt-2">
@@ -137,6 +149,7 @@
                                         <div class="invalid-feedback">Por favor seleccione una ubicación</div>
                                     </div>
                                 </div>
+
                                 <!-- Botones -->
                                 <div class="d-flex justify-content-between mt-4 pt-3 border-top">
                                     <a th:href="@{/equipo}" class="btn btn-secondary">
@@ -148,36 +161,40 @@
                                 </div>
                             </div>
                         </div>
+                    </form>
                 </div>
-                </form>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const imagenInput = document.getElementById('fileImagen');
+                const vistaPrevia = document.getElementById('imagePreview');
+              
+                imagenInput.addEventListener('change', function(event) {
+                    const archivo = event.target.files[0];
+                    
+                    if (!archivo) {
+                        vistaPrevia.src = '/img/default-equipo.jpg';
+                        return;
+                    }
+
+                    // Validar tipo
+                    if (!['image/jpeg', 'image/png'].includes(archivo.type)) {
+                        alert('Solo se permiten imágenes JPEG o PNG');
+                        imagenInput.value = '';
+                        return;
+                    }
+
+                    // Mostrar vista previa
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        vistaPrevia.src = e.target.result;
+                    };
+                    reader.readAsDataURL(archivo);
+                });
+            });
+        </script>
     </div>
-    </div>
-
-    <!-- Script para vista previa de imagen -->
-    <script>
-        function previewImage(input) {
-            const preview = document.getElementById('imagePreview');
-            const maxSize = 2 * 1024 * 1024; // 2MB en bytes
-
-            if (input.files && input.files[0]) {
-                // Validar tamaño
-                if (input.files[0].size > maxSize) {
-                    alert('La imagen excede el tamaño máximo de 2MB');
-                    input.value = '';
-                    return;
-                }
-
-                // Crear vista previa
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
 </body>
-
 </html>
