@@ -30,6 +30,14 @@ public class Solicitud {
     @JoinColumn(name = "personalId", nullable = false)
     private Personal personal;
 
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
+    }
+
     @OneToOne(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ReporteCorrectivo reporteCorrectivo;
 
