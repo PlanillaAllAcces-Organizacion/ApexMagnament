@@ -9,9 +9,16 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface IAsignacionEquipoService {
+
+    Page<Equipo> obtenerEquiposDelUsuarioAutenticado(String nserie, String nombre, String model, Pageable pageable);
+
     AsignacionEquipo crearAsignacion(Personal personal, Equipo equipo);
+
     void asignarEquipo(Personal personal, Integer equipoId);
+
     List<Equipo> obtenerEquiposAsignados(Integer personalId);
+
     Page<Equipo> buscarEquiposDisponibles(String nombre, String nserie, Integer ubicacion, Pageable pageable);
+
     void desasignarEquipo(Integer personalId, Integer equipoId);
 }
