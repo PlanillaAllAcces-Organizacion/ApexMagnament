@@ -88,7 +88,7 @@ public class EquipoController {
         return "equipo/create";
     }
 
-    @PostMapping("/save")
+    @PostMapping("/guardar")
     public String save(@Valid @ModelAttribute Equipo equipo,
             BindingResult result,
             @RequestParam("fileImagen") MultipartFile fileImagen,
@@ -108,12 +108,6 @@ public class EquipoController {
 
         if (fileImagen.isEmpty()) {
             attributes.addFlashAttribute("error", "Debe seleccionar una imagen");
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
-        }
-
-        if (fileImagen.getSize() > 2097152) {
-            attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
