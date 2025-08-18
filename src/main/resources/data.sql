@@ -1,4 +1,4 @@
-USE sistmaequipo2;
+USE ApexMagnamentDB;
 
 INSERT IGNORE INTO rol (Nombre) VALUES ('Administrador') ;
 INSERT IGNORE INTO rol (Nombre) VALUES ('Tecnico') ;
