@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface IAsignacionEquipoService {
 
+    AsignacionEquipo obtenerAsignacionDelUsuarioAutenticadoYEquipo(Integer equipoId);
+
     Page<Equipo> obtenerEquiposDelUsuarioAutenticado(String nserie, String nombre, String model, Pageable pageable);
 
     AsignacionEquipo crearAsignacion(Personal personal, Equipo equipo);

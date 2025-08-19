@@ -4,12 +4,12 @@ import com.apexManagent.modelos.AsignacionEquipo;
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.modelos.Personal;
 import com.apexManagent.repositorio.IAsignacionEquipoRepository;
-import com.apexManagent.repositorio.IPersonalRepository;
 import com.apexManagent.servicios.interfaces.IAsignacionEquipoService;
+import com.apexManagent.servicios.interfaces.IPersonalService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,26 +22,22 @@ public class AsignacionEquipoService implements IAsignacionEquipoService {
     private IAsignacionEquipoRepository asignacionRepository;
 
     @Autowired
-    private IPersonalRepository personalRepository;
-
+    private IPersonalService personalService; 
 
     @Override
-    public Page<Equipo> obtenerEquiposDelUsuarioAutenticado(String nserie, String nombre, String model,
-            Pageable pageable) {
+    public AsignacionEquipo obtenerAsignacionDelUsuarioAutenticadoYEquipo(Integer equipoId) {
+        Personal personal = personalService.getAuthenticatedPersonal(); 
+        return asignacionRepository.findByPersonalAndEquipoId(personal, equipoId);
+    }
 
-        // Usuario autenticado
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // Buscar personal
-        Personal personal = personalRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        // Buscar equipos asignados con filtro + paginación
+    @Override
+    public Page<Equipo> obtenerEquiposDelUsuarioAutenticado(String nserie, String nombre, String modelo, Pageable pageable) {
+        Personal personal = personalService.getAuthenticatedPersonal(); 
+        
         Page<AsignacionEquipo> asignaciones = asignacionRepository
-                .findByPersonalAndEquipo_NserieContainingAndEquipo_NombreContainingAndEquipo_ModeloContaining(personal,
-                        nserie, nombre, model, pageable);
+                .findByPersonalAndEquipo_NserieContainingAndEquipo_NombreContainingAndEquipo_ModeloContaining(
+                        personal, nserie, nombre, modelo, pageable);
 
-        // Transformar AsignacionEquipo -> Equipo
         return asignaciones.map(AsignacionEquipo::getEquipo);
     }
 
