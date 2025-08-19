@@ -97,10 +97,19 @@
                 </div>
                 <div class="details-body">
                     <div class="row">
-                        <div class="col-md-5 text-center">
-                            <img th:src="${equipo.img != null} ? @{'/equipo/image/' + ${equipo.img}} : '/img/default-equipo.jpg'" 
-                                 class="equipo-img img-fluid" alt="Imagen del equipo"
-                                 onerror="this.src='/img/default-equipo.jpg'">
+                       <div class="col-md-4">
+                            <div class="text-center">
+                                <img th:if="${equipo.img != null}" 
+                                     th:src="@{'/uploads/' + ${equipo.img}}"
+                                     class="equipo-img img-fluid" 
+                                     alt="Imagen del equipo"
+                                     style="max-height: 300px; max-width: 100%; border-radius: 5px; border: 1px solid #dee2e6; padding: 5px; background-color: #fff;">
+                                <div th:if="${equipo.img == null}" class="text-muted py-4" 
+                                     style="border: 1px dashed #dee2e6; border-radius: 5px;">
+                                    <i class="fas fa-image fa-3x"></i>
+                                    <p class="mt-2">Sin imagen</p>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-7">
                             <div class="row">

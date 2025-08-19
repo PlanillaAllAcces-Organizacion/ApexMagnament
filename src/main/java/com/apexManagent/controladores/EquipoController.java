@@ -5,15 +5,10 @@ import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,6 +38,17 @@ public class EquipoController {
     @Autowired
     private IUbicacionService ubicacionService;
 
+    /**
+     * Método para mostrar la lista paginada de equipos
+     * @param model Modelo para pasar datos a la vista
+     * @param page Número de página actual
+     * @param size Tamaño de la página
+     * @param search Término de búsqueda general (no implementado)
+     * @param nserie Número de serie para filtrar
+     * @param nombre Nombre para filtrar
+     * @param modelo Modelo para filtrar
+     * @return Vista index de equipos
+     */
     @GetMapping
     public String index(Model model,
             @RequestParam("page") Optional<Integer> page,
@@ -79,6 +85,12 @@ public class EquipoController {
         return "equipo/index";
     }
 
+
+    /**
+     * Método para mostrar el formulario de creación de equipos
+     * @param model Modelo para pasar datos a la vista
+     * @return Vista create de equipos
+     */
     @GetMapping("/create")
     public String create(Model model) {
         if (!model.containsAttribute("equipo")) {
@@ -88,11 +100,20 @@ public class EquipoController {
         return "equipo/create";
     }
 
+    
+    /**
+     * Método para guardar un nuevo equipo
+     * @param equipo Datos del equipo a guardar
+     * @param result Resultado de la validación
+     * @param fileImagen Archivo de imagen del equipo
+     * @param attributes Atributos para redirección (mensajes flash)
+     * @return Redirección a la lista de equipos o al formulario con errores
+     */
     @PostMapping("/guardar")
     public String save(@Valid @ModelAttribute Equipo equipo,
             BindingResult result,
             @RequestParam("fileImagen") MultipartFile fileImagen,
-            RedirectAttributes attributes) throws IOException {
+            RedirectAttributes attributes) {
 
         if (result.hasErrors()) {
             attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
@@ -112,33 +133,37 @@ public class EquipoController {
             return "redirect:/equipo/create";
         }
 
-        String contentType = fileImagen.getContentType();
-        if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-            attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
-        }
-
         try {
+            // Crear directorio si no existe 
             Path uploadPath = Paths.get(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
+
+            // Guardar imagen con nombre original
             String fileName = fileImagen.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(fileImagen.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            
             equipo.setImg(fileName);
-        } catch (Exception e) {
-            attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+            equipo.setFechaRegistro(LocalDateTime.now());
+            equipoService.guardar(equipo);
+            
+            attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
+            return "redirect:/equipo";
+            
+        } catch (IOException e) {
+            attributes.addFlashAttribute("error", "Error al guardar la imagen: " + e.getMessage());
             return "redirect:/equipo/create";
         }
-
-        equipo.setFechaRegistro(LocalDateTime.now());
-        equipoService.guardar(equipo);
-        attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
-        return "redirect:/equipo";
     }
 
+     /**
+     * Método para mostrar los detalles de un equipo
+     * @param id ID del equipo a mostrar
+     * @param model Modelo para pasar datos a la vista
+     * @return Vista details del equipo
+     */
     @GetMapping("/details/{id}")
     public String mostrarEquipo(@PathVariable Integer id, Model model) {
         Equipo equipo = equipoService.obtenerPorId(id)
@@ -147,6 +172,12 @@ public class EquipoController {
         return "equipo/details";
     }
 
+    /**
+     * Método para mostrar el formulario de edición de un equipo
+     * @param id ID del equipo a editar
+     * @param model Modelo para pasar datos a la vista
+     * @return Vista edit del equipo
+     */
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         Equipo equipo = equipoService.obtenerPorId(id)
@@ -156,13 +187,22 @@ public class EquipoController {
         return "equipo/edit";
     }
 
+/**
+     * Método para actualizar un equipo existente
+     * @param id ID del equipo a actualizar
+     * @param fileImagen Nueva imagen del equipo (opcional)
+     * @param equipo Datos actualizados del equipo
+     * @param result Resultado de la validación
+     * @param attributes Atributos para redirección (mensajes flash)
+     * @return Redirección a los detalles del equipo o al formulario con errores
+     */
     @PostMapping("/update")
     public String update(
             @RequestParam("id") Integer id,
             @RequestParam(value = "fileImagen", required = false) MultipartFile fileImagen,
             @Valid @ModelAttribute("equipo") Equipo equipo,
             BindingResult result,
-            RedirectAttributes attributes) throws IOException {
+            RedirectAttributes attributes) {
 
         if (result.hasErrors()) {
             attributes.addFlashAttribute("org.springframework.validation.BindingResult.equipo", result);
@@ -179,52 +219,51 @@ public class EquipoController {
             return "redirect:/equipo/edit/" + id;
         }
 
-        if (fileImagen != null && !fileImagen.isEmpty()) {
-            try {
-                // Validar imagen nueva
-                if (fileImagen.getSize() > 2097152) {
-                    attributes.addFlashAttribute("error", "La imagen no debe exceder 2MB");
-                    return "redirect:/equipo/edit/" + id;
-                }
-
-                String contentType = fileImagen.getContentType();
-                if (!(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-                    attributes.addFlashAttribute("error", "Solo se permiten imágenes JPEG o PNG");
-                    return "redirect:/equipo/edit/" + id;
-                }
-
+        try {
+            // Si se sube nueva imagen
+            if (fileImagen != null && !fileImagen.isEmpty()) {
                 // Eliminar imagen anterior si existe
                 if (equipoExistente.getImg() != null) {
                     Path oldFilePath = Paths.get(UPLOAD_DIR + equipoExistente.getImg());
                     Files.deleteIfExists(oldFilePath);
                 }
 
-                // Guardar nueva imagen
+                // Guardar nueva imagen con nombre original
                 String fileName = fileImagen.getOriginalFilename();
                 Path filePath = Paths.get(UPLOAD_DIR + fileName);
                 Files.copy(fileImagen.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                 equipo.setImg(fileName);
-            } catch (Exception e) {
-                attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
-                return "redirect:/equipo/edit/" + id;
+            } else {
+                // Mantener la imagen existente
+                equipo.setImg(equipoExistente.getImg());
             }
-        } else {
-            equipo.setImg(equipoExistente.getImg());
-        }
 
-        equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
-        equipoService.guardar(equipo);
-        attributes.addFlashAttribute("msg", "Información actualizada correctamente");
-        return "redirect:/equipo/details/" + id;
+            // Mantener la fecha de registro original
+            equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
+            equipoService.guardar(equipo);
+            
+            attributes.addFlashAttribute("msg", "Información actualizada correctamente");
+            return "redirect:/equipo/details/" + id;
+            
+        } catch (IOException e) {
+            attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+            return "redirect:/equipo/edit/" + id;
+        }
     }
 
+     /**
+     * Método para eliminar un equipo
+     * @param id ID del equipo a eliminar
+     * @param attributes Atributos para redirección (mensajes flash)
+     * @return Redirección a la lista de equipos
+     */
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes attributes) {
         try {
             Equipo equipo = equipoService.obtenerPorId(id)
                     .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
 
-            // Eliminar imagen asociada si existe
+            // Eliminar imagen asociada si existe esto se puede eliminar depende la necesidad
             if (equipo.getImg() != null) {
                 Path filePath = Paths.get(UPLOAD_DIR + equipo.getImg());
                 Files.deleteIfExists(filePath);
@@ -232,28 +271,10 @@ public class EquipoController {
 
             equipoService.eliminarPorId(id);
             attributes.addFlashAttribute("msg", "Equipo eliminado correctamente");
+            
         } catch (Exception e) {
             attributes.addFlashAttribute("error", "Error al eliminar el equipo: " + e.getMessage());
         }
         return "redirect:/equipo";
-    }
-
-    @GetMapping("/image/{filename:.+}")
-    @ResponseBody
-    public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
-        try {
-            Path file = Paths.get(UPLOAD_DIR).resolve(filename);
-            Resource resource = new UrlResource(file.toUri());
-            
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(file))
-                    .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 }

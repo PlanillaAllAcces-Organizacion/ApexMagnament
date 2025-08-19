@@ -10,7 +10,7 @@
             position: relative;
             margin-bottom: 20px;
         }
-        
+
         .img-overlay {
             border: 2px dashed #dee2e6;
             padding: 15px;
@@ -18,33 +18,33 @@
             border-radius: 5px;
             background-color: #f8f9fa;
         }
-        
+
         .equipo-img {
             max-height: 250px;
             max-width: 100%;
             margin-bottom: 15px;
         }
-        
+
         .btn-change-img {
             width: 100%;
             margin-top: 10px;
         }
-        
+
         .detalle-item {
             margin-bottom: 15px;
         }
-        
+
         .detalle-label {
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
         }
-        
+
         .detalle-label.required::after {
             content: " *";
             color: red;
         }
-        
+
         .detalle-value {
             display: block;
             padding: 8px;
@@ -91,11 +91,11 @@
                             <div class="col-md-5">
                                 <div class="equipo-img-container">
                                     <div class="img-overlay">
-                                        <img id="currentImg" 
-                                             th:src="${equipo.img != null} ? @{'/equipo/image/' + ${equipo.img}} : '/img/default-equipo.jpg'"
-                                             class="equipo-img img-fluid" alt="Imagen actual del equipo">
+                                        <img id="currentImg"
+                                            th:src="${equipo.img != null} ? @{'/uploads/' + ${equipo.img}} : '/img/default-equipo.jpg'"
+                                            class="equipo-img img-fluid" alt="Imagen actual del equipo"
+                                            style="max-height: 250px; max-width: 100%;">
                                     </div>
-
                                     <button type="button" class="btn btn-primary btn-change-img"
                                         onclick="document.getElementById('fileImagen').click()">
                                         <i class="fas fa-camera me-1"></i> Cambiar Imagen
@@ -187,13 +187,13 @@
         </div>
 
         <script>
-            document.getElementById('fileImagen').addEventListener('change', function(event) {
+            document.getElementById('fileImagen').addEventListener('change', function (event) {
                 const file = event.target.files[0];
                 const preview = document.getElementById('currentImg');
-                
+
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         preview.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
@@ -202,4 +202,5 @@
         </script>
     </div>
 </body>
+
 </html>
