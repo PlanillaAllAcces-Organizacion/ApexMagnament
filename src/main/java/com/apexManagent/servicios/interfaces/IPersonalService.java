@@ -8,6 +8,8 @@ import com.apexManagent.modelos.Personal;
 
 public interface IPersonalService {
 
+    Personal getAuthenticatedPersonal();
+
     Personal guardar(Personal personal);
 
     Optional<Personal> obtenerPorId(Integer id);

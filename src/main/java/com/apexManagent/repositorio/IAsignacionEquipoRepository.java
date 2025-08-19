@@ -18,6 +18,9 @@ import java.util.List;
 @Repository
 public interface IAsignacionEquipoRepository extends JpaRepository<AsignacionEquipo, Integer> {
 
+       // Nuevo método en el repositorio
+       AsignacionEquipo findByPersonalAndEquipoId(Personal personal, Integer equipoId);
+
        Page<AsignacionEquipo> findByPersonalAndEquipo_NserieContainingAndEquipo_NombreContainingAndEquipo_ModeloContaining(
                      Personal personal, String nserie, String nombre,
                      String model,

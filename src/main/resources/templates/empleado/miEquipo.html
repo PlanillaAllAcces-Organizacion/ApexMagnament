@@ -11,6 +11,17 @@
 
     <div layout:fragment="content">
 
+
+         <div th:if="${msg != null}">
+            <script>
+                Swal.fire({
+                    title: "Confirmación",
+                    text: '[[${msg}]]',
+                    icon: "success"
+                });
+            </script>
+        </div>
+
         <div class="container-fluid px-4">
             <h1 class="mt-4">Gestión de mis Equipos</h1>
             <ol class="breadcrumb mb-4">
@@ -60,7 +71,7 @@
                             <div class="card location-card d-flex flex-column overflow-hidden">
 
                                 <div class="d-flex flex-row-reverse p-3 align-items-center">
-                                    <a th:href="@{/empleados/solicitud}">
+                                    <a th:href="@{/empleados/solicitud(equipoId=${item.id})}">
                                         <img class="card-img-right card-image" th:src="@{/equipo/image/{file}(file=${item.img})}"/>
                                     </a>
                                     <div class="card-body p-0 me-3 d-flex flex-column justify-content-center">
