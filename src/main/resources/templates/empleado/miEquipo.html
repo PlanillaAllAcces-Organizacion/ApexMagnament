@@ -12,8 +12,7 @@
     <div layout:fragment="content">
 
 
-        <!-- Mostrar mensaje de confirmación en caso de éxito -->
-        <div th:if="${msg != null}">
+         <div th:if="${msg != null}">
             <script>
                 Swal.fire({
                     title: "Confirmación",
@@ -23,69 +22,83 @@
             </script>
         </div>
 
-        <!-- Mostrar mensaje de error en caso de error -->
-        <div th:if="${error != null}">
-            <script>
-                Swal.fire({
-                    title: "Error",
-                    text: '[[${error}]]',
-                    icon: "error"
-                });
-            </script>
-        </div>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Gestión de mis Equipos</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item active">Mis Equipos</li>
+            </ol>
 
-        <div class="app-card mb-4">
+            <div class="app-card mb-4">
+                <div class="col-md-12">
+                    <!-- Campo de filtro -->
+                    <form th:action="@{/empleados/miEquipo}" method="get" class="d-flex align-items-center">
 
-            <!-- Campo de filtro -->
-            <form  method="get">
-                <div class="input-group mb-2">
-                    <button class="input-group-text" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                    <input type="text" name="nombre" class="form-control" placeholder="Filtrar por nombre de rol...">
+
+                        <button type="submit" class="btn btn-primary me-1">
+                            <i class="fas fa-search"></i>
+                        </button>
+
+                        <div class="input-group me-2 flex-grow-1">
+                            <input type="text" class="form-control search-input" name="nserie"
+                                placeholder="Filtrar por numero de serie de equipo...">
+                        </div>
+                        <div class="input-group me-2 flex-grow-1">
+                            <input type="text" class="form-control search-input" name="nombre"
+                                placeholder="Filtrar por nombre de equipo...">
+                        </div>
+                        <div class="input-group me-2 flex-grow-1">
+                            <input type="text" class="form-control search-input" name="modelo"
+                                placeholder="Filtrar por modelo de equipo...">
+                        </div>
+
+                    </form>
+
                 </div>
-            </form>
 
-            <div class="d-flex justify-content-end">
-                <a class="btn btn-primary">Ingresar nuevo</a>
             </div>
 
-        </div>
 
+            <div class="app-card">
+                <div class="row g-3">
 
-        <div class="app-card">
-            <div id="locationList" class="row g-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h4 card-title mb-0">Mis equipos</h2>
+                    </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="h4 card-title mb-0">Mis equipos</h2>
-                </div>
+                    <div class="row g-3" th:each="item : ${equipos}">
+                        <div class="col-12">
+                            <div class="card location-card d-flex flex-column overflow-hidden">
 
-                <div class="col-12 col-md-6" >
-                    <div class="card location-card p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title h6 mb-0" ></h5>
-                            <div class="d-flex gap-2">
-                                <a class="btn btn-sm btn-light"><i
-                                        class="fa-solid fa-clipboard"></i></a>
-                                <a  class="btn btn-sm btn-dark"><i
-                                        class="fa-solid fa-pencil"></i></a>
+                                <div class="d-flex flex-row-reverse p-3 align-items-center">
+                                    <a th:href="@{/empleados/solicitud(equipoId=${item.id})}">
+                                        <img class="card-img-right card-image" th:src="@{/equipo/image/{file}(file=${item.img})}"/>
+                                    </a>
+                                    <div class="card-body p-0 me-3 d-flex flex-column justify-content-center">
+                                        <h1 class="card-title" th:text="${item.nombre}"></h1>
+                                        <h3 class="card-title" th:text="${item.modelo}"></h3>
+                                        <p class="card-text text-muted mb-0" th:text="${item.descripcion}"></p>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+
                 </div>
-
             </div>
-        </div>
 
-        <br>
-        <!-- <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item" th:each="pageNumber : ${pageNumbers}"
-                    th:classappend="${pageNumber == roles.number + 1 ? 'active' : ''}">
-                    <a class="page-link" th:href="@{|/roles?page=${pageNumber}|}" th:text="${pageNumber}"></a>
-                </li>
-            </ul>
-        </nav> -->
+            <br>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                        th:classappend="${pageNumber == equipos.number + 1 ? 'active' : ''}">
+                        <a class="page-link" th:href="@{|/equipos?page=${pageNumber}|}" th:text="${pageNumber}"></a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
 
     </div>
     <br />

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{layouts/_mainLayout}">
-
+layout:decorate="~{layouts/_mainLayout}">
 <head>
     <title>Lista de Personal | Apex Manager</title>
     <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
@@ -77,7 +76,7 @@
                                 <div class="input-group flex-grow-1">
                                     <select class="form-select" name="rolNombre" id="rol">
                                         <option value="">Buscar por Rol...</option>
-                                        <option th:each="rol : ${roles}"  th:text="${rol.nombre}">
+                                        <option th:each="rol : ${roles}" th:text="${rol.nombre}">
                                         </option>
                                     </select>
                                 </div>
@@ -132,11 +131,10 @@
                                                 onclick="confirmDelete(event, this.href)">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
-                                            <button class="btn btn-sm btn-primary" th:attr="data-id=${item.id}"
-                                                onclick="window.location.href='/asignaciones/asignar/' + this.getAttribute('data-id')"
-                                                title="Asignar equipo">
+                                            <a th:href="@{/asignaciones/asignar/{id}(id=${item.id})}"
+                                                class="btn btn-sm btn-primary" title="Asignar equipo">
                                                 <i class="fa-solid fa-laptop-medical"></i>
-                                            </button>
+                                            </a>
 
                                         </div>
                                     </td>

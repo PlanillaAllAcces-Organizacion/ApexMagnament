@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IEquiposRepository extends JpaRepository<Equipo, Integer> {
+
     boolean existsByNserie(String nserie);
     
     Page<Equipo> findByNserieContainingAndNombreContainingAndModeloContaining(

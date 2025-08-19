@@ -39,9 +39,9 @@ public class Equipo {
     @Column(nullable = false)
     private short garantia;
 
-    @Lob
-    @Column(name = "img", columnDefinition = "LONGBLOB")
-    private byte[] img;
+    @Column(name = "img")
+    private String img;
+    
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
@@ -52,13 +52,33 @@ public class Equipo {
     @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CalendarioPreventivo> calendarioPreventivo = new HashSet<>();
 
-    public Integer getId() {
+
+     @Transient 
+    private boolean asignado;
+
+     public Integer getId() {
         return Id;
     }
 
     public void setId(Integer id) {
         Id = id;
     }
+
+    // Método para verificar si está asignado
+    public boolean isAsignado() {
+        return !this.AsignacionEquipo.isEmpty();
+    }
+
+    // Getter y Setter para el campo transitorio
+    public boolean getAsignado() {
+        return this.asignado;
+    }
+
+    public void setAsignado(boolean asignado) {
+        this.asignado = asignado;
+    }
+
+   
    
     public String getNserie() {
         return nserie;
@@ -100,11 +120,11 @@ public class Equipo {
         this.garantia = garantia;
     }
 
-    public byte[] getImg() {
+    public String getImg() {
         return img;
     }
 
-    public void setImg(byte[] img) {
+    public void setImg(String img) {
         this.img = img;
     }
 
@@ -124,11 +144,4 @@ public Ubicacion getUbicacion() {
 public void setUbicacion(Ubicacion ubicacion) {
     this.ubicacion = ubicacion;
 }
-// Método para mostrar imagen en Base64
-    public String getImagenBase64() {
-        if (this.img != null && this.img.length > 0) {
-            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(this.img);
-        }
-        return "/img/default-equipo.jpg";
-    }
 }

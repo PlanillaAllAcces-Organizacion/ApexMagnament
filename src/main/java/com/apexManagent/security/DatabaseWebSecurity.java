@@ -30,10 +30,11 @@ public class DatabaseWebSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                 // aperturar el acceso a los recursos estáticos
-                .requestMatchers("/assets/**", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/uploads/**", "/static/**", "/assets/**", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/equipo/image/**").permitAll()
 
                 // las vistas públicas no requieren autenticación
-                .requestMatchers("/privacy", "/terms", "/Login").permitAll() 
+                .requestMatchers("/privacy", "/terms", "/Login").permitAll()
 
                 // Asignar permisos a URLs por ROLES
                 .requestMatchers("/").hasAnyAuthority("Administrador", "Tecnico", "Usuario")
@@ -41,7 +42,9 @@ public class DatabaseWebSecurity {
                 .requestMatchers("/personales/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/roles/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/ubicaciones/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/asignaciones/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/empleados/**").hasAnyAuthority("Usuario")
+                .requestMatchers("/solicitudes/**").hasAnyAuthority("Usuario")
 
                 // todas las demás vistas requieren autenticación
                 .anyRequest().denyAll());
@@ -49,7 +52,7 @@ public class DatabaseWebSecurity {
         http.formLogin(form -> form
                 .loginPage("/Login") // Le dice a Spring Security cuál es la URL de tu página de login
                 .permitAll()
-                .defaultSuccessUrl("/", true) 
+                .defaultSuccessUrl("/", true)
                 .failureUrl("/Login?error=true") // Redirige a la página de login con un parámetro de error si falla
         );
 

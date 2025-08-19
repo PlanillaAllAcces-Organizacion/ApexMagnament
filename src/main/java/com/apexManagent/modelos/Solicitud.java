@@ -11,24 +11,30 @@ public class Solicitud {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
-    @NotBlank(message = "La fecha de registro requerido")
-    @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 
     @NotBlank(message = "La descripcion es requerida")
     @Column(nullable = false)
     private String descripcion; 
 
-    @NotBlank(message = "El estado es requerido")
     private short estado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asignacionEquipoId", nullable = false)
     private AsignacionEquipo asignacionEquipo;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personalId", nullable = false)
     private Personal personal;
+
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
+    }
 
     @OneToOne(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ReporteCorrectivo reporteCorrectivo;
@@ -68,6 +74,10 @@ public class Solicitud {
 
     public AsignacionEquipo getAsignacionEquipo() {
         return asignacionEquipo;
+    }
+    
+    public void setAsignacionEquipo(AsignacionEquipo asignacionEquipo) {
+        this.asignacionEquipo = asignacionEquipo;
     }
 
 }

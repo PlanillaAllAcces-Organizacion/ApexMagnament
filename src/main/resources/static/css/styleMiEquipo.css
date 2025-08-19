@@ -1,74 +1,66 @@
-  body {
-      background: linear-gradient(to right, #efeae4, #8db986);
-      /* Fondo más suave */
-      font-family: 'Roboto', sans-serif;
-  }
+body {
+  background: linear-gradient(to right, #efeae4, #8db986);
+  font-family: "Roboto", sans-serif;
+  min-height: 100vh;
+}
 
-  /* estilos para el index ubicacion */
-  .container {
-      max-width: 900px;
-  }
+.container {
+  max-width: 900px;
+}
 
-  .app-card {
-      border: none;
-      border-radius: 0.75rem;
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-      background-color: #ffffff;
-      padding: 2.5rem;
-  }
+.app-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 2.5rem;
+}
 
-  /* Estilos para las tarjetas de ubicación */
-  .location-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
-      border: 1px solid #d0d7df;
-      border-radius: 0.5rem;
-      height: 100%;
-  }
+.location-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  border: 1px solid #d0d7df;
+  border-radius: 0.5rem;
+  height: 100%;
+}
 
-  .location-card:hover {
-      transform: translateY(-5px);
-      /* Efecto de elevación */
-      box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
-      /* Sombra más pronunciada */
-  }
+.location-card:hover {
+  transform: translateY(-5px);
+  background-color: #8db986;
+  color: #ffffff;
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
 
-  /* estilos para el create ubicacion */
+.location-card:hover .card-text {
+  color: #ffffff !important;
+}
 
-  .creative-card {
-      background-color: #ffffff;
-      border: none;
-      border-radius: 1.5rem;
-      /* Bordes más redondeados */
-      box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
-      /* Sombra más pronunciada */
-      padding: 3rem;
-  }
+.card-image {
+  width: 200px; /* Imagen más grande */
+  height: 200px; /* Imagen más grande */
+  object-fit: cover;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
 
-  .form-control {
-      border-radius: 0.75rem;
-  }
+/*Color para la paginacion*/
 
-  /*Color para la paginacion*/
+.page-item.active .page-link {
+  background-color: #8db986;
+  border-color: #8db986;
+  color: #ffffff;
+}
 
-  .page-item.active .page-link {
-      background-color: #8db986;
-      border-color: #8db986;
-      color: #ffffff;
-  }
+.page-link {
+  color: #000000;
+  background-color: #ffffff;
+}
 
+.page-link:hover {
+  background-color: #8db986;
+  color: #ffffff;
+}
 
-  .page-link {
-      color: #000000;
-      background-color: #ffffff;
-  }
-
-  .page-link:hover {
-      background-color: #8db986;
-      color: #ffffff;
-  }
-
-
-  .bg-siluetaVer{
-    background-color: #8db986;
-  }
+.bg-siluetaVer {
+  background-color: #8db986;
+}

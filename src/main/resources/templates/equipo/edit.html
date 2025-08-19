@@ -5,6 +5,53 @@
 <head>
     <title>Editar Equipo | Apex Manager</title>
     <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .equipo-img-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .img-overlay {
+            border: 2px dashed #dee2e6;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+
+        .equipo-img {
+            max-height: 250px;
+            max-width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-change-img {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .detalle-item {
+            margin-bottom: 15px;
+        }
+
+        .detalle-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .detalle-label.required::after {
+            content: " *";
+            color: red;
+        }
+
+        .detalle-value {
+            display: block;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 
 <body>
@@ -44,22 +91,21 @@
                             <div class="col-md-5">
                                 <div class="equipo-img-container">
                                     <div class="img-overlay">
-                                        <img id="currentImg" th:src="${equipo.getImagenBase64()}"
+                                        <img id="currentImg"
+                                            th:src="${equipo.img != null} ? @{'/uploads/' + ${equipo.img}} : '/img/default-equipo.jpg'"
                                             class="equipo-img img-fluid" alt="Imagen actual del equipo"
-                                            onerror="this.src='/img/default-equipo.jpg'">
-
-                                        <img id="imgPreview" class="img-preview">
+                                            style="max-height: 250px; max-width: 100%;">
                                     </div>
-
                                     <button type="button" class="btn btn-primary btn-change-img"
-                                        onclick="document.getElementById('imgInput').click()">
+                                        onclick="document.getElementById('fileImagen').click()">
                                         <i class="fas fa-camera me-1"></i> Cambiar Imagen
                                     </button>
 
-                                    <input type="file" id="imgInput" name="imagen" accept="image/jpeg, image/png"
-                                        onchange="previewImage(this)" style="display: none;">
-
-
+                                    <input type="file" id="fileImagen" name="fileImagen" accept="image/jpeg, image/png"
+                                        style="display: none;">
+                                </div>
+                                <div th:if="${equipo.img != null}" class="mt-2">
+                                    <small>Archivo actual: <span th:text="${equipo.img}"></span></small>
                                 </div>
                             </div>
 
@@ -67,7 +113,6 @@
                             <div class="col-md-7">
                                 <div class="row">
                                     <!-- Número de Serie -->
-                                    <!-- Campos del formulario actualizados con validación -->
                                     <div class="col-md-6 detalle-item">
                                         <label for="nserie" class="detalle-label required">Número de Serie</label>
                                         <input type="text" class="form-control" id="nserie" th:field="*{nserie}"
@@ -111,10 +156,9 @@
                                             <option value="">Seleccione una ubicación</option>
                                             <option th:each="ubic : ${ubicaciones}" th:value="${ubic.id}"
                                                 th:text="${ubic.nombreUbicacion}"
-                                                th:selected="${ubic.id == equipo.ubicacion.id}">
+                                                th:selected="${ubic.id == equipo.ubicacion?.id}">
                                             </option>
                                         </select>
-                                       
                                     </div>
 
                                     <div class="col-12 detalle-item">
@@ -136,13 +180,27 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script th:src="@{/js/equipo/scripts.js}"></script>
+        <script>
+            document.getElementById('fileImagen').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                const preview = document.getElementById('currentImg');
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
+    </div>
 </body>
 
 </html>

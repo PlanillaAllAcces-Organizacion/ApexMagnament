@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,12 @@ public class PersonalService implements IPersonalService {
 
     @Autowired
     private IPersonalRepository personalRepository;
+
+    public Personal getAuthenticatedPersonal() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return personalRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + username));
+    }
 
     @Override
     public Personal guardar(Personal personal) {
