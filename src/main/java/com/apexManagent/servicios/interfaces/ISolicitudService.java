@@ -6,9 +6,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface ISolicitudService {
     Page<Solicitud> obtenerSolicitudesPendientes(Pageable pageable);
+
     Page<Solicitud> buscarSolicitudes(String search, Pageable pageable);
+
     Page<Solicitud> obtenerSolicitudesPorPersonal(Integer personalId, Pageable pageable);
+
     Solicitud obtenerPorId(Integer id);
-    void guardar(Solicitud solicitud);
+
+    Solicitud guardar(Solicitud solicitud);
+
     void cambiarEstado(Integer id, short estado);
 }

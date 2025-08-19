@@ -41,8 +41,8 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     @Transactional
-    public void guardar(Solicitud solicitud) {
-        solicitudRepository.save(solicitud);
+    public Solicitud guardar(Solicitud solicitud) {
+        return solicitudRepository.save(solicitud);
     }
 
     @Override
