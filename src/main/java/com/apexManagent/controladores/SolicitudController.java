@@ -28,6 +28,7 @@ public class SolicitudController {
                        @RequestParam("page") Optional<Integer> page,
                        @RequestParam("size") Optional<Integer> size,
                        @RequestParam(required = false) String search,
+                       @RequestParam(required = false) Short estado,
                        @AuthenticationPrincipal User user) {
 
         int currentPage = page.orElse(1) - 1;
@@ -37,14 +38,21 @@ public class SolicitudController {
         Pageable pageable = PageRequest.of(currentPage, pageSize, sortByIdDesc);
 
         Page<Solicitud> solicitudes;
+        
+        // Estado por defecto: Pendiente (0)
+        short estadoFiltro = estado != null ? estado : (short) 0;
+        
         if (search != null && !search.isEmpty()) {
-            solicitudes = solicitudService.buscarSolicitudes(search, pageable);
+            // Búsqueda por estado + nombre de empleado
+            solicitudes = solicitudService.obtenerSolicitudesPorEstadoYEmpleado(estadoFiltro, search, pageable);
         } else {
-            solicitudes = solicitudService.obtenerSolicitudesPendientes(pageable);
+            // Solo por estado
+            solicitudes = solicitudService.obtenerSolicitudesPorEstado(estadoFiltro, pageable);
         }
 
         model.addAttribute("solicitudes", solicitudes);
         model.addAttribute("search", search);
+        model.addAttribute("estado", estadoFiltro);
 
         int totalPages = solicitudes.getTotalPages();
         if (totalPages > 0) {
@@ -59,7 +67,15 @@ public class SolicitudController {
                                @RequestParam short estado,
                                RedirectAttributes attributes) {
         solicitudService.cambiarEstado(id, estado);
-        attributes.addFlashAttribute("msg", estado == 1 ? "Solicitud aprobada" : "Solicitud rechazada");
+        
+        String mensaje = switch (estado) {
+            case 1 -> "Solicitud aprobada";
+            case 2 -> "Solicitud rechazada";
+            case 3 -> "Solicitud finalizada";
+            default -> "Estado actualizado";
+        };
+        
+        attributes.addFlashAttribute("msg", mensaje);
         return "redirect:/mantenimiento/solicitud";
     }
 }
