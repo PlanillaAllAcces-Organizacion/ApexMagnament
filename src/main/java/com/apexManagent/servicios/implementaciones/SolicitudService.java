@@ -17,24 +17,18 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Solicitud> obtenerSolicitudesPendientes(Pageable pageable) {
-        return solicitudRepository.findByEstado((short) 0, pageable); // 0 = Pendiente
+    public Page<Solicitud> obtenerSolicitudesPorEstado(short estado, Pageable pageable) {
+        return solicitudRepository.findByEstado(estado, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Solicitud> buscarSolicitudes(String search, Pageable pageable) {
-        return solicitudRepository.search(search, pageable);
+    public Page<Solicitud> obtenerSolicitudesPorEstadoYEmpleado(short estado, String nombreEmpleado, Pageable pageable) {
+        return solicitudRepository.findByEstadoAndPersonalNombreContaining(estado, nombreEmpleado, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Solicitud> obtenerSolicitudesPorPersonal(Integer personalId, Pageable pageable) {
-        return solicitudRepository.findByPersonalId(personalId, pageable);
-    }
-
-    @Override
-    @Transactional
     public Solicitud obtenerPorId(Integer id) {
         return solicitudRepository.findById(id).orElse(null);
     }
