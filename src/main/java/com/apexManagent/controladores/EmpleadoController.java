@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,9 +48,56 @@ public class EmpleadoController {
     @Autowired
     private IPersonalService personalService;
 
-    @GetMapping("/index")
-    public String index() {
-        return "empleado/index";
+    @GetMapping("/historial")
+    public String historialSolicitud(Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size,
+            @RequestParam("nombre") Optional<String> nombre,
+            @RequestParam("modelo") Optional<String> modelo,
+            @RequestParam("fechaRegistro") Optional<String> fechaRegistro) {
+
+        int currentPage = page.orElse(1) - 1;
+        int pageSize = size.orElse(5);
+
+        Sort sortByIdDesc = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(currentPage, pageSize, sortByIdDesc);
+
+        Date fechaSearch = null; // Inicializa la fecha como nula
+        if (fechaRegistro.isPresent() && !fechaRegistro.get().isBlank()) {
+            try {
+                // Si la fecha no está vacía, la conviertes manualmente
+                fechaSearch = Date.valueOf(fechaRegistro.get());
+            } catch (IllegalArgumentException e) {
+                // Maneja el error si el formato de la fecha es incorrecto
+                model.addAttribute("error", "Formato de fecha inválido.");
+                // Puedes devolver la vista con un mensaje de error o redirigir
+                return "empleado/historial";
+            }
+        }
+
+        String nombreSearch = nombre.orElse(null);
+        String modeloSearch = modelo.orElse(null);
+        Page<Solicitud> solicitudes = solicitudService.obtenerLasSolicitudesDelUsuario(nombreSearch, modeloSearch,
+                fechaSearch, pageable);
+
+        Map<Short, String> estados = new HashMap<>();
+        estados.put((short) 0, "Rechazada");
+        estados.put((short) 1, "En espera");
+        estados.put((short) 2, "En proceso");
+        estados.put((short) 3, "Finalizado");
+
+        model.addAttribute("solicitudes", solicitudes);
+        model.addAttribute("estados", estados);
+
+        int totalPages = solicitudes.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        return "empleado/historial";
     }
 
     @GetMapping("/miEquipo")
@@ -113,7 +163,7 @@ public class EmpleadoController {
 
     @PostMapping("/guardar")
     public String guardarSolicitud(@ModelAttribute("solicitud") Solicitud solicitud,
-            @RequestParam("equipoId") Integer equipoId, // Añade este parámetro
+            @RequestParam("equipoId") Integer equipoId,
             BindingResult result,
             RedirectAttributes redirectAttributes) {
 
