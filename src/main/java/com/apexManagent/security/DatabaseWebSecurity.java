@@ -31,7 +31,6 @@ public class DatabaseWebSecurity {
         http.authorizeHttpRequests(authorize -> authorize
                 // aperturar el acceso a los recursos estáticos
                 .requestMatchers("/uploads/**", "/static/**", "/assets/**", "/css/**", "/js/**").permitAll()
-                .requestMatchers("/equipo/image/**").permitAll()
 
                 // las vistas públicas no requieren autenticación
                 .requestMatchers("/privacy", "/terms", "/Login").permitAll()
@@ -47,7 +46,7 @@ public class DatabaseWebSecurity {
                 .requestMatchers("/solicitudes/**").hasAnyAuthority("Usuario")
 
                 // todas las demás vistas requieren autenticación
-                .anyRequest().denyAll());
+                .anyRequest().authenticated());
 
         http.formLogin(form -> form
                 .loginPage("/Login") // Le dice a Spring Security cuál es la URL de tu página de login

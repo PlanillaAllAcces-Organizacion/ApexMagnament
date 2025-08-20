@@ -1,10 +1,16 @@
 package com.apexManagent.servicios.interfaces;
 
 import com.apexManagent.modelos.Solicitud;
+
+import java.sql.Date;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ISolicitudService {
+
+    Page<Solicitud> obtenerLasSolicitudesDelUsuario(String nombre, String modelo, Date fecha, Pageable pageable);
+
     Page<Solicitud> obtenerSolicitudesPendientes(Pageable pageable);
 
     Page<Solicitud> buscarSolicitudes(String search, Pageable pageable);
