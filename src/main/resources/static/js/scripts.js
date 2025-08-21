@@ -89,7 +89,7 @@ function confirmDelete(event, url) {
     event.preventDefault();
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "¡Esta acción eliminará el equipo permanentemente!",
+        text: "¡Esta acción eliminará el equipo y asignacion!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3a7bd5',
