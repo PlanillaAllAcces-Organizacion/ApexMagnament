@@ -82,15 +82,19 @@ public String mostrarFormularioAsignacion(
         return "redirect:/asignaciones/asignar/" + personalId;
     }
 
-    @GetMapping("/desasignar/{personalId}/{equipoId}")
-    public String desasignarEquipo(
-            @PathVariable Integer personalId,
-            @PathVariable Integer equipoId,
-            RedirectAttributes redirectAttributes) {
-        
+   @GetMapping("/desasignar/{personalId}/{equipoId}")
+public String desasignarEquipo(
+        @PathVariable Integer personalId,
+        @PathVariable Integer equipoId,
+        RedirectAttributes redirectAttributes) {
+    
+    try {
         asignacionService.desasignarEquipo(personalId, equipoId);
-        
         redirectAttributes.addFlashAttribute("success", "Equipo desasignado correctamente");
-        return "redirect:/asignaciones/asignar/" + personalId;
+    } catch (IllegalArgumentException e) {
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
+    
+    return "redirect:/asignaciones/asignar/" + personalId;
+}
 }

@@ -76,12 +76,12 @@ public class AsignacionEquipoService implements IAsignacionEquipoService {
         return asignacionRepository.findEquiposDisponiblesConFiltros(nombre, nserie, ubicacion, pageable);
     }
 
-    @Override
+     @Override
     @Transactional
     public void desasignarEquipo(Integer personalId, Integer equipoId) {
-        int eliminados = asignacionRepository.eliminarAsignacion(personalId, equipoId);
-        if (eliminados == 0) {
-            throw new IllegalArgumentException("No se encontró la asignación especificada");
+        if (!asignacionRepository.existsByPersonalIdAndEquipoId(personalId, equipoId)) {
+            throw new IllegalArgumentException("No se encontró la asignación especificada para desasignar");
         }
+        asignacionRepository.deleteByPersonalIdAndEquipoId(personalId, equipoId);
     }
 }
