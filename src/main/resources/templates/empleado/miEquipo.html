@@ -72,7 +72,7 @@
 
                                 <div class="d-flex flex-row-reverse p-3 align-items-center">
                                     <a th:href="@{/empleados/solicitud(equipoId=${item.id})}">
-                                        <img class="card-img-right card-image" th:src="@{/equipo/image/{file}(file=${item.img})}"/>
+                                        <img class="card-img-right card-image"  th:src="@{/uploads/{file}(file=${item.img})}"/>
                                     </a>
                                     <div class="card-body p-0 me-3 d-flex flex-column justify-content-center">
                                         <h1 class="card-title" th:text="${item.nombre}"></h1>
