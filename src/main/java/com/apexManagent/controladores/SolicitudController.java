@@ -39,14 +39,12 @@ public class SolicitudController {
 
         Page<Solicitud> solicitudes;
         
-        // Estado por defecto: Pendiente (0)
-        short estadoFiltro = estado != null ? estado : (short) 0;
+        // Estado por defecto: En espera (1)
+        short estadoFiltro = estado != null ? estado : (short) 1;
         
         if (search != null && !search.isEmpty()) {
-            // Búsqueda por estado + nombre de empleado
             solicitudes = solicitudService.obtenerSolicitudesPorEstadoYEmpleado(estadoFiltro, search, pageable);
         } else {
-            // Solo por estado
             solicitudes = solicitudService.obtenerSolicitudesPorEstado(estadoFiltro, pageable);
         }
 
@@ -69,8 +67,9 @@ public class SolicitudController {
         solicitudService.cambiarEstado(id, estado);
         
         String mensaje = switch (estado) {
-            case 1 -> "Solicitud aprobada";
-            case 2 -> "Solicitud rechazada";
+            case 0 -> "Solicitud rechazada";
+            case 1 -> "Solicitud puesta en espera";
+            case 2 -> "Solicitud aceptada y en proceso";
             case 3 -> "Solicitud finalizada";
             default -> "Estado actualizado";
         };
