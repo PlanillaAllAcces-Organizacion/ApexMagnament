@@ -1,5 +1,6 @@
 package com.apexManagent.servicios.implementaciones;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +56,8 @@ public class EquipoService implements IEquipoService {
                 nserie, nombre, modelo, pageable);
     }
 
-    
+     @Override
+    public List<Equipo> findAll() {
+        return equipoRepository.findAll();
+    }
 }

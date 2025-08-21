@@ -43,11 +43,13 @@ public class DatabaseWebSecurity {
                 .requestMatchers("/roles/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/ubicaciones/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/asignaciones/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/mantenimiento/**").hasAnyAuthority("Administrador", "Tecnico")
+                .requestMatchers("/equipo/pdf/**").hasAnyAuthority("Administrador", "Tecnico")
                 .requestMatchers("/empleados/**").hasAnyAuthority("Usuario")
                 .requestMatchers("/solicitudes/**").hasAnyAuthority("Usuario")
 
                 // todas las demás vistas requieren autenticación
-                .anyRequest().denyAll());
+                .anyRequest().authenticated());
 
         http.formLogin(form -> form
                 .loginPage("/Login") // Le dice a Spring Security cuál es la URL de tu página de login
