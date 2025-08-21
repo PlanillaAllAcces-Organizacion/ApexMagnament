@@ -3,12 +3,17 @@ package com.apexManagent.controladores;
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
+import com.apexManagent.servicios.utilerias.PdfGeneraterService; // Importa el servicio PDF
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,11 +43,15 @@ public class EquipoController {
     @Autowired
     private IUbicacionService ubicacionService;
 
+    @Autowired
+    private PdfGeneraterService pdfGeneraterService;
+
     /**
      * Método para mostrar la lista paginada de equipos
-     * @param model Modelo para pasar datos a la vista
-     * @param page Número de página actual
-     * @param size Tamaño de la página
+     * 
+     * @param model  Modelo para pasar datos a la vista
+     * @param page   Número de página actual
+     * @param size   Tamaño de la página
      * @param search Término de búsqueda general (no implementado)
      * @param nserie Número de serie para filtrar
      * @param nombre Nombre para filtrar
@@ -85,9 +94,9 @@ public class EquipoController {
         return "equipo/index";
     }
 
-
     /**
      * Método para mostrar el formulario de creación de equipos
+     * 
      * @param model Modelo para pasar datos a la vista
      * @return Vista create de equipos
      */
@@ -100,11 +109,11 @@ public class EquipoController {
         return "equipo/create";
     }
 
-    
     /**
      * Método para guardar un nuevo equipo
-     * @param equipo Datos del equipo a guardar
-     * @param result Resultado de la validación
+     * 
+     * @param equipo     Datos del equipo a guardar
+     * @param result     Resultado de la validación
      * @param fileImagen Archivo de imagen del equipo
      * @param attributes Atributos para redirección (mensajes flash)
      * @return Redirección a la lista de equipos o al formulario con errores
@@ -134,7 +143,7 @@ public class EquipoController {
         }
 
         try {
-            // Crear directorio si no existe 
+            // Crear directorio si no existe
             Path uploadPath = Paths.get(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -144,23 +153,24 @@ public class EquipoController {
             String fileName = fileImagen.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(fileImagen.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            
+
             equipo.setImg(fileName);
             equipo.setFechaRegistro(LocalDateTime.now());
             equipoService.guardar(equipo);
-            
+
             attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
             return "redirect:/equipo";
-            
+
         } catch (IOException e) {
             attributes.addFlashAttribute("error", "Error al guardar la imagen: " + e.getMessage());
             return "redirect:/equipo/create";
         }
     }
 
-     /**
+    /**
      * Método para mostrar los detalles de un equipo
-     * @param id ID del equipo a mostrar
+     * 
+     * @param id    ID del equipo a mostrar
      * @param model Modelo para pasar datos a la vista
      * @return Vista details del equipo
      */
@@ -174,7 +184,8 @@ public class EquipoController {
 
     /**
      * Método para mostrar el formulario de edición de un equipo
-     * @param id ID del equipo a editar
+     * 
+     * @param id    ID del equipo a editar
      * @param model Modelo para pasar datos a la vista
      * @return Vista edit del equipo
      */
@@ -187,12 +198,13 @@ public class EquipoController {
         return "equipo/edit";
     }
 
-/**
+    /**
      * Método para actualizar un equipo existente
-     * @param id ID del equipo a actualizar
+     * 
+     * @param id         ID del equipo a actualizar
      * @param fileImagen Nueva imagen del equipo (opcional)
-     * @param equipo Datos actualizados del equipo
-     * @param result Resultado de la validación
+     * @param equipo     Datos actualizados del equipo
+     * @param result     Resultado de la validación
      * @param attributes Atributos para redirección (mensajes flash)
      * @return Redirección a los detalles del equipo o al formulario con errores
      */
@@ -241,19 +253,20 @@ public class EquipoController {
             // Mantener la fecha de registro original
             equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
             equipoService.guardar(equipo);
-            
+
             attributes.addFlashAttribute("msg", "Información actualizada correctamente");
             return "redirect:/equipo/details/" + id;
-            
+
         } catch (IOException e) {
             attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
             return "redirect:/equipo/edit/" + id;
         }
     }
 
-     /**
+    /**
      * Método para eliminar un equipo
-     * @param id ID del equipo a eliminar
+     * 
+     * @param id         ID del equipo a eliminar
      * @param attributes Atributos para redirección (mensajes flash)
      * @return Redirección a la lista de equipos
      */
@@ -263,7 +276,8 @@ public class EquipoController {
             Equipo equipo = equipoService.obtenerPorId(id)
                     .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
 
-            // Eliminar imagen asociada si existe esto se puede eliminar depende la necesidad
+            // Eliminar imagen asociada si existe esto se puede eliminar depende la
+            // necesidad
             if (equipo.getImg() != null) {
                 Path filePath = Paths.get(UPLOAD_DIR + equipo.getImg());
                 Files.deleteIfExists(filePath);
@@ -271,10 +285,31 @@ public class EquipoController {
 
             equipoService.eliminarPorId(id);
             attributes.addFlashAttribute("msg", "Equipo eliminado correctamente");
-            
+
         } catch (Exception e) {
             attributes.addFlashAttribute("error", "Error al eliminar el equipo: " + e.getMessage());
         }
         return "redirect:/equipo";
+    }
+
+    @GetMapping("/reportegeneral/{visualizacion}")
+    public ResponseEntity<byte[]> ReporteGeneral(@PathVariable("visualizacion") String visualizacion) {
+
+        try {
+            List<Equipo> equipos = equipoService.findAll();
+
+            // Genera el PDF. Si hay un error aquí, la excepción será capturada.
+            byte[] pdfBytes = pdfGeneraterService.generatePdfFromHtml("reportes/rpEquipo", "equipo", equipos);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            // inline= vista previa, attachment=descarga el archivo
+            headers.add("Content-Disposition", visualizacion + "; filename=reporte_general.pdf");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

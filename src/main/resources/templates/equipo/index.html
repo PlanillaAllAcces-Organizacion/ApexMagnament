@@ -52,6 +52,16 @@
                         <a th:href="@{equipo/create}" class="btn btn-light btn-sm">
                             <i class="fas fa-plus me-1"></i> Nuevo Equipo
                         </a>
+
+                        <form>
+                            <a th:href="@{/equipo/reportegeneral/attachment}" class="btn btn-success">
+                                <i class="bi bi-download me-2"></i>Descargar Reporte General
+                            </a>
+                            <a th:href="@{/equipo/reportegeneral/inline}" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-printer me-2"></i>Imprimir Reporte General
+                            </a>
+                        </form>
+
                     </div>
                 </div>
 
@@ -144,11 +154,11 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <nav th:if="${equipos.totalPages > 1}">
-                            <ul class="pagination justify-content-center">
+                        <nav aria-label="Page navigation example" >
+                            <ul class="pagination">
                                 <li class="page-item" th:each="pageNumber : ${pageNumbers}"
-                                    th:classappend="${pageNumber == equipos.number + 1} ? 'active'">
-                                    <a class="page-link" th:href="@{|/equipo?page=${pageNumber}&size=${equipos.size}|}"
+                                    th:classappend="${pageNumber == equipos.number + 1} ? 'active' : ''">
+                                    <a class="page-link" th:href="@{|/equipo?page=${pageNumber}|}"
                                         th:text="${pageNumber}"></a>
                                 </li>
                             </ul>
