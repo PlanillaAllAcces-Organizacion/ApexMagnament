@@ -5,9 +5,11 @@ import com.apexManagent.modelos.Solicitud;
 import com.apexManagent.repositorio.IReporteCorrectivoRepository;
 import com.apexManagent.servicios.interfaces.IReporteCorrectivoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +17,13 @@ public class ReporteCorrectivoService implements IReporteCorrectivoService {
 
     @Autowired
     private IReporteCorrectivoRepository reporteCorrectivoRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReporteCorrectivo> buscarReportes(String search, Short tipoMantenimiento, 
+                                                 org.springframework.data.domain.Pageable pageable) {
+        return reporteCorrectivoRepository.buscarReportes(search, tipoMantenimiento, pageable);
+    }
 
     @Override
     @Transactional
@@ -56,5 +65,10 @@ public class ReporteCorrectivoService implements IReporteCorrectivoService {
         reporte.setPersonal(solicitud.getPersonal());
         
         return guardarReporte(reporte);
+    }
+
+     @Override
+    public List<ReporteCorrectivo> findAll() {
+        return reporteCorrectivoRepository.findAll();
     }
 }
