@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
+<head>
+    <title>Calendarios Preventivos | Apex Manager</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+
+
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Gestión Calendarios Preventivos</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item active">Calendarios Preventivos</li>
+            </ol>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    Listado de Calendarios
+                </div>
+
+                <form method="get" th:action="@{/calendarios}" class="mb-3 row g-2">
+                    <div class="col-4">
+                        <select name="estado" class="form-select">
+                            <option th:value="1" th:selected="${estado == 1}">En espera</option>
+                            <option th:value="2" th:selected="${estado == 2}">En proceso</option>
+                            <option th:value="3" th:selected="${estado == 3}">Finalizado</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary w-100" type="submit">Filtrar</button>
+                    </div>
+                </form>
+
+                <!-- TABLA -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                             <th>Equipo</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${calendarios}">
+                            <td th:text="${item.id}"></td>
+                            <td th:text="${item.equipo != null ? item.equipo.nombre : '---'}"></td>
+                            <td th:text="${#temporals.format(item.fechaInicio, 'dd-MM-yyyy HH:mm')}"></td>
+                             <td th:text="${#temporals.format(item.fechaFin, 'dd-MM-yyyy HH:mm')}"></td>
+                            <td>
+                                <span th:switch="${item.estadoMantenimiento}">
+                                    <span th:case="1" class="badge bg-warning text-dark">En espera</span>
+                                    <span th:case="2" class="badge bg-info text-dark">En proceso</span>
+                                    <span th:case="3" class="badge bg-success">Finalizado</span>
+                                    <span th:case="*">Desconocido</span>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- PAGINACION -->
+                <!-- <nav th:if="${calendarios.totalPages > 1}">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${calendarios.first}? 'disabled'">
+                            <a class="page-link"
+                                th:href="@{/calendarios(page=${calendarios.number}, estado=${estado})}">Anterior</a>
+                        </li>
+
+                        <li th:each="pageNum : ${pageNumbers}" class="page-item"
+                            th:classappend="${pageNum == ${calendarios.number + 1}}? 'active'">
+                            <a class="page-link" th:href="@{/calendarios(page=${pageNum}, estado=${estado})}"
+                                th:text="${pageNum}"></a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${calendarios.last}? 'disabled'">
+                            <a class="page-link"
+                                th:href="@{/calendarios(page=${calendarios.number + 2}, estado=${estado})}">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav> -->
+
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
