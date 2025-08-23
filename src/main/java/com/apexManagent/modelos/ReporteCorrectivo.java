@@ -1,9 +1,9 @@
 package com.apexManagent.modelos;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class ReporteCorrectivo {
@@ -13,29 +13,35 @@ public class ReporteCorrectivo {
     private Integer Id;
 
     @NotBlank(message = "La observacion es requerida")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String observacion;
 
-    @NotBlank(message = "La fecha de creacion es requerido")
+    @NotNull(message = "La fecha de creacion es requerida")
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
 
-    @NotBlank(message = "El tipo de mantenimiento es requerido")
+    @NotNull(message = "El tipo de mantenimiento es requerido")
     @Column(nullable = false)
-    private short tipoMantenimiento;
+    private Short tipoMantenimiento; // Cambiado a Short
 
-    @NotBlank(message = "El estado es requerido")
+    @NotNull(message = "El estado es requerido")
     @Column(nullable = false)
-    private short estado;
+    private Short estado; // Cambiado a Short
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SolicitudId", nullable = false)
+    @JoinColumn(name = "solicitudId", nullable = false) // Corregido: "solicitudId" en minúscula
     private Solicitud solicitud;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PersonalId", nullable = false)
+    @JoinColumn(name = "personalId", nullable = false)
     private Personal personal;
 
+    // Constructor por defecto
+    public ReporteCorrectivo() {
+        this.fechaCreacion = LocalDateTime.now();
+    }
+
+    // Getters y Setters
     public Integer getId() {
         return Id;
     }
@@ -60,20 +66,19 @@ public class ReporteCorrectivo {
         this.fechaCreacion = fechaCreacion;
     }
 
-    
-    public short getTipoMantenimiento() {
+    public Short getTipoMantenimiento() {
         return tipoMantenimiento;
     }
 
-    public void setTipoMantenimiento(short tipoMantenimiento) {
+    public void setTipoMantenimiento(Short tipoMantenimiento) {
         this.tipoMantenimiento = tipoMantenimiento;
     }
 
-    public short getEstado() {
+    public Short getEstado() {
         return estado;
     }
 
-    public void setEstado(short estado) {
+    public void setEstado(Short estado) {
         this.estado = estado;
     }
 
@@ -85,4 +90,11 @@ public class ReporteCorrectivo {
         this.solicitud = solicitud;
     }
 
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
+    }
 }
