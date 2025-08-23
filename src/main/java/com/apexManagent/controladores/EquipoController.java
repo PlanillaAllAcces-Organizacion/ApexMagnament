@@ -158,8 +158,10 @@ public class EquipoController {
             equipo.setFechaRegistro(LocalDateTime.now());
             equipoService.guardar(equipo);
 
+            attributes.addAttribute("equipoId", equipo.getId());
+
             attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
-            return "redirect:/equipo";
+            return "redirect:/preventivos/calendario";
 
         } catch (IOException e) {
             attributes.addFlashAttribute("error", "Error al guardar la imagen: " + e.getMessage());
