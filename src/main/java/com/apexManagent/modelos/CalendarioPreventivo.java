@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-
 
 @Entity
 public class CalendarioPreventivo {
@@ -19,14 +17,10 @@ public class CalendarioPreventivo {
     @JoinColumn(name = "equipoId", nullable = false)
     private Equipo equipo;
 
-    @NotBlank(message = "La fecha de inicio es obligatoria")
-    @FutureOrPresent(message = "La fecha de inicio no puede ser anterior a la fecha actual") 
-    @Column(name = "fecha_inicio", nullable = false)
+    @FutureOrPresent(message = "La fecha de inicio no puede ser anterior  a la fecha actual, y debe ser una hora futura")
     private LocalDateTime fechaInicio;
 
-    @NotBlank(message = "La fecha fin es obligatoria")
-    @Column(name = "fecha_fin", nullable = false)
-    @Future(message = "La fecha de fin debe ser posterior a la fecha actual")
+    @Future(message = "La fecha de fin debe ser posterior a la fecha actual, debe ser una posterior a la fecha de inicio")
     private LocalDateTime fechaFin;
 
     @Column(name = "estado_mantenimiento")
@@ -65,6 +59,14 @@ public class CalendarioPreventivo {
 
     public void setEstadoMantenimiento(short estadoMantenimiento) {
         this.estadoMantenimiento = estadoMantenimiento;
+    }
+
+    public void setEquipo(Equipo equipo) {
+        this.equipo = equipo;
+    }
+
+     public Equipo getEquipo() {
+        return equipo;
     }
 
 
