@@ -19,10 +19,10 @@ window.addEventListener('DOMContentLoaded', event => {
     // Resaltar filas de tabla al pasar el mouse
     const tableRows = document.querySelectorAll('tbody tr');
     tableRows.forEach(row => {
-        row.addEventListener('mouseenter', function() {
+        row.addEventListener('mouseenter', function () {
             this.classList.add('table-active');
         });
-        row.addEventListener('mouseleave', function() {
+        row.addEventListener('mouseleave', function () {
             this.classList.remove('table-active');
         });
     });
@@ -35,15 +35,15 @@ window.addEventListener('DOMContentLoaded', event => {
 });
 
 // Validación del formulario de edición
-(function() {
+(function () {
     'use strict';
-    
+
     const form = document.querySelector('.needs-validation');
     if (form) {
         const phoneInput = document.querySelector('#phone-input');
         const phoneRegex = /^\d{4}-\d{4}$/;
 
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             if (!form.checkValidity() || (phoneInput && !phoneRegex.test(phoneInput.value))) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -63,7 +63,6 @@ window.addEventListener('DOMContentLoaded', event => {
                     confirmButtonColor: '#3a7bd5'
                 });
             }
-            form.classList.add('was-validated');
         }, false);
 
         form.querySelectorAll('input, select, textarea').forEach(input => {
@@ -104,13 +103,13 @@ function confirmDelete(event, url) {
 }
 
 // Inicialización de elementos cuando se carga contenido dinámico
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Configuración de mensajes flash
     const flashMessage = document.getElementById('flash-message');
     if (flashMessage) {
         const messageType = flashMessage.getAttribute('data-type');
         const messageText = flashMessage.getAttribute('data-message');
-        
+
         if (messageType && messageText) {
             Swal.fire({
                 icon: messageType,
@@ -118,6 +117,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 text: messageText,
                 confirmButtonColor: '#3a7bd5'
             });
+        }
+    }
+});
+
+
+//calendarioVista
+document.getElementById("calendarioForm").addEventListener("submit", function (event) {
+    const fechaInicioInput = document.getElementById("fechaInicio").value;
+    const fechaFinInput = document.getElementById("fechaFin").value;
+    const errorDiv = document.getElementById("fechaError");
+
+    // Limpiar errores anteriores
+    errorDiv.textContent = "";
+
+    if (fechaInicioInput && fechaFinInput) {
+        const fechaInicio = new Date(fechaInicioInput);
+        const fechaFin = new Date(fechaFinInput);
+
+        // Fecha esperada = fechaInicio + 1 mes
+        const fechaEsperada = new Date(fechaInicio);
+        fechaEsperada.setMonth(fechaEsperada.getMonth() + 1);
+
+        // Comparar solo fecha (día/mes/año)
+        const mismoDia = fechaFin.getDate() === fechaEsperada.getDate();
+        const mismoMes = fechaFin.getMonth() === fechaEsperada.getMonth();
+        const mismoAnio = fechaFin.getFullYear() === fechaEsperada.getFullYear();
+
+        if (!(mismoDia && mismoMes && mismoAnio)) {
+            event.preventDefault(); // detener envío
+            errorDiv.textContent = "La fecha de fin debe ser exactamente un mes después de la fecha de inicio.";
         }
     }
 });
