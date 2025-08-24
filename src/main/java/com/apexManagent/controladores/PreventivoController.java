@@ -355,4 +355,53 @@ public class PreventivoController {
         }
         return null;
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    @GetMapping("/newCalendario/{id}")
+    public String NewcalendarioEquipo(@PathVariable("id") Integer equipoId, Model model) {
+        Optional<Equipo> equipoOpt = equipoService.obtenerPorId(equipoId);
+
+        if (equipoOpt.isEmpty()) {
+            model.addAttribute("error", "Equipo no encontrado.");
+            return "error";
+        }
+
+        Equipo equipo = equipoOpt.get();
+        CalendarioPreventivo calendario = new CalendarioPreventivo();
+        calendario.setEquipo(equipo);
+
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("calendario", calendario);
+
+        return "preventivo/newCalendario";
+    }
+
+    @PostMapping("/Newguardar")
+    public String guardarNewCalendario(
+            @Valid @ModelAttribute("calendario") CalendarioPreventivo calendario,
+            BindingResult result,
+            @RequestParam("equipoId") Integer equipoId,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        if (result.hasErrors()) {
+            Equipo equipo = equipoService.obtenerPorId(equipoId)
+                    .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + equipoId));
+
+            model.addAttribute("equipo", equipo);
+            model.addAttribute("calendario", calendario);
+            return "preventivo/calendario";
+        }
+
+        Equipo equipo = equipoService.obtenerPorId(equipoId)
+                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + equipoId));
+
+        calendario.setEquipo(equipo);
+        calendario.setEstadoMantenimiento((short) 1);
+        preventivoService.guardar(calendario);
+
+        redirectAttributes.addFlashAttribute("msg", "Reporte y nuevo calendario preventivo guardado exitosamente.");
+        return "redirect:/indexPreventivo";
+    }
+
 }
