@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="/layouts/_mainLayout">
+
+<head>
+    <title>calendario Preventivo</title>
+    <style>
+        .equipo-img-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .img-overlay {
+            border: 2px dashed #dee2e6;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+
+        .equipo-img {
+            max-height: 250px;
+            max-width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-change-img {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .detalle-item {
+            margin-bottom: 15px;
+        }
+
+        .detalle-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .detalle-label.required::after {
+            content: " *";
+            color: red;
+        }
+
+        .detalle-value {
+            display: block;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .card-header {
+            background-color: #8db986;
+            border-color: #8db986;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+
+        <div class="container-fluid px-4">
+
+
+
+            <h1 class="mt-4">Nuevo calendario Preventivo</h1>
+            <br>
+
+            <div class="card mb-4">
+                <div class="card-header text-white">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    Calendario preventivo
+                </div>
+                <div class="card-body">
+                    <form id="calendarioForm" th:action="@{/preventivos/Newguardar}" th:object="${calendario}"
+                        method="post" class="needs-validation">
+
+                        <input type="hidden" name="equipoId" th:value="${equipo.id}" />
+
+                        <div class="text-danger" th:if="${#fields.hasGlobalErrors()}"
+                            th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+
+                        <div class="row justify-content-center">
+                            <div class="col-md-7">
+                                <div class="row">
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="nserie" class="detalle-label">Numero de serie</label>
+                                        <input type="text" class="form-control" id="nserie" th:value="${equipo.nserie}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="nombre" class="detalle-label">Nombre del equipo</label>
+                                        <input type="text" class="form-control" id="nombre" th:value="${equipo.nombre}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="modelo" class="detalle-label">Modelo</label>
+                                        <input type="text" class="form-control" id="modelo" th:value="${equipo.modelo}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="modelo" class="detalle-label">Garantía</label>
+                                        <input type="text" class="form-control" id="garantia"
+                                            th:value="${equipo.garantia} + ' meses'" readonly>
+                                    </div>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="fechaInicio" class="detalle-label">Fecha de Inicio de
+                                            revisión</label>
+                                        <input type="datetime-local" class="form-control" id="fechaInicio"
+                                            th:field="*{fechaInicio}" required>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('fechaInicio')}"
+                                            th:errors="*{fechaInicio}"></div>
+
+                                    </div>
+
+                                    <div class="col-md-6 detalle-item">
+                                        <label for="fechaFin" class="detalle-label">Fecha de Fin de revisión</label>
+                                        <input type="datetime-local" class="form-control" id="fechaFin"
+                                            th:field="*{fechaFin}" required>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('fechaFin')}"
+                                            th:errors="*{fechaFin}"></div>
+                                        <div id="fechaError" class="text-danger mt-1"></div>
+
+                                    </div>
+
+                                    <div class="d-flex justify-content-center mt-4 pt-3 border-top">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa-solid fa-arrow-right"></i> Guardar nuevo calendario
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
