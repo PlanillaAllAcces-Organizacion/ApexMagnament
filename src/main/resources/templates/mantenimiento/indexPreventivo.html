@@ -118,6 +118,11 @@
                                                     class="btn btn-info" title="Ver equipo">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+                                                <a th:if="${calendario.estadoMantenimiento == 3}"
+                                                     th:href="@{'/preventivos/newCalendario/' + ${calendario.equipo.id}}"
+                                                    class="btn btn-dark" title="Ver equipo">
+                                                    <i class="fa-solid fa-calendar"></i>
+                                                </a>
                                                 <a th:if="${calendario.estadoMantenimiento == 1 or calendario.estadoMantenimiento == 2}"
                                                     th:href="@{'/preventivos/reporte/enviar/' + ${calendario.id}}"
                                                     class="btn btn-warning btn-sm" title="Enviar reporte">
