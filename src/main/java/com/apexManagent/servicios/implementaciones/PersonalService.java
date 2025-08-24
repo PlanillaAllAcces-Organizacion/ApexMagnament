@@ -33,6 +33,10 @@ public class PersonalService implements IPersonalService {
     public Optional<Personal> obtenerPorId(Integer id) {
         return personalRepository.findById(id);
     }
+      @Override
+    public Optional<Personal> obtenerPorUsername(String Username) {
+        return personalRepository.findByUsername(Username);
+    }
 
     @Override
     public Page<Personal> findByNombreContainingAndApellidoContainingAndEmailContainingAndRol_NombreContaining(

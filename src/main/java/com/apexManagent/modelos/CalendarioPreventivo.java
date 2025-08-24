@@ -69,5 +69,13 @@ public class CalendarioPreventivo {
         return equipo;
     }
 
+     public ReportePreventivo getReportePreventivo() {
+         return reportePreventivo;
+     }
+
+     public void setReportePreventivo(ReportePreventivo reportePreventivo) {
+         this.reportePreventivo = reportePreventivo;
+     }
+
 
 }
