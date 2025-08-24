@@ -3,6 +3,7 @@ package com.apexManagent.modelos;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class ReportePreventivo {
@@ -23,9 +24,17 @@ public class ReportePreventivo {
     @Column(nullable = false)
     private String observacion;
 
-    @NotBlank(message = "La fecha de atencion es requerida")
+    @NotNull(message = "La fecha de atencion es requerida") 
     @Column(nullable = false)
     private LocalDateTime fechaAtencion;
+    
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
+    }
 
     @Column(nullable = false)
     private Short  tipoMantenimiento;
@@ -59,6 +68,14 @@ public class ReportePreventivo {
 
     public Short getTipoMantenimiento() {
         return tipoMantenimiento;
+    }
+
+    public CalendarioPreventivo getCalendarioPreventivo() {
+        return calendarioPreventivo;
+    }
+
+    public void setCalendarioPreventivo(CalendarioPreventivo calendarioPreventivo) {
+        this.calendarioPreventivo = calendarioPreventivo;
     }
 
     public void setTipoMantenimiento(Short tipoMantenimiento) {
