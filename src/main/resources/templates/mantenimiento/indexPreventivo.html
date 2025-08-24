@@ -4,6 +4,7 @@
 
 <head>
     <title>Mantenimiento Preventivo | Apex Manager</title>
+    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
 </head>
 
 <body>
@@ -26,7 +27,7 @@
             </ol>
 
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-siluetaVer">
                     <i class="fas fa-calendar me-1"></i>
                     Calendario de Mantenimiento Preventivo
                 </div>
@@ -46,22 +47,22 @@
                                 </div>
                             </form>
                         </div>
-                      
+
                     </div>
 
                     <!-- Filtros de estado -->
                     <div class="mb-4">
                         <div class="btn-group" role="group">
-                            <a th:href="@{/preventivos/indexPreventivo(estado=1)}" class="btn btn-sm btn-outline-warning"
-                                th:classappend="${estado == 1} ? 'active' : ''">
+                            <a th:href="@{/preventivos/indexPreventivo(estado=1)}"
+                                class="btn btn-sm btn-outline-warning" th:classappend="${estado == 1} ? 'active' : ''">
                                 Pendientes
                             </a>
-                            <a th:href="@{/preventivos/indexPreventivo(estado=2)}" class="btn btn-sm btn-outline-primary"
-                                th:classappend="${estado == 2} ? 'active' : ''">
+                            <a th:href="@{/preventivos/indexPreventivo(estado=2)}"
+                                class="btn btn-sm btn-outline-primary" th:classappend="${estado == 2} ? 'active' : ''">
                                 En proceso
                             </a>
-                            <a th:href="@{/preventivos/indexPreventivo(estado=3)}" class="btn btn-sm btn-outline-success"
-                                th:classappend="${estado == 3} ? 'active' : ''">
+                            <a th:href="@{/preventivos/indexPreventivo(estado=3)}"
+                                class="btn btn-sm btn-outline-success" th:classappend="${estado == 3} ? 'active' : ''">
                                 Completados
                             </a>
                             <a th:href="@{/preventivos/indexPreventivo}" class="btn btn-sm btn-outline-secondary"
@@ -99,13 +100,15 @@
                                 <tbody>
                                     <tr th:each="calendario : ${calendarios}">
                                         <td th:text="${calendario.equipo.nombre}"></td>
-                                        <td th:text="${#temporals.format(calendario.fechaInicio, 'dd/MM/yyyy HH:mm')}"></td>
-                                        <td th:text="${#temporals.format(calendario.fechaFin, 'dd/MM/yyyy HH:mm')}"></td>
+                                        <td th:text="${#temporals.format(calendario.fechaInicio, 'dd/MM/yyyy HH:mm')}">
+                                        </td>
+                                        <td th:text="${#temporals.format(calendario.fechaFin, 'dd/MM/yyyy HH:mm')}">
+                                        </td>
                                         <td>
-                                            <span class="badge" 
-                                                  th:classappend="${calendario.estadoMantenimiento == 1} ? 'bg-warning' : 
+                                            <span class="badge"
+                                                th:classappend="${calendario.estadoMantenimiento == 1} ? 'bg-warning' : 
                                                                  (${calendario.estadoMantenimiento == 2} ? 'bg-primary' : 'bg-success')"
-                                                  th:text="${calendario.estadoMantenimiento == 1} ? 'Pendiente' : 
+                                                th:text="${calendario.estadoMantenimiento == 1} ? 'Pendiente' : 
                                                            (${calendario.estadoMantenimiento == 2} ? 'En proceso' : 'Completado')">
                                             </span>
                                         </td>
@@ -116,11 +119,11 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a th:if="${calendario.estadoMantenimiento == 1 or calendario.estadoMantenimiento == 2}"
-   th:href="@{'/preventivos/reporte/enviar/' + ${calendario.id}}"
-   class="btn btn-warning btn-sm" title="Enviar reporte">
-   <i class="fas fa-file-alt me-1"></i> Enviar Reporte
-</a>
-                                               
+                                                    th:href="@{'/preventivos/reporte/enviar/' + ${calendario.id}}"
+                                                    class="btn btn-warning btn-sm" title="Enviar reporte">
+                                                    <i class="fas fa-file-alt me-1"></i> Enviar Reporte
+                                                </a>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -145,4 +148,5 @@
         </div>
     </div>
 </body>
+
 </html>
