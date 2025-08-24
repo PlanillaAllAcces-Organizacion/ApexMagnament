@@ -3,93 +3,124 @@
     layout:decorate="~{layouts/_mainLayout}">
 
 <head>
-    <title>Calendarios Preventivos | Apex Manager</title>
+    <title>Reportes Preventivos | Apex Manager</title>
 </head>
 
 <body>
     <div layout:fragment="content">
-
-
         <div class="container-fluid px-4">
-            <h1 class="mt-4">Gestión Calendarios Preventivos</h1>
+            <h1 class="mt-4">Reportes de Mantenimiento Preventivo</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
-                <li class="breadcrumb-item active">Calendarios Preventivos</li>
+                <li class="breadcrumb-item"><a th:href="@{/}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Reportes Preventivos</li>
             </ol>
 
             <div class="card mb-4">
                 <div class="card-header">
-                    <i class="fas fa-calendar-alt me-1"></i>
-                    Listado de Calendarios
+                    <i class="fas fa-file-alt me-1"></i>
+                    Listado de Reportes Preventivos
                 </div>
 
-                <form method="get" th:action="@{/calendarios}" class="mb-3 row g-2">
-                    <div class="col-4">
-                        <select name="estado" class="form-select">
-                            <option th:value="1" th:selected="${estado == 1}">En espera</option>
-                            <option th:value="2" th:selected="${estado == 2}">En proceso</option>
-                            <option th:value="3" th:selected="${estado == 3}">Finalizado</option>
-                        </select>
+                <div class="card-body">
+                    <!-- Botones de descarga e impresión -->
+                    <div class="d-flex justify-content-end mb-4">
+                        <a th:href="@{/preventivos/reportegeneral/attachment}" class="btn btn-success me-2">
+                            <i class="fas fa-download me-1"></i> Descargar Reporte General
+                        </a>
+                        <a th:href="@{/preventivos/reportegeneral/inline}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-print me-1"></i> Imprimir Reporte General
+                        </a>
                     </div>
-                    <div class="col-2">
-                        <button class="btn btn-primary w-100" type="submit">Filtrar</button>
+
+                    <!-- Formulario de búsqueda -->
+                    <form th:action="@{/preventivos/reportes-preventivos}" method="get" class="mb-4">
+                        <div class="row align-items-end">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="search"
+                                    placeholder="Buscar por equipo o observación..." th:value="${search}">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" name="tipoMantenimiento">
+                                    <option value="">Todos los tipos</option>
+                                    <option value="1" th:selected="${tipoMantenimiento == 1}">Hardware</option>
+                                    <option value="2" th:selected="${tipoMantenimiento == 2}">Software</option>
+                                    <option value="3" th:selected="${tipoMantenimiento == 3}">Hardware y Software
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-1"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div th:if="${reportes.empty}">
+                        <div class="alert alert-info text-center">
+                            No se encontraron reportes de mantenimiento preventivo.
+                        </div>
                     </div>
-                </form>
 
-                <!-- TABLA -->
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                             <th>Equipo</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="item : ${calendarios}">
-                            <td th:text="${item.id}"></td>
-                            <td th:text="${item.equipo != null ? item.equipo.nombre : '---'}"></td>
-                            <td th:text="${#temporals.format(item.fechaInicio, 'dd-MM-yyyy HH:mm')}"></td>
-                             <td th:text="${#temporals.format(item.fechaFin, 'dd-MM-yyyy HH:mm')}"></td>
-                            <td>
-                                <span th:switch="${item.estadoMantenimiento}">
-                                    <span th:case="1" class="badge bg-warning text-dark">En espera</span>
-                                    <span th:case="2" class="badge bg-info text-dark">En proceso</span>
-                                    <span th:case="3" class="badge bg-success">Finalizado</span>
-                                    <span th:case="*">Desconocido</span>
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <div th:unless="${reportes.empty}">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Equipo</th>
+                                        <th>Fecha Atención</th>
+                                        <th>Observación</th>
+                                        <th>Tipo Mantenimiento</th>
+                                        <th>Personal</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="reporte : ${reportes}">
+                                        <td th:text="${reporte.calendarioPreventivo.equipo.nombre}"></td>
+                                        <td th:text="${#temporals.format(reporte.fechaAtencion, 'dd/MM/yyyy HH:mm')}">
+                                        </td>
+                                        <td>
+                                            <span th:if="${#strings.length(reporte.observacion) > 50}"
+                                                th:text="${#strings.substring(reporte.observacion, 0, 50) + '...'}"></span>
+                                            <span th:unless="${#strings.length(reporte.observacion) > 50}"
+                                                th:text="${reporte.observacion}"></span>
+                                        </td>
+                                        <td>
+                                            <span class="badge"
+                                                th:classappend="${reporte.tipoMantenimiento == 1} ? 'bg-info' : 
+                                                                 (${reporte.tipoMantenimiento == 2} ? 'bg-warning' : 'bg-primary')"
+                                                th:text="${tiposMantenimiento.get(reporte.tipoMantenimiento)}">
+                                            </span>
+                                        </td>
+                                        <td th:text="${reporte.personal.nombre + ' ' + reporte.personal.apellido}"></td>
+                                        <td>
+                                            <!-- EXPRESIÓN CORREGIDA: Usar una sola expresión ${} con operadores ternarios anidados -->
+                                            <span class="badge"
+                                                th:classappend="${reporte.estado == 3 ? 'bg-success' : (reporte.estado == 2 ? 'bg-primary' : 'bg-secondary')}"
+                                                th:text="${estadosMap.get(reporte.estado)}">
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                <!-- PAGINACION -->
-                <!-- <nav th:if="${calendarios.totalPages > 1}">
-                    <ul class="pagination">
-                        <li class="page-item" th:classappend="${calendarios.first}? 'disabled'">
-                            <a class="page-link"
-                                th:href="@{/calendarios(page=${calendarios.number}, estado=${estado})}">Anterior</a>
-                        </li>
-
-                        <li th:each="pageNum : ${pageNumbers}" class="page-item"
-                            th:classappend="${pageNum == ${calendarios.number + 1}}? 'active'">
-                            <a class="page-link" th:href="@{/calendarios(page=${pageNum}, estado=${estado})}"
-                                th:text="${pageNum}"></a>
-                        </li>
-
-                        <li class="page-item" th:classappend="${calendarios.last}? 'disabled'">
-                            <a class="page-link"
-                                th:href="@{/calendarios(page=${calendarios.number + 2}, estado=${estado})}">Siguiente</a>
-                        </li>
-                    </ul>
-                </nav> -->
-
-
+                        <!-- Paginación -->
+                        <nav th:if="${reportes.totalPages > 1}">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                                    th:classappend="${pageNumber == reportes.number + 1} ? 'active' : ''">
+                                    <a class="page-link"
+                                        th:href="@{|/preventivos/reportes-preventivos?page=${pageNumber}&size=${reportes.size}&search=${search}&tipoMantenimiento=${tipoMantenimiento}|}"
+                                        th:text="${pageNumber}"></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </body>
-
 </html>

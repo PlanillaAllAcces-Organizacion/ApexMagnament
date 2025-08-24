@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
+<head>
+    <title>Enviar Reporte Preventivo | Apex Manager</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Enviar Reporte de Mantenimiento Preventivo</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/preventivos/indexPreventivo}">Mantenimiento Preventivo</a></li>
+                <li class="breadcrumb-item active">Enviar Reporte</li>
+            </ol>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-file-alt me-1"></i>
+                    Formulario de Reporte Preventivo
+                </div>
+                <div class="card-body">
+                    <!-- Información del equipo -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Información del Equipo</h5>
+                            <p><strong>Equipo:</strong> <span th:text="${calendario.equipo.nombre}"></span></p>
+                            <p><strong>Fecha programada:</strong> 
+                                <span th:text="${#temporals.format(calendario.fechaInicio, 'dd/MM/yyyy HH:mm')}"></span> - 
+                                <span th:text="${#temporals.format(calendario.fechaFin, 'dd/MM/yyyy HH:mm')}"></span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Estado Actual</h5>
+                            <span class="badge bg-primary">En proceso</span>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/preventivos/reporte/guardar}" method="post">
+                        <input type="hidden" name="calendarioId" th:value="${calendario.id}">
+
+                        <!-- Observación -->
+                        <div class="mb-3">
+                            <label for="observacion" class="form-label">Observación *</label>
+                            <textarea class="form-control" id="observacion" name="observacion" 
+                                rows="4" placeholder="Describa el trabajo realizado..." required></textarea>
+                        </div>
+
+                        <!-- Fecha de Atención -->
+                        <div class="mb-3">
+                            <label for="fechaAtencion" class="form-label">Fecha de Atención *</label>
+                            <input type="datetime-local" class="form-control" id="fechaAtencion" name="fechaAtencion"
+                                required>
+                        </div>
+
+                        <!-- Tipo de Mantenimiento -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de mantenimiento *</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoMantenimiento"
+                                    id="hardware" value="1" required>
+                                <label class="form-check-label" for="hardware">Hardware</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoMantenimiento"
+                                    id="software" value="2">
+                                <label class="form-check-label" for="software">Software</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoMantenimiento"
+                                    id="ambos" value="3">
+                                <label class="form-check-label" for="ambos">Hardware y Software</label>
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/preventivos/indexPreventivo}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Regresar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-1"></i> Finalizar Reporte
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fecha y hora actual
+            const now = new Date();
+            const localDateTime = now.toISOString().slice(0, 16);
+            document.getElementById('fechaAtencion').value = localDateTime;
+        });
+    </script>
+</body>
+</html>

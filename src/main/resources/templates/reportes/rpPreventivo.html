@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Reporte de Mantenimiento Preventivo</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 15px;
+        }
+
+        .company-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .report-title {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .report-date {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            page-break-inside: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        td {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: #95a5a6;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="company-name">Apex Management</div>
+        <div class="report-title">Reporte de Mantenimiento Preventivo</div>
+        <div class="report-date">Generado el: <span
+                th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Equipo</th>
+                <th>Fecha Atención</th>
+                <th>Observación</th>
+                <th>Tipo Mantenimiento</th>
+                <th>Técnico</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="reporte : ${reporte_preventivo}">
+                <td th:text="${reporte.calendarioPreventivo.equipo.nombre}"></td>
+                <td th:text="${#temporals.format(reporte.fechaAtencion, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${reporte.observacion}"></td>
+                <td>
+                    <span th:switch="${reporte.tipoMantenimiento}">
+                        <span th:case="1">Hardware</span>
+                        <span th:case="2">Software</span>
+                        <span th:case="3">Hardware y Software</span>
+                    </span>
+                </td>
+                <td th:text="${reporte.personal.nombre + ' ' + reporte.personal.apellido}"></td>
+                <td>
+                    <span th:switch="${reporte.estado}">
+                        <span th:case="1">Pendiente</span>
+                        <span th:case="2">En proceso</span>
+                        <span th:case="3">Completado</span>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div>Reporte generado por Sistema de Mantenimiento Preventivo</div>
+        <div>Total de registros: <span th:text="${reporte_preventivo.size()}">0</span></div>
+    </div>
+</body>
+
+</html>
