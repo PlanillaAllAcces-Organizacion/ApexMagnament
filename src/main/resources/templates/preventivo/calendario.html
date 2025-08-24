@@ -65,16 +65,13 @@
 
 
 
-            <h1 class="mt-4">calendario preventivo para el equipo</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
-                <li class="breadcrumb-item active">Calendario</li>
-            </ol>
+            <h1 class="mt-4">Calendario Preventivo</h1>
+            <br>
 
             <div class="card mb-4">
                 <div class="card-header text-white">
                     <i class="fa-solid fa-clipboard-list"></i>
-                    Solicitud equipo
+                    Calendario de mantenimiento preventivo
                 </div>
                 <div class="card-body">
                     <form id="calendarioForm" th:action="@{/preventivos/guardar}" th:object="${calendario}"
@@ -134,7 +131,7 @@
 
                                     <div class="d-flex justify-content-center mt-4 pt-3 border-top">
                                         <button type="submit" class="btn btn-success">
-                                            <i class="fa-solid fa-arrow-right"></i> Enviar Solicitud
+                                            <i class="fa-solid fa-arrow-right"></i> Guardar 
                                         </button>
                                     </div>
 

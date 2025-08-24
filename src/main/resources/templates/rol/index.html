@@ -42,16 +42,16 @@
             <!-- Campo de filtro -->
             <form th:action="@{/roles}" method="get">
                 <div class="input-group mb-2">
-                    <button class="input-group-text" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <button type="submit" class="btn btn-primary me-1">
+                        <i class="fas fa-search"></i>
                     </button>
-                    <input type="text" name="nombre" class="form-control"
-                        placeholder="Filtrar por nombre de rol...">
+                    <input type="text" name="nombre" class="form-control" placeholder="Filtrar por nombre de rol...">
                 </div>
             </form>
 
             <div class="d-flex justify-content-end">
-                <a th:href="@{/roles/create}" class="btn btn-primary">Ingresar nuevo</a>
+                <a th:href="@{/roles/create}" class="btn btn-dark">
+                    <i class="fas fa-plus me-1"></i> Ingresar nuevo</a>
             </div>
 
         </div>
@@ -62,6 +62,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="h4 card-title mb-0">Lista de roles</h2>
+                    <span class="text-muted" th:text="'Mostrando ' + ${roles.totalElements} + ' roles'"></span>
                 </div>
 
                 <div class="col-12 col-md-6" th:each="item : ${roles}">
@@ -69,8 +70,10 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title h6 mb-0" th:text="${item.nombre}"></h5>
                             <div class="d-flex gap-2">
-                                <a th:href="@{/roles/details/{id} (id = ${item.id}) }" class="btn btn-sm btn-light"><i class="fa-solid fa-clipboard"></i></a>
-                                <a th:href="@{/roles/edit/{id} (id = ${item.id}) }" class="btn btn-sm btn-dark" ><i class="fa-solid fa-pencil"></i></a>
+                                <a th:href="@{/roles/details/{id} (id = ${item.id}) }" class="btn btn-sm btn-light"><i
+                                        class="fa-solid fa-clipboard"></i></a>
+                                <a th:href="@{/roles/edit/{id} (id = ${item.id}) }" class="btn btn-sm btn-dark"><i
+                                        class="fa-solid fa-pencil"></i></a>
                             </div>
                         </div>
                     </div>
