@@ -4,6 +4,7 @@
 
 <head>
     <title>Reportes Preventivos | Apex Manager</title>
+    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
 </head>
 
 <body>
@@ -95,7 +96,6 @@
                                         </td>
                                         <td th:text="${reporte.personal.nombre + ' ' + reporte.personal.apellido}"></td>
                                         <td>
-                                            <!-- EXPRESIÓN CORREGIDA: Usar una sola expresión ${} con operadores ternarios anidados -->
                                             <span class="badge"
                                                 th:classappend="${reporte.estado == 3 ? 'bg-success' : (reporte.estado == 2 ? 'bg-primary' : 'bg-secondary')}"
                                                 th:text="${estadosMap.get(reporte.estado)}">
@@ -105,14 +105,13 @@
                                 </tbody>
                             </table>
                         </div>
-
                         <!-- Paginación -->
                         <nav th:if="${reportes.totalPages > 1}">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:each="pageNumber : ${pageNumbers}"
                                     th:classappend="${pageNumber == reportes.number + 1} ? 'active' : ''">
                                     <a class="page-link"
-                                        th:href="@{|/preventivos/reportes-preventivos?page=${pageNumber}&size=${reportes.size}&search=${search}&tipoMantenimiento=${tipoMantenimiento}|}"
+                                        th:href="@{|/preventivos/reportes-preventivos?page=${pageNumber}&size=${reportes.size}&search=${param.search}&tipoMantenimiento=${param.tipoMantenimiento}|}"
                                         th:text="${pageNumber}"></a>
                                 </li>
                             </ul>
@@ -123,4 +122,5 @@
         </div>
     </div>
 </body>
+
 </html>

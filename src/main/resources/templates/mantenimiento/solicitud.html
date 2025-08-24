@@ -4,6 +4,8 @@
 
 <head>
     <title>Solicitudes | Apex Manager</title>
+    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+
 </head>
 
 <body>
@@ -33,7 +35,7 @@
             </ol>
 
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-siluetaVer text-white">
                     <i class="fas fa-table me-1"></i>
                     Listado de Solicitudes
 
@@ -170,9 +172,9 @@
 
                     <!-- Paginación -->
                     <nav th:if="${solicitudes.totalPages > 1}">
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination">
                             <li class="page-item" th:each="pageNumber : ${pageNumbers}"
-                                th:classappend="${pageNumber == solicitudes.number + 1} ? 'active' : ''">
+                                th:classappend="${pageNumber == solicitudes.number + 1} ? 'active bg-siluetaVer' : ''">
                                 <a class="page-link"
                                     th:href="@{/mantenimiento/solicitud(page=${pageNumber}, size=${solicitudes.size}, search=${search}, estado=${estado})}"
                                     th:text="${pageNumber}"></a>

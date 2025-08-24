@@ -47,13 +47,22 @@
                     aria-expanded="false">
                     <i class="fas fa-user-circle fa-fw"></i>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
                     <li>
-                        <hr class="dropdown-divider" />
+                        <span class="dropdown-header text-dark">
+                            <strong>[[${#authentication.principal.username}]]</strong>
+                        </span>
                     </li>
-                    <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar
-                            sesión</a></li>
+                    <li>
+                        <hr class="dropdown-divider my-2">
+                    </li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="p-0 m-0">
+                            <button type="submit" class="dropdown-item border-0 bg-transparent w-100 text-start">
+                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </li>
         </ul>
