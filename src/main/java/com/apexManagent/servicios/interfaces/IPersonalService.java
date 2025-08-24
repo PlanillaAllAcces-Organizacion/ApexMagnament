@@ -14,6 +14,9 @@ public interface IPersonalService {
 
     Optional<Personal> obtenerPorId(Integer id);
 
+    Optional<Personal> obtenerPorUsername(String username);
+
+
     Page<Personal> findByNombreContainingAndApellidoContainingAndEmailContainingAndRol_NombreContaining(String nombre,
             String apellido, String email, String rolNombre, Pageable pageable);
 
