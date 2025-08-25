@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/_mainLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Management</title>
+  
+    <style>
+        /* Estilos generales para un aspecto limpio */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            /* Un gris claro para el fondo */
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Contenedor principal para centrar el contenido */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            /* Degradado oscuro y elegante */
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background-color: #38a169;
+            /* Un verde vibrante para el botón de acción */
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background-color: #2f855a;
+            transform: translateY(-3px);
+        }
+
+        /* --- Seccion de Caracteristicas --- */
+        .features-section {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .features-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .features-section h2::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: #38a169;
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-item .icon {
+            font-size: 2.5rem;
+            color: #38a169;
+            margin-bottom: 20px;
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .feature-item p {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+
+        /* Pie de Pagina */
+        .footer {
+            background-color: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="container">
+            <section class="hero-section">
+                <h1>Bienvenido a Apex Management</h1>
+                <p>
+                    Tu solución integral para la gestión y organización de equipos de trabajo y proyectos.
+                    Optimiza tus procesos y alcanza nuevos niveles de productividad.
+                </p>
+            </section>
+
+            <section class="features-section">
+                <h2>Nuestras Soluciones</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-users icon"></i>
+                        <h3>Gestión de Personal</h3>
+                        <p>
+                            Administra a tu equipo, asigna roles y mantén un control detallado de cada miembro.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tools icon"></i>
+                        <h3>Mantenimiento Preventivo</h3>
+                        <p>
+                            Programa y da seguimiento a tareas de mantenimiento para prolongar la vida útil de tus
+                            equipos.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line icon"></i>
+                        <h3>Reportes y Análisis</h3>
+                        <p>
+                            Genera reportes detallados para tomar decisiones informadas y medir el rendimiento.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2023</span> Apex Management. Todos
+                los derechos reservados.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -4,6 +4,8 @@
 
 <head>
     <title>Reportes Correctivos | Apex Manager</title>
+    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+
 </head>
 
 <body>
@@ -22,7 +24,6 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Formulario de búsqueda -->
                     <!-- Formulario de búsqueda -->
                     <form th:action="@{/mantenimiento/solicitud/reportes-correctivos}" method="get" class="mb-3">
                         <div class="row align-items-end">
@@ -74,10 +75,10 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Fecha</th>
-                                        <th>Técnico</th>
+                                        <th>Solicitante</th>
                                         <th>Equipo</th>
                                         <th>Tipo Mantenimiento</th>
-                                        <th>Observaciones</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -93,20 +94,22 @@
                                                 <span th:case="3" class="badge bg-info">Ambos</span>
                                             </span>
                                         </td>
-                                        <td th:text="${reporte.observacion}"></td>
                                     </tr>
                                 </tbody>
                             </table>
+                            
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination">
                                     <li class="page-item" th:each="pageNumber : ${pageNumbers}"
-                                        th:classappend="${pageNumber == reportes.number + 1} ? 'active' : ''">
-                                        <a class="page-link"
+                                        th:classappend="${pageNumber == reportes.number + 1} ? 'active bg-siluetaVer' : ''">
+                                        <a class="page-link text-white"
                                             th:href="@{|/mantenimiento/solicitud/reportes-correctivos?page=${pageNumber}|}"
-                                            th:text="${pageNumber}"></a>
+                                            th:text="${pageNumber}"
+                                            th:classappend="${pageNumber == reportes.number + 1} ? 'text-white' : ''"></a>
                                     </li>
                                 </ul>
                             </nav>
+                            
                         </div>
 
                     </div>

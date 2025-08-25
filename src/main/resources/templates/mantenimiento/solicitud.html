@@ -21,7 +21,7 @@
         </div>
 
         <div class="container-fluid px-4">
-            <h1 class="mt-4">Solicitudes de Mantenimiento</h1>
+            <h1 class="mt-4">Solicitudes de Mantenimiento Correctivo</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item active">
                     <span th:switch="${estado}">
@@ -177,7 +177,8 @@
                                 th:classappend="${pageNumber == solicitudes.number + 1} ? 'active bg-siluetaVer' : ''">
                                 <a class="page-link"
                                     th:href="@{/mantenimiento/solicitud(page=${pageNumber}, size=${solicitudes.size}, search=${search}, estado=${estado})}"
-                                    th:text="${pageNumber}"></a>
+                                    th:text="${pageNumber}"
+                                    th:classappend="${pageNumber == solicitudes.number + 1} ? 'text-white' : ''"></a>
                             </li>
                         </ul>
                     </nav>

@@ -12,7 +12,7 @@
         <div class="container-fluid px-4">
             <h1 class="mt-4">Reportes de Mantenimiento Preventivo</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a th:href="@{/}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
                 <li class="breadcrumb-item active">Reportes Preventivos</li>
             </ol>
 
@@ -70,7 +70,6 @@
                                     <tr>
                                         <th>Equipo</th>
                                         <th>Fecha Atención</th>
-                                        <th>Observación</th>
                                         <th>Tipo Mantenimiento</th>
                                         <th>Personal</th>
                                         <th>Estado</th>
@@ -81,12 +80,7 @@
                                         <td th:text="${reporte.calendarioPreventivo.equipo.nombre}"></td>
                                         <td th:text="${#temporals.format(reporte.fechaAtencion, 'dd/MM/yyyy HH:mm')}">
                                         </td>
-                                        <td>
-                                            <span th:if="${#strings.length(reporte.observacion) > 50}"
-                                                th:text="${#strings.substring(reporte.observacion, 0, 50) + '...'}"></span>
-                                            <span th:unless="${#strings.length(reporte.observacion) > 50}"
-                                                th:text="${reporte.observacion}"></span>
-                                        </td>
+
                                         <td>
                                             <span class="badge"
                                                 th:classappend="${reporte.tipoMantenimiento == 1} ? 'bg-info' : 

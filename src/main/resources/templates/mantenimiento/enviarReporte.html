@@ -24,11 +24,11 @@
                     <form th:action="@{/mantenimiento/solicitud/reporte/guardar}" method="post" th:object="${reporte}">
                         <input type="hidden" name="solicitudId" th:value="${solicitud.id}">
 
-                        <!-- Observación -->
                         <div class="mb-3">
                             <label for="observacion" class="form-label">Observación *</label>
                             <textarea class="form-control" id="observacion" name="observacion" th:field="*{observacion}"
-                                rows="4" placeholder="Describa el trabajo realizado..." required></textarea>
+                                rows="4" placeholder="Describa el trabajo realizado..." required ></textarea>
+
                         </div>
 
                         <!-- Tipo de Mantenimiento -->

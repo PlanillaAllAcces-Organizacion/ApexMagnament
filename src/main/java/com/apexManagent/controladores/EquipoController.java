@@ -243,19 +243,11 @@ public class EquipoController {
             Equipo equipo = equipoService.obtenerPorId(id)
                     .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
 
-            // Validar si el equipo está asignado a algún personal
-            if (asignacionService.existeAsignacionPorEquipoId(id)) {
-                attributes.addFlashAttribute("error",
-                        "No se puede eliminar el equipo porque está asignado a un personal.");
-                return "redirect:/equipo";
-            }
-
             // Eliminar imagen asociada si existe
             if (equipo.getImg() != null) {
                 Path filePath = Paths.get(UPLOAD_DIR + equipo.getImg());
                 Files.deleteIfExists(filePath);
             }
-
             equipoService.eliminarPorId(id);
             attributes.addFlashAttribute("success", "Equipo eliminado correctamente");
 
