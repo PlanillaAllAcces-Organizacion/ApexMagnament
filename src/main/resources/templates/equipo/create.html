@@ -197,11 +197,6 @@
                     imagenInput.addEventListener('change', function (event) {
                         const archivo = event.target.files[0];
 
-                        if (!archivo) {
-                            vistaPrevia.src = '/img/default-equipo.jpg';
-                            return;
-                        }
-
                         // Validar tipo
                         if (!['image/jpeg', 'image/png'].includes(archivo.type)) {
                             Swal.fire({

@@ -5,7 +5,36 @@
 <head>
     <title>Reportes Correctivos | Apex Manager</title>
     <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+        }
 
+        .badge {
+            font-size: 0.85em;
+            padding: 0.35em 0.65em;
+        }
+
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+
+        .bg-success {
+            background-color: #198754 !important;
+        }
+
+        .bg-info {
+            background-color: #0dcaf0 !important;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .bg-siluetaVer {
+            background-color: #198754 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -78,7 +107,7 @@
                                         <th>Solicitante</th>
                                         <th>Equipo</th>
                                         <th>Tipo Mantenimiento</th>
-                                       
+                                        <th>Observación</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -94,10 +123,11 @@
                                                 <span th:case="3" class="badge bg-info">Ambos</span>
                                             </span>
                                         </td>
+                                        <td th:text="${reporte.observacion}"></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            
+
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination">
                                     <li class="page-item" th:each="pageNumber : ${pageNumbers}"
@@ -109,7 +139,7 @@
                                     </li>
                                 </ul>
                             </nav>
-                            
+
                         </div>
 
                     </div>
