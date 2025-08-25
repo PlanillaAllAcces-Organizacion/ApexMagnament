@@ -358,20 +358,21 @@ public class PreventivoController {
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/newCalendario/{id}")
-    public String NewcalendarioEquipo(@PathVariable("id") Integer equipoId, Model model) {
-        Optional<Equipo> equipoOpt = equipoService.obtenerPorId(equipoId);
+    public String NewcalendarioEquipo(@PathVariable("id") Integer calendarioId, Model model) {
+        Optional<CalendarioPreventivo> calendarioOpt = preventivoService.obtenerPorId(calendarioId);
 
-        if (equipoOpt.isEmpty()) {
-            model.addAttribute("error", "Equipo no encontrado.");
-            return "error";
+        if (calendarioOpt.isEmpty()) {
+            model.addAttribute("error", "Calendario no encontrado.");
+            return "redirect:/preventivos/indexPreventivo";
         }
 
-        Equipo equipo = equipoOpt.get();
-        CalendarioPreventivo calendario = new CalendarioPreventivo();
-        calendario.setEquipo(equipo);
+        CalendarioPreventivo calendarioAnterior = calendarioOpt.get();
+        CalendarioPreventivo nuevoCalendario = new CalendarioPreventivo();
+        nuevoCalendario.setEquipo(calendarioAnterior.getEquipo());
 
-        model.addAttribute("equipo", equipo);
-        model.addAttribute("calendario", calendario);
+        model.addAttribute("equipo", calendarioAnterior.getEquipo());
+        model.addAttribute("calendario", nuevoCalendario);
+        model.addAttribute("calendarioAnterior", calendarioAnterior);
 
         return "preventivo/newCalendario";
     }
@@ -380,28 +381,39 @@ public class PreventivoController {
     public String guardarNewCalendario(
             @Valid @ModelAttribute("calendario") CalendarioPreventivo calendario,
             BindingResult result,
-            @RequestParam("equipoId") Integer equipoId,
+            @RequestParam("calendarioAnteriorId") Integer calendarioAnteriorId,
             RedirectAttributes redirectAttributes,
             Model model) {
 
-        if (result.hasErrors()) {
-            Equipo equipo = equipoService.obtenerPorId(equipoId)
-                    .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + equipoId));
+        try {
+            if (result.hasErrors()) {
+                Optional<CalendarioPreventivo> calendarioAnt = preventivoService.obtenerPorId(calendarioAnteriorId);
+                if (calendarioAnt.isPresent()) {
+                    model.addAttribute("equipo", calendarioAnt.get().getEquipo());
+                    model.addAttribute("calendarioAnterior", calendarioAnt.get());
+                }
+                model.addAttribute("calendario", calendario);
+                return "preventivo/newCalendario";
+            }
 
-            model.addAttribute("equipo", equipo);
-            model.addAttribute("calendario", calendario);
-            return "preventivo/calendario";
+            // Obtener y actualizar el calendario anterior
+            CalendarioPreventivo calendarioAnterior = preventivoService.obtenerPorId(calendarioAnteriorId)
+                .orElseThrow(() -> new IllegalArgumentException("Calendario anterior no encontrado"));
+            
+            // Actualizar el estado del calendario anterior a 4
+            calendarioAnterior.setEstadoMantenimiento((short) 4);
+            preventivoService.guardar(calendarioAnterior);
+
+            // Guardar el nuevo calendario con estado inicial 1
+            calendario.setEquipo(calendarioAnterior.getEquipo());
+            calendario.setEstadoMantenimiento((short) 1);  // Establecer estado inicial como 1
+            preventivoService.guardar(calendario);
+
+            redirectAttributes.addFlashAttribute("msg", "Nuevo calendario preventivo programado exitosamente");
+            return "redirect:/preventivos/indexPreventivo";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al guardar el calendario: " + e.getMessage());
+            return "redirect:/preventivos/indexPreventivo";
         }
-
-        Equipo equipo = equipoService.obtenerPorId(equipoId)
-                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + equipoId));
-
-        calendario.setEquipo(equipo);
-        calendario.setEstadoMantenimiento((short) 1);
-        preventivoService.guardar(calendario);
-
-        redirectAttributes.addFlashAttribute("msg", "Reporte y nuevo calendario preventivo guardado exitosamente.");
-        return "redirect:/indexPreventivo";
     }
-
 }

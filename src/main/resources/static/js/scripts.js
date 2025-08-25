@@ -102,6 +102,26 @@ function confirmDelete(event, url) {
     });
 }
 
+// Función para confirmar eliminación
+function confirmDeletePersonal(event, url) {
+    event.preventDefault();
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡Esta acción eliminará el personal y asignacion de equipo!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3a7bd5',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    });
+}
+
+
 // Inicialización de elementos cuando se carga contenido dinámico
 document.addEventListener('DOMContentLoaded', function () {
     // Configuración de mensajes flash

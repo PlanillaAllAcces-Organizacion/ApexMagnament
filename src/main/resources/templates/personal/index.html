@@ -9,7 +9,6 @@ layout:decorate="~{layouts/_mainLayout}">
 <body>
     <div layout:fragment="content">
 
-        <!-- Mostrar mensaje de confirmación en caso de éxito -->
         <div th:if="${msg != null}">
             <script>
                 Swal.fire({
@@ -20,7 +19,6 @@ layout:decorate="~{layouts/_mainLayout}">
             </script>
         </div>
 
-        <!-- Mostrar mensaje de error en caso de error -->
         <div th:if="${error != null}">
             <script>
                 Swal.fire({
@@ -128,7 +126,7 @@ layout:decorate="~{layouts/_mainLayout}">
                                             </a>
                                             <a th:href="@{/personales/delete/{id} (id = ${item.id}) }"
                                                 class="btn btn-sm btn-danger" title="Eliminar"
-                                                onclick="confirmDelete(event, this.href)">
+                                                onclick="confirmDeletePersonal(event, this.href)">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                             <a th:href="@{/asignaciones/asignar/{id}(id=${item.id})}"
