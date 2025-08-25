@@ -23,4 +23,7 @@ public interface IAsignacionEquipoService {
     Page<Equipo> buscarEquiposDisponibles(String nombre, String nserie, Integer ubicacion, Pageable pageable);
 
     void desasignarEquipo(Integer personalId, Integer equipoId);
+
+    boolean existeAsignacionPorEquipoId(Integer equipoId);
+
 }
