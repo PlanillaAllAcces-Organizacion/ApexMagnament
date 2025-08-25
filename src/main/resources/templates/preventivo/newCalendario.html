@@ -77,7 +77,7 @@
                     <form id="calendarioForm" th:action="@{/preventivos/Newguardar}" th:object="${calendario}"
                         method="post" class="needs-validation">
 
-                        <input type="hidden" name="equipoId" th:value="${equipo.id}" />
+                        <input type="hidden" name="calendarioAnteriorId" th:value="${calendarioAnterior.id}" />
 
                         <div class="text-danger" th:if="${#fields.hasGlobalErrors()}"
                             th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
