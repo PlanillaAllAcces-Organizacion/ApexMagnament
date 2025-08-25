@@ -17,11 +17,15 @@ import java.util.List;
 public interface IAsignacionEquipoRepository extends JpaRepository<AsignacionEquipo, Integer> {
 
        AsignacionEquipo findByPersonalAndEquipoId(Personal personal, Integer equipoId);
+
        Page<AsignacionEquipo> findByPersonalAndEquipo_NserieContainingAndEquipo_NombreContainingAndEquipo_ModeloContaining(
                      Personal personal, String nserie, String nombre, String model, Pageable pageable);
 
        boolean existsByEquipoId(Integer equipoId);
+
        boolean existsByPersonalIdAndEquipoId(Integer personalId, Integer equipoId);
+
+       long countByEquipoId(Integer equipoId);
 
        @Query("SELECT a.equipo FROM AsignacionEquipo a WHERE a.personal.id = :personalId")
        List<Equipo> findEquiposAsignadosPorPersonal(@Param("personalId") Integer personalId);

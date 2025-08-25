@@ -112,62 +112,73 @@
                             <!-- Columna Formulario -->
                             <div class="col-md-7">
                                 <div class="row">
-                                    <!-- Número de Serie -->
-                                    <div class="col-md-6 detalle-item">
-                                        <label for="nserie" class="detalle-label required">Número de Serie</label>
+
+
+                                    <div class="col-md-6">
+                                        <label for="nserie" class="form-label required-field">Número de Serie</label>
                                         <input type="text" class="form-control" id="nserie" th:field="*{nserie}"
                                             required
-                                            th:classappend="${#fields.hasErrors('nserie')} ? 'is-invalid' : ''">
-                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nserie')}"
-                                            th:errors="*{nserie}"></div>
+                                            th:classappend="${#fields.hasErrors('nserie')} ? 'is-invalid' : ''" />
+                                        <div th:if="${#fields.hasErrors('nserie')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{nserie}"></span>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-6 detalle-item">
-                                        <label for="nombre" class="detalle-label required">Nombre</label>
+                                    <div class="col-md-6">
+                                        <label for="nombre" class="form-label required-field">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required minlength="3"
+                                            required placeholder="Ej: Laptop Dell XPS"
                                             th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
-                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}"
-                                            th:errors="*{nombre}"></div>
+                                        <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{nombre}"></span>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-6 detalle-item">
-                                        <label for="modelo" class="detalle-label required">Modelo</label>
+                                    <div class="col-12">
+                                        <label for="modelo" class="form-label required-field">Modelo</label>
                                         <input type="text" class="form-control" id="modelo" th:field="*{modelo}"
-                                            required
+                                            required placeholder="Ej: XPS 15 9500"
                                             th:classappend="${#fields.hasErrors('modelo')} ? 'is-invalid' : ''">
-                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('modelo')}"
-                                            th:errors="*{modelo}"></div>
+                                        <div th:if="${#fields.hasErrors('modelo')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{modelo}"></span>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-6 detalle-item">
-                                        <label for="garantia" class="detalle-label required">Garantía (meses)</label>
-                                        <input type="number" class="form-control" id="garantia" th:field="*{garantia}"
-                                            min="0" required
-                                            th:classappend="${#fields.hasErrors('garantia')} ? 'is-invalid' : ''">
-                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('garantia')}"
-                                            th:errors="*{garantia}"></div>
-                                    </div>
-
-                                    <div class="col-md-12 detalle-item">
-                                        <label for="ubicacion" class="detalle-label required">Ubicación</label>
-                                        <select class="form-select" id="ubicacion" th:field="*{ubicacion.id}" required
-                                            th:classappend="${#fields.hasErrors('ubicacion')} ? 'is-invalid' : ''">
-                                            <option value="">Seleccione una ubicación</option>
-                                            <option th:each="ubic : ${ubicaciones}" th:value="${ubic.id}"
-                                                th:text="${ubic.nombreUbicacion}"
-                                                th:selected="${ubic.id == equipo.ubicacion?.id}">
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-12 detalle-item">
-                                        <label for="descripcion" class="detalle-label required">Descripción</label>
+                                    <div class="col-12">
+                                        <label for="descripcion" class="form-label">Descripción</label>
                                         <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
-                                            rows="3" required
+                                            rows="3" maxlength="255" oninput="validarDescripcion(this)"
                                             th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"></textarea>
-                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
-                                            th:errors="*{descripcion}"></div>
+                                        <small class="text-muted">Máximo 255 caracteres (<span
+                                                id="contador">0</span>/255)</small>
+                                        <div th:if="${#fields.hasErrors('descripcion')}"
+                                            class="invalid-feedback d-block">
+                                            <span th:errors="*{descripcion}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="garantia" class="form-label required-field">Garantía (meses)</label>
+                                        <input type="number" class="form-control" id="garantia" th:field="*{garantia}"
+                                            min="0" max="60" required
+                                            th:classappend="${#fields.hasErrors('garantia')} ? 'is-invalid' : ''">
+                                        <div th:if="${#fields.hasErrors('garantia')}" class="invalid-feedback d-block">
+                                            <span th:errors="*{garantia}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="ubicacion" class="form-label required-field">Ubicación</label>
+                                        <select class="form-select" id="ubicacion" th:field="*{ubicacion.id}" required
+                                            th:classappend="${#fields.hasErrors('ubicacion.id')} ? 'is-invalid' : ''">
+                                            <option value="">Seleccione una ubicación...</option>
+                                            <option th:each="ubicacion : ${ubicaciones}" th:value="${ubicacion.id}"
+                                                th:text="${ubicacion.nombreUbicacion}"></option>
+                                        </select>
+                                        <div th:if="${#fields.hasErrors('ubicacion.id')}"
+                                            class="invalid-feedback d-block">
+                                            <span th:errors="*{ubicacion.id}"></span>
+                                        </div>
                                     </div>
                                     <!-- Botones -->
                                     <div class="d-flex justify-content-between mt-4 pt-3 border-top">
@@ -178,6 +189,7 @@
                                             <i class="fas fa-save me-1"></i> Guardar Cambios
                                         </button>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -187,16 +199,114 @@
         </div>
 
         <script>
-            document.getElementById('fileImagen').addEventListener('change', function (event) {
-                const file = event.target.files[0];
-                const preview = document.getElementById('currentImg');
+            document.addEventListener('DOMContentLoaded', function () {
+                // ===== ELEMENTOS DEL DOM =====
+                const imagenInput = document.getElementById('fileImagen');
+                const vistaPrevia = document.getElementById('currentImg');
+                const formulario = document.querySelector('form');
+                const descripcionTextarea = document.getElementById('descripcion');
+                const contador = document.getElementById('contador');
 
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        preview.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
+                // ===== VALIDACIÓN DE IMAGEN =====
+                if (imagenInput && vistaPrevia) {
+                    imagenInput.addEventListener('change', function (event) {
+                        const archivo = event.target.files[0];
+
+                        if (!archivo) {
+                            // Si no se selecciona archivo, mantener la imagen actual
+                            return;
+                        }
+
+                        // Validar tipo de archivo con SweetAlert
+                        if (!['image/jpeg', 'image/png'].includes(archivo.type)) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Solo se permiten imágenes JPEG o PNG',
+                                icon: 'error',
+                                confirmButtonText: 'Entendido'
+                            });
+                            imagenInput.value = '';
+                            return;
+                        }
+
+                        // Validar tamaño con SweetAlert (2MB)
+                        if (archivo.size > 2 * 1024 * 1024) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'La imagen no debe superar los 2MB',
+                                icon: 'error',
+                                confirmButtonText: 'Entendido'
+                            });
+                            imagenInput.value = '';
+                            return;
+                        }
+
+                        // Mostrar vista previa
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            vistaPrevia.src = e.target.result;
+                        };
+                        reader.readAsDataURL(archivo);
+                    });
+                }
+
+                // ===== VALIDACIÓN DE DESCRIPCIÓN =====
+                if (descripcionTextarea && contador) {
+                    function actualizarContador() {
+                        const currentLength = descripcionTextarea.value.length;
+                        contador.textContent = currentLength;
+
+                        // Cambiar color según la longitud
+                        if (currentLength > 255) {
+                            contador.classList.add('text-danger');
+                            contador.classList.remove('text-muted');
+                        } else {
+                            contador.classList.remove('text-danger');
+                            contador.classList.add('text-muted');
+                        }
+                    }
+
+                    // Event listener para cambios en la descripción
+                    descripcionTextarea.addEventListener('input', actualizarContador);
+
+                    // Inicializar contador
+                    actualizarContador();
+                }
+
+                // ===== VALIDACIÓN AL ENVIAR FORMULARIO =====
+                if (formulario) {
+                    formulario.addEventListener('submit', function (e) {
+                        let errores = [];
+
+                        // Validar imagen
+                        if (imagenInput) {
+                            const archivo = imagenInput.files[0];
+                            if (archivo && archivo.size > 2 * 1024 * 1024) {
+                                errores.push('La imagen no debe superar los 2MB');
+                            }
+                        }
+
+                        // Validar descripción
+                        if (descripcionTextarea && descripcionTextarea.value.length > 255) {
+                            errores.push('La descripción no puede exceder los 255 caracteres');
+                        }
+
+                        // Mostrar errores y prevenir envío
+                        if (errores.length > 0) {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Error de validación',
+                                html: errores.map(error => `• ${error}`).join('<br>'),
+                                icon: 'error',
+                                confirmButtonText: 'Entendido'
+                            });
+
+                            // Limpiar campo de imagen si hay error
+                            if (imagenInput && errores.includes('La imagen no debe superar los 2MB')) {
+                                imagenInput.value = '';
+                            }
+                        }
+                    });
                 }
             });
         </script>
