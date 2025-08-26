@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/_mainLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías</title>
+    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Mensajes de confirmación -->
+        <div th:if="${msg != null}">
+            <script>
+                Swal.fire({
+                    title: "Confirmación",
+                    text: '[[${msg}]]',
+                    icon: "success"
+                });
+            </script>
+        </div>
+        <div th:if="${error != null}">
+            <script>
+                Swal.fire({
+                    title: "Error",
+                    text: '[[${error}]]',
+                    icon: "error"
+                });
+            </script>
+        </div>
+
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Gestión de Categorías Informáticas</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item active">Categorías</li>
+            </ol>
+
+            <div class="app-card mb-4">
+                <!-- Campo de filtro -->
+                <form th:action="@{/categoria}" method="get">
+                    <div class="input-group mb-2">
+                        <button type="submit" class="btn btn-primary me-1">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="text" name="nombreCategoria" class="form-control"
+                            placeholder="Filtrar por nombre de categoría...">
+                    </div>
+                </form>
+                <div class="d-flex justify-content-end">
+                    <a th:href="@{/categoria/create}" class="btn btn-dark">
+                        <i class="fas fa-plus me-1"></i> Ingresar nuevo</a>
+                </div>
+            </div>
+
+            <div class="app-card">
+                <div id="categoryList" class="row g-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h4 card-title mb-0">Lista de Categorías</h2>
+                        <span class="text-muted"
+                            th:text="'Mostrando ' + ${categorias.totalElements} + ' Categorías'"></span>
+                    </div>
+                    <div class="col-12 col-md-6" th:each="item : ${categorias}">
+                        <div class="card category-card p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title h6 mb-0" th:text="${item.nombreCategoria}"></h5>
+                                <div class="d-flex gap-2">
+                                
+                                    <a th:href="@{/categoria/edit/{id}(id=${item.id})}"
+                                        class="btn btn-sm btn-dark"><i class="fa-solid fa-pencil"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                        th:classappend="${pageNumber == categorias.number + 1 ? 'active' : ''}">
+                        <a class="page-link" th:href="@{|/categoria?page=${pageNumber}|}" th:text="${pageNumber}"></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <br />
+    </div>
+</body>
+
+</html>
