@@ -19,12 +19,13 @@ layout:decorate="~{layouts/_mainLayout}">
             </script>
         </div>
 
-        <div th:if="${error != null}">
-            <script>
+        <div th:if="${swal != null}">
+            <script th:inline="javascript">
+                const swalData = /*[[${swal}]]*/ {};
                 Swal.fire({
-                    title: "Error",
-                    text: '[[${error}]]',
-                    icon: "error"
+                    title: swalData.title,
+                    text: swalData.text,
+                    icon: swalData.icon
                 });
             </script>
         </div>

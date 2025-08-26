@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -229,17 +231,30 @@ public class PersonalController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes attributes) {
+    public String delete(@PathVariable Integer id, RedirectAttributes attributes,
+            @AuthenticationPrincipal User user) {
         try {
+            // Obtener el personal autenticado
+            Optional<Personal> personalAutenticado = personalService.obtenerPorUsername(user.getUsername());
+            
+            // Validar si el usuario está intentando eliminarse a sí mismo
+            if (personalAutenticado.isPresent() && personalAutenticado.get().getId().equals(id)) {
+                attributes.addFlashAttribute("swal", Map.of(
+                    "title", "Operación no permitida",
+                    "text", "No puedes eliminar tu propio usuario mientras estés autenticado",
+                    "icon", "warning"));
+                return "redirect:/personales";
+            }
+
             personalService.eliminarPorId(id);
             attributes.addFlashAttribute("swal", Map.of(
                     "title", "¡Eliminado!",
-                    "text", "El equipo ha sido eliminado correctamente",
+                    "text", "El personal ha sido eliminado correctamente",
                     "icon", "success"));
         } catch (Exception e) {
             attributes.addFlashAttribute("swal", Map.of(
                     "title", "Error",
-                    "text", "No se pudo eliminar el equipo: " + e.getMessage(),
+                    "text", "No se pudo eliminar el personal: " + e.getMessage(),
                     "icon", "error"));
         }
         return "redirect:/personales";
