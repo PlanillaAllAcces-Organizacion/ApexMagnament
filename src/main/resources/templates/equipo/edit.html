@@ -57,16 +57,7 @@
 <body>
     <div layout:fragment="content">
         <div class="container-fluid px-4">
-            <!-- Mensajes Flash -->
-            <div th:if="${success != null}" class="alert alert-success alert-dismissible fade show mt-3">
-                <span th:text="${success}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-
-            <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show mt-3">
-                <span th:text="${error}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+           
 
             <h1 class="mt-4">Editar Equipo</h1>
             <ol class="breadcrumb mb-4">
@@ -145,12 +136,11 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <label for="descripcion" class="form-label">Descripción</label>
+                                        <label for="descripcion" class="form-label required-field">Descripción</label>
                                         <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
-                                            rows="3" maxlength="255" oninput="validarDescripcion(this)"
+                                            rows="3" maxlength="255" o
                                             th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"></textarea>
-                                        <small class="text-muted">Máximo 255 caracteres (<span
-                                                id="contador">0</span>/255)</small>
+                                        <small class="text-muted">Máximo 255 caracteres </small>
                                         <div th:if="${#fields.hasErrors('descripcion')}"
                                             class="invalid-feedback d-block">
                                             <span th:errors="*{descripcion}"></span>
@@ -205,7 +195,6 @@
                 const vistaPrevia = document.getElementById('currentImg');
                 const formulario = document.querySelector('form');
                 const descripcionTextarea = document.getElementById('descripcion');
-                const contador = document.getElementById('contador');
 
                 // ===== VALIDACIÓN DE IMAGEN =====
                 if (imagenInput && vistaPrevia) {
@@ -249,30 +238,6 @@
                         reader.readAsDataURL(archivo);
                     });
                 }
-
-                // ===== VALIDACIÓN DE DESCRIPCIÓN =====
-                if (descripcionTextarea && contador) {
-                    function actualizarContador() {
-                        const currentLength = descripcionTextarea.value.length;
-                        contador.textContent = currentLength;
-
-                        // Cambiar color según la longitud
-                        if (currentLength > 255) {
-                            contador.classList.add('text-danger');
-                            contador.classList.remove('text-muted');
-                        } else {
-                            contador.classList.remove('text-danger');
-                            contador.classList.add('text-muted');
-                        }
-                    }
-
-                    // Event listener para cambios en la descripción
-                    descripcionTextarea.addEventListener('input', actualizarContador);
-
-                    // Inicializar contador
-                    actualizarContador();
-                }
-
                 // ===== VALIDACIÓN AL ENVIAR FORMULARIO =====
                 if (formulario) {
                     formulario.addEventListener('submit', function (e) {
@@ -286,10 +251,7 @@
                             }
                         }
 
-                        // Validar descripción
-                        if (descripcionTextarea && descripcionTextarea.value.length > 255) {
-                            errores.push('La descripción no puede exceder los 255 caracteres');
-                        }
+
 
                         // Mostrar errores y prevenir envío
                         if (errores.length > 0) {

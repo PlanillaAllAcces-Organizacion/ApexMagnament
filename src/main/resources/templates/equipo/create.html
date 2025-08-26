@@ -116,7 +116,7 @@
                                             required placeholder="Ej: Laptop Dell XPS"
                                             th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
                                         <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback d-block">
-                                            <span th:errors="*{nombre}"></span>
+                                            <span th:errors="*{nombre}">ingrese el nombre del </span>
                                         </div>
                                     </div>
 
@@ -131,22 +131,23 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <label for="descripcion" class="form-label">Descripción</label>
+                                        <label for="descripcion" class="form-label required-field">Descripción</label>
                                         <textarea class="form-control" id="descripcion" th:field="*{descripcion}"
-                                            rows="3" maxlength="255" oninput="validarDescripcion(this)"
+                                            rows="3" maxlength="255"
                                             th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"></textarea>
-                                        <small class="text-muted">Máximo 255 caracteres (<span
-                                                id="contador">0</span>/255)</small>
+                                        <small class="text-muted">Máximo 255 caracteres</small>
+
                                         <div th:if="${#fields.hasErrors('descripcion')}"
                                             class="invalid-feedback d-block">
                                             <span th:errors="*{descripcion}"></span>
                                         </div>
+                                       
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="garantia" class="form-label required-field">Garantía (meses)</label>
                                         <input type="number" class="form-control" id="garantia" th:field="*{garantia}"
-                                            min="0" max="60" required
+                                            min="0" max="30" required
                                             th:classappend="${#fields.hasErrors('garantia')} ? 'is-invalid' : ''">
                                         <div th:if="${#fields.hasErrors('garantia')}" class="invalid-feedback d-block">
                                             <span th:errors="*{garantia}"></span>
@@ -182,15 +183,13 @@
                 </div>
             </div>
         </div>
-    
+
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 // ===== ELEMENTOS DEL DOM =====
                 const imagenInput = document.getElementById('fileImagen');
                 const vistaPrevia = document.getElementById('imagePreview');
                 const formulario = document.querySelector('form');
-                const descripcionTextarea = document.getElementById('descripcion');
-                const contador = document.getElementById('contador');
 
                 // ===== VALIDACIÓN DE IMAGEN =====
                 if (imagenInput && vistaPrevia) {
@@ -230,29 +229,6 @@
                     });
                 }
 
-                // ===== VALIDACIÓN DE DESCRIPCIÓN =====
-                if (descripcionTextarea && contador) {
-                    function actualizarContador() {
-                        const currentLength = descripcionTextarea.value.length;
-                        contador.textContent = currentLength;
-
-                        // Cambiar color
-                        if (currentLength > 255) {
-                            contador.classList.add('text-danger');
-                            contador.classList.remove('text-muted');
-                        } else {
-                            contador.classList.remove('text-danger');
-                            contador.classList.add('text-muted');
-                        }
-                    }
-
-                    // Event listener para cambios
-                    descripcionTextarea.addEventListener('input', actualizarContador);
-
-                    // Inicializar contador
-                    actualizarContador();
-                }
-
                 // ===== VALIDACIÓN AL ENVIAR FORMULARIO =====
                 if (formulario) {
                     formulario.addEventListener('submit', function (e) {
@@ -264,11 +240,6 @@
                             if (archivo && archivo.size > 2 * 1024 * 1024) {
                                 errores.push('La imagen no debe superar los 2MB');
                             }
-                        }
-
-                        // Validar descripción
-                        if (descripcionTextarea && descripcionTextarea.value.length > 255) {
-                            errores.push('La descripción no puede exceder los 255 caracteres');
                         }
 
                         // Mostrar errores y prevenir envío

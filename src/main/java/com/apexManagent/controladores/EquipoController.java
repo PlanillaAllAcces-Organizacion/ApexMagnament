@@ -1,7 +1,6 @@
 package com.apexManagent.controladores;
 
 import com.apexManagent.modelos.Equipo;
-import com.apexManagent.servicios.interfaces.IAsignacionEquipoService;
 import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
 import com.apexManagent.servicios.utilerias.PdfGeneraterService;
@@ -38,8 +37,6 @@ public class EquipoController {
 
     private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
-    @Autowired
-    private IAsignacionEquipoService asignacionService;
     @Autowired
     private IEquipoService equipoService;
     @Autowired
@@ -116,20 +113,7 @@ public class EquipoController {
             return "redirect:/equipo/create";
         }
 
-        // Validación de descripción (máximo 255 caracteres)
-        if (equipo.getDescripcion() != null && equipo.getDescripcion().length() > 255) {
-            attributes.addFlashAttribute("errorDescripcion", "La descripción no puede exceder los 255 caracteres");
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
-        }
-
-        // Validación de tamaño ANTES de cualquier operación
-        if (fileImagen.getSize() > 2 * 1024 * 1024) {
-            attributes.addFlashAttribute("error", "La imagen no debe superar los 2MB");
-            attributes.addFlashAttribute("equipo", equipo);
-            return "redirect:/equipo/create";
-        }
-
+       
         try {
             // Crear directorio si no existe
             Path uploadPath = Paths.get(UPLOAD_DIR);
@@ -193,16 +177,6 @@ public class EquipoController {
         if (equipoService.existePorNserie(equipo.getNserie()) &&
                 !equipoExistente.getNserie().equals(equipo.getNserie())) {
             attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
-            return "redirect:/equipo/edit/" + id;
-        }
-
-        if (fileImagen != null && !fileImagen.isEmpty() && fileImagen.getSize() > 2 * 1024 * 1024) {
-            attributes.addFlashAttribute("error", "La imagen no debe superar los 2MB");
-            return "redirect:/equipo/edit/" + id;
-        }
-
-        if (equipo.getDescripcion() != null && equipo.getDescripcion().length() > 255) {
-            attributes.addFlashAttribute("errorDescripcion", "La descripción no puede exceder los 255 caracteres");
             return "redirect:/equipo/edit/" + id;
         }
 
