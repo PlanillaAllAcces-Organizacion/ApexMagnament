@@ -189,7 +189,7 @@ public class EmpleadoController {
 
         redirectAttributes.addFlashAttribute("msg", "Solicitud enviada, espere su respuesta");
 
-        return "redirect:/empleados/miEquipo";
+        return "redirect:/empleados/historial";
     }
 
 }
