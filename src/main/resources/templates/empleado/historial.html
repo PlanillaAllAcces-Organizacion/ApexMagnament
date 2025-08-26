@@ -76,7 +76,13 @@
                                     <td th:text="${solicitud.asignacionEquipo.equipo.nombre}"></td>
                                     <td th:text="${solicitud.asignacionEquipo.equipo.modelo}"></td>
                                     <td th:text="${solicitud.descripcion}"></td>
-                                    <td th:text="${estados.get(solicitud.estado)}"></td>
+                                    <td>
+                                        <span class="badge ms-2" th:classappend="${solicitud.estado == 0} ? 'bg-danger' : 
+                                                          (${solicitud.estado == 1} ? 'bg-warning' : 
+                                                          (${solicitud.estado == 2} ? 'bg-primary' : 'bg-success'))"
+                                        th:text="${estados.get(solicitud.estado)}">
+                                        </span>
+                                    </td>
                                     <td th:text="${#temporals.format(solicitud.fechaRegistro, 'dd-MM-yyyy HH:mm')}">
                                     </td>
                                 </tr>

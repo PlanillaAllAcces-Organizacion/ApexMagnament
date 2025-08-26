@@ -36,66 +36,76 @@
                 });
             </script>
         </div>
+        <div class="container-fluid px-4">
 
-        <div class="app-card mb-4">
 
-            <!-- Campo de filtro -->
-            <form th:action="@{/ubicaciones}" method="get">
-                <div class="input-group mb-2">
-                    <button type="submit" class="btn btn-primary me-1">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <input type="text" name="nombreUbicacion" class="form-control"
-                        placeholder="Filtrar por nombre de ubicación...">
+            <h1 class="mt-4">Gestión de Ubicaciones</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item active">Ubicaciones</li>
+            </ol>
+
+
+            <div class="app-card mb-4">
+
+                <!-- Campo de filtro -->
+                <form th:action="@{/ubicaciones}" method="get">
+                    <div class="input-group mb-2">
+                        <button type="submit" class="btn btn-primary me-1">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="text" name="nombreUbicacion" class="form-control"
+                            placeholder="Filtrar por nombre de ubicación...">
+                    </div>
+                </form>
+
+                <div class="d-flex justify-content-end">
+                    <a th:href="@{/ubicaciones/create}" class="btn btn-dark">
+                        <i class="fas fa-plus me-1"></i> Ingresar nuevo</a>
                 </div>
-            </form>
 
-            <div class="d-flex justify-content-end">
-                <a th:href="@{/ubicaciones/create}" class="btn btn-dark">
-                    <i class="fas fa-plus me-1"></i> Ingresar nuevo</a>
             </div>
 
-        </div>
 
+            <div class="app-card">
+                <div id="locationList" class="row g-3">
 
-        <div class="app-card">
-            <div id="locationList" class="row g-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h4 card-title mb-0">Lista de Ubicaciones</h2>
+                        <span class="text-muted"
+                            th:text="'Mostrando ' + ${ubicaciones.totalElements} + ' Ubicaciones'"></span>
+                    </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="h4 card-title mb-0">Lista de Ubicaciones</h2>
-                    <span class="text-muted"
-                        th:text="'Mostrando ' + ${ubicaciones.totalElements} + ' Ubicaciones'"></span>
-                </div>
-
-                <div class="col-12 col-md-6" th:each="item : ${ubicaciones}">
-                    <div class="card location-card p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title h6 mb-0" th:text="${item.nombreUbicacion}"></h5>
-                            <div class="d-flex gap-2">
-                                <a th:href="@{/ubicaciones/details/{id} (id = ${item.id}) }"
-                                    class="btn btn-sm btn-light"><i class="fa-solid fa-clipboard"></i></a>
-                                <a th:href="@{/ubicaciones/edit/{id} (id = ${item.id}) }" class="btn btn-sm btn-dark"><i
-                                        class="fa-solid fa-pencil"></i></a>
+                    <div class="col-12 col-md-6" th:each="item : ${ubicaciones}">
+                        <div class="card location-card p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title h6 mb-0" th:text="${item.nombreUbicacion}"></h5>
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/ubicaciones/details/{id} (id = ${item.id}) }"
+                                        class="btn btn-sm btn-light"><i class="fa-solid fa-clipboard"></i></a>
+                                    <a th:href="@{/ubicaciones/edit/{id} (id = ${item.id}) }"
+                                        class="btn btn-sm btn-dark"><i class="fa-solid fa-pencil"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
-
             </div>
+
+            <br>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                        th:classappend="${pageNumber == ubicaciones.number + 1 ? 'active' : ''}">
+                        <a class="page-link" th:href="@{|/ubicaciones?page=${pageNumber}|}" th:text="${pageNumber}"></a>
+                    </li>
+                </ul>
+            </nav>
+
         </div>
-
-        <br>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item" th:each="pageNumber : ${pageNumbers}"
-                    th:classappend="${pageNumber == ubicaciones.number + 1 ? 'active' : ''}">
-                    <a class="page-link" th:href="@{|/ubicaciones?page=${pageNumber}|}" th:text="${pageNumber}"></a>
-                </li>
-            </ul>
-        </nav>
-
+        <br />
     </div>
-    <br />
 
 </body>
 
