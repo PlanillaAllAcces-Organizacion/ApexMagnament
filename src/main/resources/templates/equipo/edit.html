@@ -170,6 +170,20 @@
                                             <span th:errors="*{ubicacion.id}"></span>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <label for="categoria" class="form-label required-field">Categoría</label>
+                                        <select class="form-select" id="categoria" th:field="*{categoria.id}" required
+                                            th:classappend="${#fields.hasErrors('categoria.id')} ? 'is-invalid' : ''">
+                                            <option value="">Seleccione una categoría...</option>
+                                            <option th:each="categoria : ${categorias}" th:value="${categoria.id}"
+                                                th:text="${categoria.nombreCategoria}"></option>
+                                        </select>
+                                        <div th:if="${#fields.hasErrors('categoria.id')}"
+                                            class="invalid-feedback d-block">
+                                            <span th:errors="*{categoria.id}"></span>
+                                        </div>
+                                    </div>
                                     <!-- Botones -->
                                     <div class="d-flex justify-content-between mt-4 pt-3 border-top">
                                         <a th:href="@{'/equipo/details/' + ${equipo.id}}" class="btn btn-secondary">

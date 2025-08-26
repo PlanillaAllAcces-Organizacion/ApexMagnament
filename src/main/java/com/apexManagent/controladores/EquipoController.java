@@ -43,6 +43,8 @@ public class EquipoController {
     private IUbicacionService ubicacionService;
     @Autowired
     private PdfGeneraterService pdfGeneraterService;
+    @Autowired
+    private com.apexManagent.servicios.interfaces.ICategoriaService categoriaService;
 
     @GetMapping
     public String index(Model model,
@@ -68,6 +70,7 @@ public class EquipoController {
 
         model.addAttribute("equipos", equipos);
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        model.addAttribute("categorias", categoriaService.obtenerTodos()); // <-- Agregado
 
         int totalPages = equipos.getTotalPages();
         if (totalPages > 0) {
@@ -86,6 +89,7 @@ public class EquipoController {
             model.addAttribute("equipo", new Equipo());
         }
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        model.addAttribute("categorias", categoriaService.obtenerTodos()); // <-- Agregado
         return "equipo/create";
     }
 
@@ -154,6 +158,7 @@ public class EquipoController {
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
         model.addAttribute("equipo", equipo);
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        model.addAttribute("categorias", categoriaService.obtenerTodos()); // <-- Agregado
         return "equipo/edit";
     }
 

@@ -144,6 +144,10 @@
                                     <span class="detalle-value" th:text="${equipo.ubicacion?.nombreUbicacion} ?: 'Sin ubicación'"></span>
                                 </div>
                                 <div class="col-md-6 detalle-item">
+                                    <span class="detalle-label">Categoría</span>
+                                    <span class="detalle-value" th:text="${equipo.categoria?.nombreCategoria} ?: 'Sin categoría'"></span>
+                                </div>
+                                <div class="col-md-6 detalle-item">
                                     <span class="detalle-label">Fecha de Registro</span>
                                     <span class="detalle-value"
                                         th:text="${#temporals.format(equipo.fechaRegistro, 'dd/MM/yyyy HH:mm')}"></span>
