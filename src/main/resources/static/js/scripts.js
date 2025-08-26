@@ -102,24 +102,62 @@ function confirmDelete(event, url) {
     });
 }
 
-// Función para confirmar eliminación
-function confirmDeletePersonal(event, url) {
+//eliminar personal
+function confirmDeletePersonal(event, href) {
     event.preventDefault();
+
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "¡Esta acción eliminará el personal y asignacion de equipo!",
+        text: "¿Deseas eliminar este personal, ya que puede tener asignacion de equipo?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3a7bd5',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location.href = url;
+            window.location.href = href;
         }
     });
 }
+
+//Ver imagen antes de subirla
+function previewImage(input) {
+    const imagePreview = document.getElementById('imagePreview');
+    const file = input.files[0];
+
+    if (file) {
+        // Verificar el tamaño del archivo (2MB = 2 * 1024 * 1024 bytes)
+        if (file.size > 2 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'La imagen no debe superar los 2MB'
+            });
+            input.value = '';
+            return;
+        }
+
+        // Verificar el tipo de archivo
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'El archivo debe ser una imagen'
+            });
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 
 
 // Inicialización de elementos cuando se carga contenido dinámico
