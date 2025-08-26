@@ -41,6 +41,7 @@ public class DatabaseWebSecurity {
                 .requestMatchers("/personales/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/roles/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/ubicaciones/**").hasAnyAuthority("Administrador")
+                .requestMatchers("/categoria/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/asignaciones/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/preventivos/**").hasAnyAuthority("Administrador")
                 .requestMatchers("/mantenimiento/**").hasAnyAuthority("Administrador", "Tecnico")

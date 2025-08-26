@@ -102,7 +102,7 @@ public class SolicitudController {
             @AuthenticationPrincipal User user) {
 
         int currentPage = page.orElse(1) - 1;
-        int pageSize = size.orElse(5);
+        int pageSize = size.orElse(4);
         Sort sortByIdDesc = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(currentPage, pageSize, sortByIdDesc);
 
