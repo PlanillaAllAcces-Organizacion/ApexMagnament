@@ -108,7 +108,7 @@
                                     <div class="col-md-6">
                                         <label for="nserie" class="form-label required-field">Número de Serie</label>
                                         <input type="text" class="form-control" id="nserie" th:field="*{nserie}"
-                                            required
+                                            required maxlength="50"
                                             th:classappend="${#fields.hasErrors('nserie')} ? 'is-invalid' : ''" />
                                         <div th:if="${#fields.hasErrors('nserie')}" class="invalid-feedback d-block">
                                             <span th:errors="*{nserie}"></span>
@@ -118,7 +118,7 @@
                                     <div class="col-md-6">
                                         <label for="nombre" class="form-label required-field">Nombre</label>
                                         <input type="text" class="form-control" id="nombre" th:field="*{nombre}"
-                                            required placeholder="Ej: Laptop Dell XPS"
+                                            required maxlength="100" placeholder="Ej: Laptop Dell XPS"
                                             th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
                                         <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback d-block">
                                             <span th:errors="*{nombre}"></span>
@@ -127,7 +127,7 @@
 
                                     <div class="col-12">
                                         <label for="modelo" class="form-label required-field">Modelo</label>
-                                        <input type="text" class="form-control" id="modelo" th:field="*{modelo}"
+                                        <input type="text" maxlength="100" class="form-control" id="modelo" th:field="*{modelo}"
                                             required placeholder="Ej: XPS 15 9500"
                                             th:classappend="${#fields.hasErrors('modelo')} ? 'is-invalid' : ''">
                                         <div th:if="${#fields.hasErrors('modelo')}" class="invalid-feedback d-block">
