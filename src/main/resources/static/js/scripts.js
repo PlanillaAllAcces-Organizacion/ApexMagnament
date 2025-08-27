@@ -208,3 +208,19 @@ document.getElementById("calendarioForm").addEventListener("submit", function (e
         }
     }
 });
+
+
+function togglePassword() {
+    const passwordContainer = document.getElementById('passwordContainer');
+    const passwordInput = document.getElementById('password');
+
+    if (passwordContainer.style.display === 'none') {
+        // Mostrar el campo de contraseña
+        passwordContainer.style.display = 'block';
+        passwordInput.value = ''; // Limpiar el campo
+    } else {
+        // Ocultar el campo de contraseña
+        passwordContainer.style.display = 'none';
+        passwordInput.value = ''; // Limpiar el campo
+    }
+}
