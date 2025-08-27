@@ -4,6 +4,24 @@
 
 <head>
     <title>Enviar Reporte Preventivo | Apex Manager</title>
+    <style>
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .badge {
+            font-size: 0.85em;
+            padding: 0.35em 0.65em;
+        }
+
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -11,7 +29,8 @@
         <div class="container-fluid px-4">
             <h1 class="mt-4">Enviar Reporte de Mantenimiento Preventivo</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a th:href="@{/preventivos/indexPreventivo}">Mantenimiento Preventivo</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/preventivos/indexPreventivo}">Mantenimiento Preventivo</a>
+                </li>
                 <li class="breadcrumb-item active">Enviar Reporte</li>
             </ol>
 
@@ -26,8 +45,9 @@
                         <div class="col-md-6">
                             <h5>Información del Equipo</h5>
                             <p><strong>Equipo:</strong> <span th:text="${calendario.equipo.nombre}"></span></p>
-                            <p><strong>Fecha programada:</strong> 
-                                <span th:text="${#temporals.format(calendario.fechaInicio, 'dd/MM/yyyy HH:mm')}"></span> - 
+                            <p><strong>Fecha programada:</strong>
+                                <span th:text="${#temporals.format(calendario.fechaInicio, 'dd/MM/yyyy HH:mm')}"></span>
+                                -
                                 <span th:text="${#temporals.format(calendario.fechaFin, 'dd/MM/yyyy HH:mm')}"></span>
                             </p>
                         </div>
@@ -37,14 +57,15 @@
                         </div>
                     </div>
 
-                    <form th:action="@{/preventivos/reporte/guardar}" method="post">
+                    <form th:action="@{/preventivos/reporte/guardar}" method="post" id="reporteForm">
                         <input type="hidden" name="calendarioId" th:value="${calendario.id}">
 
                         <!-- Observación -->
                         <div class="mb-3">
                             <label for="observacion" class="form-label">Observación *</label>
-                            <textarea class="form-control" id="observacion" name="observacion" 
-                                rows="4" placeholder="Describa el trabajo realizado..." required></textarea>
+                            <textarea class="form-control" id="observacion" name="observacion" rows="4"
+                                placeholder="Describa el trabajo realizado..." maxlength="255"></textarea>
+                            <small class="text-muted">Máximo 255 caracteres</small>
                         </div>
 
                         <!-- Fecha de Atención -->
@@ -58,18 +79,18 @@
                         <div class="mb-3">
                             <label class="form-label">Tipo de mantenimiento *</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipoMantenimiento"
-                                    id="hardware" value="1" required>
+                                <input class="form-check-input" type="radio" name="tipoMantenimiento" id="hardware"
+                                    value="1" required>
                                 <label class="form-check-label" for="hardware">Hardware</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipoMantenimiento"
-                                    id="software" value="2">
+                                <input class="form-check-input" type="radio" name="tipoMantenimiento" id="software"
+                                    value="2">
                                 <label class="form-check-label" for="software">Software</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipoMantenimiento"
-                                    id="ambos" value="3">
+                                <input class="form-check-input" type="radio" name="tipoMantenimiento" id="ambos"
+                                    value="3">
                                 <label class="form-check-label" for="ambos">Hardware y Software</label>
                             </div>
                         </div>
@@ -90,12 +111,15 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Establecer fecha y hora actual
             const now = new Date();
             const localDateTime = now.toISOString().slice(0, 16);
             document.getElementById('fechaAtencion').value = localDateTime;
+
         });
+
     </script>
 </body>
+
 </html>

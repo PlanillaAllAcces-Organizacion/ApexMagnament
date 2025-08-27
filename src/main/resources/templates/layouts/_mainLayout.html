@@ -76,10 +76,10 @@
 
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <!-- Sección Principal -->
-                        <div class="sb-sidenav-menu-heading">Principal</div>
 
-                        <div sec:authorize="hasAnyAuthority('Administrador', 'Tecnico')">
+                        <div sec:authorize="hasAnyAuthority('Administrador')">
+
+                            <div class="sb-sidenav-menu-heading">Principal</div>
 
                             <!-- Panel de control con submenú -->
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
@@ -102,11 +102,11 @@
                             <!-- Sección Gestión -->
                             <div class="sb-sidenav-menu-heading">Gestión</div>
 
-                            <!-- Submenú Redes -->
+                            <!-- Submenú Opciones -->
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                                 data-bs-target="#collapseRedes">
                                 <div class="sb-nav-link-icon"><i class="fas fa-network-wired"></i></div>
-                                Redes
+                                Ver opciones
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="collapseRedes">
@@ -114,8 +114,59 @@
                                     <a class="nav-link" th:href="@{/equipo}">
                                         <i class="fas fa-laptop me-2"></i> Equipos informáticos
                                     </a>
-                                    <a class="nav-link" href="#">
-                                        <i class="fas fa-file-alt me-2"></i> Historial
+                                    <a class="nav-link" th:href="@{/ubicaciones}">
+                                        <i class="fas fa-map-marker-alt me-2"></i> Ubicación
+                                    </a>
+                                    <a class="nav-link" th:href="@{/categoria}">
+                                        <i class="fas fa-tags me-2"></i> Categorías
+                                    </a>
+                                    <a class="nav-link" th:href="@{/mantenimiento/solicitud}">
+                                        <i class="fas fa-calendar-check me-2"></i> Mantenimiento Correctivo
+                                    </a>
+                                    <a class="nav-link" th:href="@{/preventivos/indexPreventivo}">
+                                        <i class="fas fa-calendar-check me-2"></i> Mantenimiento Preventivo
+                                    </a>
+                                </nav>
+                            </div>
+
+                            <!-- Sección Operaciones -->
+                            <div class="sb-sidenav-menu-heading">Operaciones</div>
+
+                            <!-- Reportes con submenú -->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapseReportes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>
+                                Reportes
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseReportes">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" th:href="@{/preventivos/reportes-preventivos}">
+                                        <i class="fas fa-shield-alt me-2"></i> Preventivos
+                                    </a>
+                                    <a class="nav-link" th:href="@{/mantenimiento/solicitud/reportes-correctivos}">
+                                        <i class="fas fa-tools me-2"></i> Correctivos
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+
+                        <div sec:authorize="hasAnyAuthority('Tecnico')">
+
+                            <!-- Sección Gestión -->
+                            <div class="sb-sidenav-menu-heading">Gestión</div>
+
+                            <!-- Submenú opciones -->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#collapseRedes">
+                                <div class="sb-nav-link-icon"><i class="fas fa-network-wired"></i></div>
+                                Ver opciones
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseRedes">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" th:href="@{/equipo}">
+                                        <i class="fas fa-laptop me-2"></i> Equipos informáticos
                                     </a>
                                     <a class="nav-link" th:href="@{/ubicaciones}">
                                         <i class="fas fa-map-marker-alt me-2"></i> Ubicación
@@ -152,6 +203,8 @@
                         </div>
 
                         <div sec:authorize="hasAnyAuthority('Usuario')">
+
+                            <div class="sb-sidenav-menu-heading">Empleado</div>
 
                             <!-- Panel de control con submenú -->
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
@@ -194,7 +247,7 @@
                 <div class="container-fluid px-4">
                     <!-- Aquí se renderizan las vistas de contenido -->
                     <div layout:fragment="content">
-                        <p>Changing contents...</p>
+                        <p>pagina vacia</p>
                     </div>
                 </div>
             </main>

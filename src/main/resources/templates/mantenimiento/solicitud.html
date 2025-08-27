@@ -21,7 +21,7 @@
         </div>
 
         <div class="container-fluid px-4">
-            <h1 class="mt-4">Solicitudes de Mantenimiento</h1>
+            <h1 class="mt-4">Solicitudes de Mantenimiento Correctivo</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item active">
                     <span th:switch="${estado}">
@@ -38,26 +38,6 @@
                 <div class="card-header bg-siluetaVer text-white">
                     <i class="fas fa-table me-1"></i>
                     Listado de Solicitudes
-
-                    <!-- Filtros de estado -->
-                    <div class="btn-group float-end" role="group">
-                        <a th:href="@{/mantenimiento/solicitud(estado=0)}" class="btn btn-sm btn-outline-danger"
-                            th:classappend="${estado == 0} ? 'active' : ''">
-                            Rechazadas
-                        </a>
-                        <a th:href="@{/mantenimiento/solicitud(estado=1)}" class="btn btn-sm btn-outline-warning"
-                            th:classappend="${estado == 1} ? 'active' : ''">
-                            En espera
-                        </a>
-                        <a th:href="@{/mantenimiento/solicitud(estado=2)}" class="btn btn-sm btn-outline-primary"
-                            th:classappend="${estado == 2} ? 'active' : ''">
-                            En proceso
-                        </a>
-                        <a th:href="@{/mantenimiento/solicitud(estado=3)}" class="btn btn-sm btn-outline-success"
-                            th:classappend="${estado == 3} ? 'active' : ''">
-                            Finalizadas
-                        </a>
-                    </div>
                 </div>
 
                 <div class="card-body">
@@ -73,7 +53,30 @@
                                     </button>
                                 </div>
                             </form>
+
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="btn-group" role="group">
+                            <a th:href="@{/mantenimiento/solicitud(estado=0)}" class="btn btn-sm btn-outline-danger"
+                                th:classappend="${estado == 0} ? 'active' : ''">
+                                Rechazadas
+                            </a>
+                            <a th:href="@{/mantenimiento/solicitud(estado=1)}" class="btn btn-sm btn-outline-warning"
+                                th:classappend="${estado == 1} ? 'active' : ''">
+                                En espera
+                            </a>
+                            <a th:href="@{/mantenimiento/solicitud(estado=2)}" class="btn btn-sm btn-outline-primary"
+                                th:classappend="${estado == 2} ? 'active' : ''">
+                                En proceso
+                            </a>
+                            <a th:href="@{/mantenimiento/solicitud(estado=3)}" class="btn btn-sm btn-outline-success"
+                                th:classappend="${estado == 3} ? 'active' : ''">
+                                Finalizadas
+                            </a>
+                        </div>
+
                     </div>
 
                     <div th:if="${solicitudes.empty}">
@@ -177,7 +180,8 @@
                                 th:classappend="${pageNumber == solicitudes.number + 1} ? 'active bg-siluetaVer' : ''">
                                 <a class="page-link"
                                     th:href="@{/mantenimiento/solicitud(page=${pageNumber}, size=${solicitudes.size}, search=${search}, estado=${estado})}"
-                                    th:text="${pageNumber}"></a>
+                                    th:text="${pageNumber}"
+                                    th:classappend="${pageNumber == solicitudes.number + 1} ? 'text-white' : ''"></a>
                             </li>
                         </ul>
                     </nav>

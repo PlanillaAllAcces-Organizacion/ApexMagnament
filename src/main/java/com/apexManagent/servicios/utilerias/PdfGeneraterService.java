@@ -3,7 +3,7 @@ package com.apexManagent.servicios.utilerias;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.TemplateEngine;
-import org.springframework.core.io.ResourceLoader;
+//import org.springframework.core.io.ResourceLoader;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer; // Import necesario para PDF
 

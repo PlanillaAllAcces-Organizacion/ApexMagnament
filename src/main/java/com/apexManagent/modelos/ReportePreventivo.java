@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class ReportePreventivo {
@@ -21,7 +22,8 @@ public class ReportePreventivo {
     private Personal personal;
 
     @NotBlank(message = "La observacion es requerida")
-    @Column(nullable = false)
+    @Size(max = 255, message = "La observación no puede exceder los 255 caracteres")
+    @Column(name = "observacion", length = 255)
     private String observacion;
 
     @NotNull(message = "La fecha de atencion es requerida") 
@@ -36,7 +38,7 @@ public class ReportePreventivo {
         this.personal = personal;
     }
 
-    @Column(nullable = false)
+    @NotNull(message = "El tipo de mantenimiento es requerido")
     private Short  tipoMantenimiento;
 
     @Column(nullable = false)

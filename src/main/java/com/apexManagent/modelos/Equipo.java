@@ -16,9 +16,21 @@ public class Equipo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ubicacionId")
     private Ubicacion ubicacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoriaId")
+    private Categoria categoria;
 
     @NotBlank(message = "El numero de serie es requerido")
     @Column(name = "n_serie", nullable = false, unique = true)
@@ -33,7 +45,7 @@ public class Equipo {
     private String modelo;
 
     @NotBlank(message = "El descripcion es requerida")
-    @Size(max = 255, message = "La descripción no puede tener más de 255 caracteres")   
+    @Size(max = 255, message = "La descripción no puede tener más de 255 caracteres")
     private String descripcion;
 
     @Column(nullable = false)
@@ -41,7 +53,6 @@ public class Equipo {
 
     @Column(name = "img")
     private String img;
-    
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
@@ -52,11 +63,10 @@ public class Equipo {
     @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CalendarioPreventivo> calendarioPreventivo = new HashSet<>();
 
-
-     @Transient 
+    @Transient
     private boolean asignado;
 
-     public Integer getId() {
+    public Integer getId() {
         return Id;
     }
 
@@ -78,8 +88,6 @@ public class Equipo {
         this.asignado = asignado;
     }
 
-   
-   
     public String getNserie() {
         return nserie;
     }
@@ -136,12 +144,11 @@ public class Equipo {
         this.fechaRegistro = fechaRegistro;
     }
 
-    
-public Ubicacion getUbicacion() {
-    return ubicacion;
-}
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
 
-public void setUbicacion(Ubicacion ubicacion) {
-    this.ubicacion = ubicacion;
-}
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 }

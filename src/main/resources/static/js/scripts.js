@@ -102,6 +102,64 @@ function confirmDelete(event, url) {
     });
 }
 
+//eliminar personal
+function confirmDeletePersonal(event, href) {
+    event.preventDefault();
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Deseas eliminar este personal, ya que puede tener asignacion de equipo?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = href;
+        }
+    });
+}
+
+//Ver imagen antes de subirla
+function previewImage(input) {
+    const imagePreview = document.getElementById('imagePreview');
+    const file = input.files[0];
+
+    if (file) {
+        // Verificar el tamaño del archivo (2MB = 2 * 1024 * 1024 bytes)
+        if (file.size > 2 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'La imagen no debe superar los 2MB'
+            });
+            input.value = '';
+            return;
+        }
+
+        // Verificar el tipo de archivo
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'El archivo debe ser una imagen'
+            });
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+
+
 // Inicialización de elementos cuando se carga contenido dinámico
 document.addEventListener('DOMContentLoaded', function () {
     // Configuración de mensajes flash
@@ -150,3 +208,19 @@ document.getElementById("calendarioForm").addEventListener("submit", function (e
         }
     }
 });
+
+
+function togglePassword() {
+    const passwordContainer = document.getElementById('passwordContainer');
+    const passwordInput = document.getElementById('password');
+
+    if (passwordContainer.style.display === 'none') {
+        // Mostrar el campo de contraseña
+        passwordContainer.style.display = 'block';
+        passwordInput.value = ''; // Limpiar el campo
+    } else {
+        // Ocultar el campo de contraseña
+        passwordContainer.style.display = 'none';
+        passwordInput.value = ''; // Limpiar el campo
+    }
+}

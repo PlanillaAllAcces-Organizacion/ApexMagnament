@@ -3,7 +3,7 @@ package com.apexManagent.controladores;
 import com.apexManagent.modelos.Equipo;
 import com.apexManagent.servicios.interfaces.IEquipoService;
 import com.apexManagent.servicios.interfaces.IUbicacionService;
-import com.apexManagent.servicios.utilerias.PdfGeneraterService; // Importa el servicio PDF
+import com.apexManagent.servicios.utilerias.PdfGeneraterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,25 +39,13 @@ public class EquipoController {
 
     @Autowired
     private IEquipoService equipoService;
-
     @Autowired
     private IUbicacionService ubicacionService;
-
     @Autowired
     private PdfGeneraterService pdfGeneraterService;
+    @Autowired
+    private com.apexManagent.servicios.interfaces.ICategoriaService categoriaService;
 
-    /**
-     * Método para mostrar la lista paginada de equipos
-     * 
-     * @param model  Modelo para pasar datos a la vista
-     * @param page   Número de página actual
-     * @param size   Tamaño de la página
-     * @param search Término de búsqueda general (no implementado)
-     * @param nserie Número de serie para filtrar
-     * @param nombre Nombre para filtrar
-     * @param modelo Modelo para filtrar
-     * @return Vista index de equipos
-     */
     @GetMapping
     public String index(Model model,
             @RequestParam("page") Optional<Integer> page,
@@ -82,6 +70,7 @@ public class EquipoController {
 
         model.addAttribute("equipos", equipos);
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        model.addAttribute("categorias", categoriaService.obtenerTodos()); // <-- Agregado
 
         int totalPages = equipos.getTotalPages();
         if (totalPages > 0) {
@@ -94,30 +83,16 @@ public class EquipoController {
         return "equipo/index";
     }
 
-    /**
-     * Método para mostrar el formulario de creación de equipos
-     * 
-     * @param model Modelo para pasar datos a la vista
-     * @return Vista create de equipos
-     */
     @GetMapping("/create")
     public String create(Model model) {
         if (!model.containsAttribute("equipo")) {
             model.addAttribute("equipo", new Equipo());
         }
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        model.addAttribute("categorias", categoriaService.obtenerTodos()); // <-- Agregado
         return "equipo/create";
     }
 
-    /**
-     * Método para guardar un nuevo equipo
-     * 
-     * @param equipo     Datos del equipo a guardar
-     * @param result     Resultado de la validación
-     * @param fileImagen Archivo de imagen del equipo
-     * @param attributes Atributos para redirección (mensajes flash)
-     * @return Redirección a la lista de equipos o al formulario con errores
-     */
     @PostMapping("/guardar")
     public String save(@Valid @ModelAttribute Equipo equipo,
             BindingResult result,
@@ -131,7 +106,7 @@ public class EquipoController {
         }
 
         if (equipoService.existePorNserie(equipo.getNserie())) {
-            attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie");
+            attributes.addFlashAttribute("error", "Ya existe un equipo con este número de serie.");
             attributes.addFlashAttribute("equipo", equipo);
             return "redirect:/equipo/create";
         }
@@ -142,6 +117,7 @@ public class EquipoController {
             return "redirect:/equipo/create";
         }
 
+       
         try {
             // Crear directorio si no existe
             Path uploadPath = Paths.get(UPLOAD_DIR);
@@ -159,7 +135,6 @@ public class EquipoController {
             equipoService.guardar(equipo);
 
             attributes.addAttribute("equipoId", equipo.getId());
-
             attributes.addFlashAttribute("msg", "Equipo registrado correctamente");
             return "redirect:/preventivos/calendario";
 
@@ -169,13 +144,6 @@ public class EquipoController {
         }
     }
 
-    /**
-     * Método para mostrar los detalles de un equipo
-     * 
-     * @param id    ID del equipo a mostrar
-     * @param model Modelo para pasar datos a la vista
-     * @return Vista details del equipo
-     */
     @GetMapping("/details/{id}")
     public String mostrarEquipo(@PathVariable Integer id, Model model) {
         Equipo equipo = equipoService.obtenerPorId(id)
@@ -184,32 +152,16 @@ public class EquipoController {
         return "equipo/details";
     }
 
-    /**
-     * Método para mostrar el formulario de edición de un equipo
-     * 
-     * @param id    ID del equipo a editar
-     * @param model Modelo para pasar datos a la vista
-     * @return Vista edit del equipo
-     */
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         Equipo equipo = equipoService.obtenerPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
         model.addAttribute("equipo", equipo);
         model.addAttribute("ubicaciones", ubicacionService.obtenerTodos());
+        model.addAttribute("categorias", categoriaService.obtenerTodos()); // <-- Agregado
         return "equipo/edit";
     }
 
-    /**
-     * Método para actualizar un equipo existente
-     * 
-     * @param id         ID del equipo a actualizar
-     * @param fileImagen Nueva imagen del equipo (opcional)
-     * @param equipo     Datos actualizados del equipo
-     * @param result     Resultado de la validación
-     * @param attributes Atributos para redirección (mensajes flash)
-     * @return Redirección a los detalles del equipo o al formulario con errores
-     */
     @PostMapping("/update")
     public String update(
             @RequestParam("id") Integer id,
@@ -256,38 +208,32 @@ public class EquipoController {
             equipo.setFechaRegistro(equipoExistente.getFechaRegistro());
             equipoService.guardar(equipo);
 
-            attributes.addFlashAttribute("msg", "Información actualizada correctamente");
-            return "redirect:/equipo/details/" + id;
-
+            attributes.addFlashAttribute("success", "Información actualizada correctamente.");
+            return "redirect:/equipo"; // Redirección a la vista principal de equipos
         } catch (IOException e) {
             attributes.addFlashAttribute("error", "Error al procesar la imagen: " + e.getMessage());
             return "redirect:/equipo/edit/" + id;
         }
     }
 
-    /**
-     * Método para eliminar un equipo
-     * 
-     * @param id         ID del equipo a eliminar
-     * @param attributes Atributos para redirección (mensajes flash)
-     * @return Redirección a la lista de equipos
-     */
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes attributes) {
         try {
             Equipo equipo = equipoService.obtenerPorId(id)
                     .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado"));
 
-            // Eliminar imagen asociada si existe esto se puede eliminar depende la
-            // necesidad
+            // Eliminar imagen asociada si existe
             if (equipo.getImg() != null) {
                 Path filePath = Paths.get(UPLOAD_DIR + equipo.getImg());
                 Files.deleteIfExists(filePath);
             }
-
             equipoService.eliminarPorId(id);
-            attributes.addFlashAttribute("msg", "Equipo eliminado correctamente");
+            attributes.addFlashAttribute("success", "Equipo eliminado correctamente");
 
+        } catch (IllegalArgumentException e) {
+            attributes.addFlashAttribute("error", "Equipo no encontrado: " + e.getMessage());
+        } catch (IOException e) {
+            attributes.addFlashAttribute("error", "Error al eliminar la imagen del equipo: " + e.getMessage());
         } catch (Exception e) {
             attributes.addFlashAttribute("error", "Error al eliminar el equipo: " + e.getMessage());
         }

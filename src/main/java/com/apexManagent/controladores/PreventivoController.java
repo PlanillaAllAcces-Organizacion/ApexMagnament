@@ -192,7 +192,7 @@ public class PreventivoController {
             @RequestParam(required = false) Short estado) {
 
         int currentPage = page.orElse(1) - 1;
-        int pageSize = size.orElse(10);
+        int pageSize = size.orElse(5);
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fechaInicio").descending());
 
         Page<CalendarioPreventivo> calendarios;
@@ -253,7 +253,6 @@ public class PreventivoController {
             @AuthenticationPrincipal User user) {
 
         Optional<CalendarioPreventivo> calendarioOpt = preventivoService.obtenerPorId(id);
-
         if (calendarioOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Mantenimiento no encontrado");
             return "redirect:/preventivos/indexPreventivo";
@@ -274,17 +273,17 @@ public class PreventivoController {
             return "redirect:/preventivos/indexPreventivo";
         }
 
-        // Crear nuevo reporte
-        ReportePreventivo reporte = new ReportePreventivo();
-        reporte.setCalendarioPreventivo(calendario);
-        reporte.setPersonal(personal);
-        reporte.setFechaAtencion(LocalDateTime.now());
-
-        // CAMBIO: Establecer estado como COMPLETADO (3) por defecto
-        reporte.setEstado((short) 3);
+        // Verificar si hay un reporte en flash attributes (para errores de validación)
+        if (!model.containsAttribute("reporte")) {
+            ReportePreventivo reporte = new ReportePreventivo();
+            reporte.setCalendarioPreventivo(calendario);
+            reporte.setPersonal(personal);
+            reporte.setFechaAtencion(LocalDateTime.now());
+            reporte.setEstado((short) 3);
+            model.addAttribute("reporte", reporte);
+        }
 
         model.addAttribute("calendario", calendario);
-        model.addAttribute("reporte", reporte);
         model.addAttribute("tiposMantenimiento", getTiposMantenimiento());
 
         return "mantenimiento/enviarReportePreventivo";
@@ -292,7 +291,8 @@ public class PreventivoController {
 
     // GUARDAR REPORTE PREVENTIVO
     @PostMapping("/reporte/guardar")
-    public String guardarReporte(@ModelAttribute ReportePreventivo reporte,
+    public String guardarReporte(@Valid @ModelAttribute ReportePreventivo reporte,
+            BindingResult result,
             @RequestParam("calendarioId") Integer calendarioId,
             @AuthenticationPrincipal User user,
             RedirectAttributes attributes) {
@@ -303,6 +303,15 @@ public class PreventivoController {
             return "redirect:/preventivos/indexPreventivo";
         }
 
+        CalendarioPreventivo calendario = calendarioOpt.get();
+
+        // Validación automática con JPA
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("org.springframework.validation.BindingResult.reporte", result);
+            attributes.addFlashAttribute("reporte", reporte);
+            return "redirect:/preventivos/reporte/enviar/" + calendarioId;
+        }
+
         // Obtener el personal autenticado
         Personal personal = obtenerPersonalDesdeUsuario(user);
         if (personal == null) {
@@ -310,40 +319,23 @@ public class PreventivoController {
             return "redirect:/preventivos/indexPreventivo";
         }
 
-        CalendarioPreventivo calendario = calendarioOpt.get();
-
         try {
-            // Validar campos requeridos
-            if (reporte.getObservacion() == null || reporte.getObservacion().trim().isEmpty()) {
-                attributes.addFlashAttribute("error", "La observación es requerida");
-                return "redirect:/preventivos/reporte/enviar/" + calendarioId;
-            }
-
-            if (reporte.getTipoMantenimiento() == null) {
-                attributes.addFlashAttribute("error", "El tipo de mantenimiento es requerido");
-                return "redirect:/preventivos/reporte/enviar/" + calendarioId;
-            }
-
-            // Asignar personal y calendario
             reporte.setPersonal(personal);
             reporte.setCalendarioPreventivo(calendario);
             reporte.setEstado((short) 3);
 
-            // Guardar el reporte
             reportePreventivoService.guardar(reporte);
 
-            // Cambiar estado del calendario a "Completado" (3)
             calendario.setEstadoMantenimiento((short) 3);
             preventivoService.guardar(calendario);
 
             attributes.addFlashAttribute("msg",
                     "Reporte enviado y mantenimiento marcado como completado exitosamente.");
-
+            return "redirect:/preventivos/indexPreventivo";
         } catch (Exception e) {
             attributes.addFlashAttribute("error", "Error al enviar el reporte: " + e.getMessage());
+            return "redirect:/preventivos/indexPreventivo";
         }
-
-        return "redirect:/preventivos/indexPreventivo";
     }
 
     // Método auxiliar para obtener personal desde usuario autenticado
@@ -358,20 +350,21 @@ public class PreventivoController {
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/newCalendario/{id}")
-    public String NewcalendarioEquipo(@PathVariable("id") Integer equipoId, Model model) {
-        Optional<Equipo> equipoOpt = equipoService.obtenerPorId(equipoId);
+    public String NewcalendarioEquipo(@PathVariable("id") Integer calendarioId, Model model) {
+        Optional<CalendarioPreventivo> calendarioOpt = preventivoService.obtenerPorId(calendarioId);
 
-        if (equipoOpt.isEmpty()) {
-            model.addAttribute("error", "Equipo no encontrado.");
-            return "error";
+        if (calendarioOpt.isEmpty()) {
+            model.addAttribute("error", "Calendario no encontrado.");
+            return "redirect:/preventivos/indexPreventivo";
         }
 
-        Equipo equipo = equipoOpt.get();
-        CalendarioPreventivo calendario = new CalendarioPreventivo();
-        calendario.setEquipo(equipo);
+        CalendarioPreventivo calendarioAnterior = calendarioOpt.get();
+        CalendarioPreventivo nuevoCalendario = new CalendarioPreventivo();
+        nuevoCalendario.setEquipo(calendarioAnterior.getEquipo());
 
-        model.addAttribute("equipo", equipo);
-        model.addAttribute("calendario", calendario);
+        model.addAttribute("equipo", calendarioAnterior.getEquipo());
+        model.addAttribute("calendario", nuevoCalendario);
+        model.addAttribute("calendarioAnterior", calendarioAnterior);
 
         return "preventivo/newCalendario";
     }
@@ -380,28 +373,39 @@ public class PreventivoController {
     public String guardarNewCalendario(
             @Valid @ModelAttribute("calendario") CalendarioPreventivo calendario,
             BindingResult result,
-            @RequestParam("equipoId") Integer equipoId,
+            @RequestParam("calendarioAnteriorId") Integer calendarioAnteriorId,
             RedirectAttributes redirectAttributes,
             Model model) {
 
-        if (result.hasErrors()) {
-            Equipo equipo = equipoService.obtenerPorId(equipoId)
-                    .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + equipoId));
+        try {
+            if (result.hasErrors()) {
+                Optional<CalendarioPreventivo> calendarioAnt = preventivoService.obtenerPorId(calendarioAnteriorId);
+                if (calendarioAnt.isPresent()) {
+                    model.addAttribute("equipo", calendarioAnt.get().getEquipo());
+                    model.addAttribute("calendarioAnterior", calendarioAnt.get());
+                }
+                model.addAttribute("calendario", calendario);
+                return "preventivo/newCalendario";
+            }
 
-            model.addAttribute("equipo", equipo);
-            model.addAttribute("calendario", calendario);
-            return "preventivo/calendario";
+            // Obtener y actualizar el calendario anterior
+            CalendarioPreventivo calendarioAnterior = preventivoService.obtenerPorId(calendarioAnteriorId)
+                .orElseThrow(() -> new IllegalArgumentException("Calendario anterior no encontrado"));
+            
+            // Actualizar el estado del calendario anterior a 4
+            calendarioAnterior.setEstadoMantenimiento((short) 4);
+            preventivoService.guardar(calendarioAnterior);
+
+            // Guardar el nuevo calendario con estado inicial 1
+            calendario.setEquipo(calendarioAnterior.getEquipo());
+            calendario.setEstadoMantenimiento((short) 1);  // Establecer estado inicial como 1
+            preventivoService.guardar(calendario);
+
+            redirectAttributes.addFlashAttribute("msg", "Nuevo calendario preventivo programado exitosamente");
+            return "redirect:/preventivos/indexPreventivo";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al guardar el calendario: " + e.getMessage());
+            return "redirect:/preventivos/indexPreventivo";
         }
-
-        Equipo equipo = equipoService.obtenerPorId(equipoId)
-                .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + equipoId));
-
-        calendario.setEquipo(equipo);
-        calendario.setEstadoMantenimiento((short) 1);
-        preventivoService.guardar(calendario);
-
-        redirectAttributes.addFlashAttribute("msg", "Reporte y nuevo calendario preventivo guardado exitosamente.");
-        return "redirect:/indexPreventivo";
     }
-
 }

@@ -23,6 +23,8 @@ public interface IAsignacionEquipoRepository extends JpaRepository<AsignacionEqu
        boolean existsByEquipoId(Integer equipoId);
        boolean existsByPersonalIdAndEquipoId(Integer personalId, Integer equipoId);
 
+       long countByEquipoId(Integer equipoId);
+
        @Query("SELECT a.equipo FROM AsignacionEquipo a WHERE a.personal.id = :personalId")
        List<Equipo> findEquiposAsignadosPorPersonal(@Param("personalId") Integer personalId);
 

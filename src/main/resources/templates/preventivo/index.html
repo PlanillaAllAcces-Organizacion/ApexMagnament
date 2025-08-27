@@ -5,6 +5,27 @@
 <head>
     <title>Reportes Preventivos | Apex Manager</title>
     <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .badge {
+            font-size: 0.85em;
+            padding: 0.35em 0.65em;
+        }
+        .bg-info {
+            background-color: #0dcaf0 !important;
+        }
+        .bg-warning {
+            background-color: #ffc107 !important;
+        }
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,10 +33,10 @@
         <div class="container-fluid px-4">
             <h1 class="mt-4">Reportes de Mantenimiento Preventivo</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a th:href="@{/}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
                 <li class="breadcrumb-item active">Reportes Preventivos</li>
             </ol>
-
+ 
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-file-alt me-1"></i>
@@ -38,7 +59,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-5">
                                 <input type="text" class="form-control" name="search"
-                                    placeholder="Buscar por equipo o observación..." th:value="${search}">
+                                    placeholder="Buscar por equipo" th:value="${search}">
                             </div>
                             <div class="col-md-4">
                                 <select class="form-select" name="tipoMantenimiento">
@@ -72,21 +93,14 @@
                                         <th>Fecha Atención</th>
                                         <th>Observación</th>
                                         <th>Tipo Mantenimiento</th>
-                                        <th>Personal</th>
-                                        <th>Estado</th>
+                                        <th>Técnico</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="reporte : ${reportes}">
                                         <td th:text="${reporte.calendarioPreventivo.equipo.nombre}"></td>
-                                        <td th:text="${#temporals.format(reporte.fechaAtencion, 'dd/MM/yyyy HH:mm')}">
-                                        </td>
-                                        <td>
-                                            <span th:if="${#strings.length(reporte.observacion) > 50}"
-                                                th:text="${#strings.substring(reporte.observacion, 0, 50) + '...'}"></span>
-                                            <span th:unless="${#strings.length(reporte.observacion) > 50}"
-                                                th:text="${reporte.observacion}"></span>
-                                        </td>
+                                        <td th:text="${#temporals.format(reporte.fechaAtencion, 'dd/MM/yyyy HH:mm')}"></td>
+                                        <td th:text="${reporte.observacion}"></td>
                                         <td>
                                             <span class="badge"
                                                 th:classappend="${reporte.tipoMantenimiento == 1} ? 'bg-info' : 
@@ -95,12 +109,6 @@
                                             </span>
                                         </td>
                                         <td th:text="${reporte.personal.nombre + ' ' + reporte.personal.apellido}"></td>
-                                        <td>
-                                            <span class="badge"
-                                                th:classappend="${reporte.estado == 3 ? 'bg-success' : (reporte.estado == 2 ? 'bg-primary' : 'bg-secondary')}"
-                                                th:text="${estadosMap.get(reporte.estado)}">
-                                            </span>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

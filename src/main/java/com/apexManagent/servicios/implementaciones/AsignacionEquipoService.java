@@ -22,18 +22,19 @@ public class AsignacionEquipoService implements IAsignacionEquipoService {
     private IAsignacionEquipoRepository asignacionRepository;
 
     @Autowired
-    private IPersonalService personalService; 
+    private IPersonalService personalService;
 
     @Override
     public AsignacionEquipo obtenerAsignacionDelUsuarioAutenticadoYEquipo(Integer equipoId) {
-        Personal personal = personalService.getAuthenticatedPersonal(); 
+        Personal personal = personalService.getAuthenticatedPersonal();
         return asignacionRepository.findByPersonalAndEquipoId(personal, equipoId);
     }
 
     @Override
-    public Page<Equipo> obtenerEquiposDelUsuarioAutenticado(String nserie, String nombre, String modelo, Pageable pageable) {
-        Personal personal = personalService.getAuthenticatedPersonal(); 
-        
+    public Page<Equipo> obtenerEquiposDelUsuarioAutenticado(String nserie, String nombre, String modelo,
+            Pageable pageable) {
+        Personal personal = personalService.getAuthenticatedPersonal();
+
         Page<AsignacionEquipo> asignaciones = asignacionRepository
                 .findByPersonalAndEquipo_NserieContainingAndEquipo_NombreContainingAndEquipo_ModeloContaining(
                         personal, nserie, nombre, modelo, pageable);
@@ -76,12 +77,17 @@ public class AsignacionEquipoService implements IAsignacionEquipoService {
         return asignacionRepository.findEquiposDisponiblesConFiltros(nombre, nserie, ubicacion, pageable);
     }
 
-     @Override
+    @Override
     @Transactional
     public void desasignarEquipo(Integer personalId, Integer equipoId) {
         if (!asignacionRepository.existsByPersonalIdAndEquipoId(personalId, equipoId)) {
             throw new IllegalArgumentException("No se encontró la asignación especificada para desasignar");
         }
         asignacionRepository.deleteByPersonalIdAndEquipoId(personalId, equipoId);
+    }
+
+    @Override
+    public boolean existeAsignacionPorEquipoId(Integer equipoId) {
+        return asignacionRepository.countByEquipoId(equipoId) > 0;
     }
 }
